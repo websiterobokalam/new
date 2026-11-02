@@ -3,6 +3,7 @@ import { appContext, fmtDate } from "@/lib/app";
 import { asAccount } from "@/lib/auth/session";
 import { loadJourney, plainProgress } from "@/lib/learn/journey";
 import { currentConsents, hasRequired } from "@/lib/learn/consent";
+import { MessageEducator, ReviewForm } from "@/components/app/Messaging";
 
 export const metadata = { title: "Family home" };
 
@@ -15,12 +16,13 @@ export default async function FamilyHome() {
       return { ...l, summary: plainProgress(l.first_name, nodes), built: nodes.filter((n) => n.state === "built").length, total: nodes.length, ready: hasRequired(await currentConsents(c, l.id)) };
     }));
     const upcoming = (await c.query(
-      `SELECT bk.id, bk.status, l.first_name, co.title, co.kind, b.starts_at, b.mode, b.location, b.educator_label
-       FROM bookings bk JOIN learners l ON l.id = bk.learner_id JOIN batches b ON b.id = bk.batch_id JOIN courses co ON co.id = b.course_id
+      `SELECT bk.id, bk.status, l.first_name, co.title, co.kind, b.starts_at, b.mode, b.location, coalesce(fp.display_name, b.educator_label) AS educator_label, fp.id AS fellow_id
+       FROM bookings bk JOIN learners l ON l.id = bk.learner_id JOIN batches b ON b.id = bk.batch_id JOIN courses co ON co.id = b.course_id LEFT JOIN fellow_profiles fp ON fp.id = b.educator_fellow_id
        WHERE b.starts_at > now() - interval '2 hours' AND bk.status IN ('confirmed','pending_payment') ORDER BY b.starts_at`,
     )).rows;
     const past = (await c.query(
-      `SELECT bk.id, bk.status, bk.feedback, bk.next_step, l.first_name, co.title, b.starts_at
+      `SELECT bk.id, bk.status, bk.feedback, bk.next_step, l.first_name, co.title, b.starts_at, b.educator_fellow_id IS NOT NULL AS has_fellow,
+              EXISTS (SELECT 1 FROM reviews r WHERE r.booking_id = bk.id) AS reviewed
        FROM bookings bk JOIN learners l ON l.id = bk.learner_id JOIN batches b ON b.id = bk.batch_id JOIN courses co ON co.id = b.course_id
        WHERE b.starts_at <= now() - interval '2 hours' ORDER BY b.starts_at DESC LIMIT 10`,
     )).rows;
@@ -74,7 +76,8 @@ export default async function FamilyHome() {
                 <li key={b.id} className="card flex flex-wrap items-center justify-between gap-3 p-4">
                   <div>
                     <p className="font-semibold text-heading">{b.title} · {b.first_name}</p>
-                    <p className="text-sm text-muted">{fmtDate(b.starts_at, locale)} · {b.mode === "online" ? "Online" : b.location}{b.educator_label ? ` · ${b.educator_label}` : ""}</p>
+                    <p className="text-sm text-muted">{fmtDate(b.starts_at, locale)} · {b.mode === "online" ? "Online" : b.location}{b.educator_label ? <> · {b.fellow_id ? <Link className="underline" href={`/educators/${b.fellow_id}`}>{b.educator_label}</Link> : b.educator_label}</> : ""}</p>
+                    {b.fellow_id && <MessageEducator bookingId={b.id} />}
                   </div>
                   <span className="rounded-full bg-panel px-3 py-1 text-xs font-semibold">{t[b.status as "confirmed"]}</span>
                 </li>
@@ -92,6 +95,7 @@ export default async function FamilyHome() {
                   <p className="font-semibold text-heading">{b.title} · {b.first_name} · {t[b.status as "attended"] ?? b.status}</p>
                   {b.feedback && <p className="mt-1">{b.feedback}</p>}
                   {b.next_step && <p className="mt-1 text-sm text-muted">{t.next_up}: {b.next_step}</p>}
+                  {b.status === "attended" && b.has_fellow && !b.reviewed && <ReviewForm bookingId={b.id} />}
                 </li>
               ))}
             </ul>
@@ -100,7 +104,7 @@ export default async function FamilyHome() {
 
         <section className="card p-6">
           <h2 className="text-xl font-bold">Messages</h2>
-          <p className="mt-1 text-muted">Messages with your child&apos;s educator stay inside Robokalam and arrive with Kalam Fellows in Phase 3. Contact details in messages are always blocked.</p>
+          <p className="mt-1 text-muted">Message your child&apos;s educator from an upcoming class. Messages stay inside Robokalam and contact details are always blocked. <Link className="underline" href="/app/messages">Open messages</Link></p>
         </section>
       </div>
     </section>

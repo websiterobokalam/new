@@ -18,5 +18,4 @@ export const planned: Record<string, { title: string; phase: number; line: strin
   terms: { title: "Terms", phase: 2, line: "Terms of use. Counsel to draft." },
   refunds: { title: "Refunds", phase: 2, line: "Published refund terms and self-serve refund requests." },
   "child-safety": { title: "Child safety", phase: 2, line: "Our safeguarding policy, named Safeguarding Lead and response time.", cta: { href: "/fellows/safety", label: "Read the Fellow rules" } },
-  "fellow-terms": { title: "Fellow terms", phase: 3, line: "Plain terms on rate, deductions, incentives and calculation, in English, Telugu and Hindi." },
 };

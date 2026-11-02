@@ -1,6 +1,6 @@
 import type { Tx } from "./db";
 
-export type LedgerAccount = "gateway_clearing" | "learner_escrow" | "gst_payable" | "platform_revenue" | "educator_payable" | "refunds";
+export type LedgerAccount = "gateway_clearing" | "learner_escrow" | "gst_payable" | "platform_revenue" | "educator_payable" | "refunds" | "platform_expense" | "deductions_payable" | "payouts_bank";
 type Posting = [LedgerAccount, number]; // debit positive, credit negative
 
 /**

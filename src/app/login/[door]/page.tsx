@@ -5,6 +5,7 @@ import { doors, type DoorId } from "@/content/site";
 import { Suspense } from "react";
 import { OtpLogin } from "@/components/forms/OtpLogin";
 import { LearnerLogin } from "@/components/app/LearnerLogin";
+import { FellowLogin } from "@/components/app/DoorLogin";
 
 export const dynamicParams = false;
 export function generateStaticParams() {
@@ -41,8 +42,8 @@ export default async function DoorLogin({ params }: { params: Promise<{ door: st
           <p className="mt-6 text-sm text-muted"><Link className="underline" href="/login">Choose a different door</Link></p>
         </div>
         <div className="card p-6 sm:p-8">
-          {d.id === "learner" ? <Suspense><LearnerLogin /></Suspense> : <OtpLogin who={c.who} />}
-          <p className="mt-4 text-xs text-muted">We will text a one-time code. {d.id === "learner" ? "" : d.id === "school" ? "School accounts open in Phase 4." : "Fellow accounts open with the Phase 3 pilot."}</p>
+          {d.id === "learner" ? <Suspense><LearnerLogin /></Suspense> : d.id === "educator" ? <Suspense><FellowLogin /></Suspense> : <OtpLogin who={c.who} />}
+          <p className="mt-4 text-xs text-muted">We will text a one-time code. {d.id === "school" ? "School accounts open in Phase 4." : ""}</p>
         </div>
       </div>
     </section>

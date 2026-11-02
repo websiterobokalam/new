@@ -28,7 +28,8 @@ export function DeleteLearner({ learnerId, t }: { learnerId: string; t: Dict }) 
       e.preventDefault();
       const r = await post("/api/app/data-requests", { kind: "erase", learnerId, confirmName: name });
       if (!r.ok) return setMsg(r.fields?.confirmName ?? r.error);
-      setMsg(t.delete_requested); router.refresh();
+      // The learner's section disappears on refresh, so confirm at page level.
+      router.replace("/app/consent?deleted=1"); router.refresh();
     }}>
       <label className="field"><span>{t.delete_confirm}</span><input className="input" value={name} onChange={(e) => setName(e.target.value)} /></label>
       {msg && <p role="status" className="text-sm">{msg}</p>}

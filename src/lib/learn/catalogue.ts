@@ -26,7 +26,7 @@ export async function listCourses(f: Filters): Promise<CourseCard[]> {
        (SELECT min(b.starts_at) FROM batches b WHERE ${bw.join(" AND ")}) AS next_start,
        coalesce((SELECT array_agg(DISTINCT b.language) FROM batches b WHERE b.course_id = c.id AND b.starts_at > now()), '{}') AS languages,
        coalesce((SELECT array_agg(DISTINCT b.mode) FROM batches b WHERE b.course_id = c.id AND b.starts_at > now()), '{}') AS modes,
-       (SELECT b.educator_label FROM batches b WHERE b.course_id = c.id AND b.starts_at > now() ORDER BY b.starts_at LIMIT 1) AS educator
+       (SELECT coalesce(fp.display_name, b.educator_label) FROM batches b LEFT JOIN fellow_profiles fp ON fp.id = b.educator_fellow_id WHERE b.course_id = c.id AND b.starts_at > now() ORDER BY b.starts_at LIMIT 1) AS educator
      FROM courses c WHERE ${where.join(" AND ")} ${batchFilter} ORDER BY c.age_min, c.title`,
     p,
   )).rows);
@@ -36,7 +36,7 @@ export async function getCourse(slug: string) {
   return anon(async (c) => {
     const course = (await c.query("SELECT * FROM courses WHERE slug = $1 AND published AND kind = 'course'", [slug])).rows[0];
     if (!course) return null;
-    const batches = (await c.query("SELECT id, starts_at, duration_min, language, mode, location, educator_label FROM batches WHERE course_id = $1 AND starts_at > now() ORDER BY starts_at LIMIT 20", [course.id])).rows;
+    const batches = (await c.query("SELECT b.id, b.starts_at, b.duration_min, b.language, b.mode, b.location, coalesce(fp.display_name, b.educator_label) AS educator_label, fp.id AS fellow_id FROM batches b LEFT JOIN fellow_profiles fp ON fp.id = b.educator_fellow_id WHERE b.course_id = $1 AND b.starts_at > now() ORDER BY b.starts_at LIMIT 20", [course.id])).rows;
     return { course, batches };
   });
 }

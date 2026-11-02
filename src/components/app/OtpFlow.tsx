@@ -4,7 +4,7 @@ import { post } from "./client";
 import { Field, FormError, Check } from "../forms/ui";
 
 /** Phone OTP sign-in. Calls onDone after the session cookie is set. */
-export function OtpFlow({ onDone, askAdult = true, cta = "Send code" }: { onDone: () => void; askAdult?: boolean; cta?: string }) {
+export function OtpFlow({ onDone, askAdult = true, cta = "Send code", phoneLabel = "Parent's mobile number" }: { onDone: () => void; askAdult?: boolean; cta?: string; phoneLabel?: string }) {
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
   const [adult, setAdult] = useState(false);
@@ -34,7 +34,7 @@ export function OtpFlow({ onDone, askAdult = true, cta = "Send code" }: { onDone
 
   return stage === "phone" ? (
     <form onSubmit={send} className="grid gap-4" noValidate>
-      <Field label="Parent's mobile number" name="phone" type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="98xxxxxx10" />
+      <Field label={phoneLabel} name="phone" type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="98xxxxxx10" />
       <FormError msg={err} />
       <button className="btn btn-primary justify-self-start" disabled={busy || phone.length < 10}>{busy ? "Sending…" : cta}</button>
     </form>

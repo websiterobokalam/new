@@ -2,18 +2,27 @@ import { notFound } from "next/navigation";
 import { appContext } from "@/lib/app";
 import { asAccount } from "@/lib/auth/session";
 import { StaffButton } from "@/components/app/StaffActions";
+import { JsonForm } from "@/components/app/JsonForm";
+import { system } from "@/lib/db";
 
 export const metadata = { title: "Safeguarding queue" };
 
 export default async function Safeguarding() {
   const { account } = await appContext("/app/safeguarding");
   if (account.role !== "safeguarding") notFound();
+  const fellows = await system(async (c) => (await c.query("SELECT account_id, full_name, status FROM fellows WHERE status IN ('live','vetting') ORDER BY full_name")).rows);
   const reports = await asAccount(account, async (c) => (await c.query("SELECT id, category, details, page, status, respond_by, created_at, respond_by < now() AS overdue FROM safety_reports WHERE status <> 'closed' ORDER BY (category = 'safety') DESC, created_at")).rows);
   return (
     <section className="py-10">
       <div className="wrap grid gap-6">
         <h1 className="display-lg">Safeguarding queue</h1>
-        <p className="text-muted">On a credible safety concern: suspend access at once and follow the POCSO reporting duty. Restriction tools arrive with Fellows in Phase 3.</p>
+        <p className="text-muted">On a credible safety concern: suspend access at once and follow the POCSO reporting duty.</p>
+        <details className="card p-5"><summary className="cursor-pointer font-semibold text-[#b42318]">Suspend a Fellow now (child safety)</summary>
+          <div className="mt-3 max-w-lg"><JsonForm url="/api/ops/cases" fixed={{ childSafety: true }} tone="danger" submit="Suspend immediately and open case" fields={[
+            { name: "fellowId", label: "Fellow", type: "select", options: fellows.map((f): [string, string] => [f.account_id, `${f.full_name} · ${f.status}`]) },
+            { name: "reasons", label: "Written reasons", type: "textarea" },
+          ]} /></div>
+        </details>
         <ul className="grid gap-3">
           {reports.map((r) => (
             <li key={r.id} className={`card grid gap-2 p-4 ${r.overdue ? "border-[#b42318]" : ""}`}>
