@@ -27,7 +27,7 @@ export default function LearnPage() {
       <JsonLd data={faqLd(learnFaqs)} />
       <PageHero art={<LearnerArt />} eyebrow="Learner door · students and parents" title={<>Build real tech, <span className="grad-text">from age 6.</span></>}
         lede="Small live batches. Real kits. Projects your child can hold, run and explain. Start with one free build session.">
-        <a href="#book" className="btn btn-primary" data-magnetic>Book a Free Build Session <span aria-hidden>→</span></a>
+        <a href="/learn/build-session" className="btn btn-primary" data-magnetic>Book a Free Build Session <span aria-hidden>→</span></a>
         <a href="#find" className="btn btn-ghost">Find a course</a>
       </PageHero>
 
@@ -71,14 +71,14 @@ export default function LearnPage() {
 
       <Section id="book" label="Book a Free Build Session">
         <div className="wrap grid gap-10 lg:grid-cols-[1fr_1.3fr]">
-          <SectionHead eyebrow="Free Build Session" title="Request your session." lede="Tell us a little. We message you to pick a slot. No pop-ups, no calls you did not ask for." />
+          <SectionHead eyebrow="Free Build Session" title="Book it yourself, or let us message you." lede={<>Book a time in four short steps: <a className="font-semibold text-link underline" href="/learn/build-session">book your Free Build Session</a>. Prefer we message you? Leave your details. No pop-ups, no calls you did not ask for.</>} />
           <BuildSessionForm />
         </div>
       </Section>
       <ParentTrust />
       <Faq items={learnFaqs} />
       <div className="h-20 md:hidden" />
-      <StickyCta href="#book" label="Book a Free Build Session" />
+      <StickyCta href="/learn/build-session" label="Book a Free Build Session" />
     </>
   );
 }

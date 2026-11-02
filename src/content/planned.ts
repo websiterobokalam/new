@@ -1,6 +1,5 @@
 /** Pages in the site map that ship in later phases. Each renders an honest placeholder. */
 export const planned: Record<string, { title: string; phase: number; line: string; cta?: { href: string; label: string } }> = {
-  courses: { title: "Courses", phase: 2, line: "The full course marketplace, filterable by age, world, language, online or offline, and time.", cta: { href: "/learn#book", label: "Book a Free Build Session" } },
   programs: { title: "Ashaer tracks", phase: 2, line: "Year-long Ashaer tracks with Junior and Senior splits and Levels 1 to 3.", cta: { href: "/learn", label: "See programmes" } },
   bootcamps: { title: "Bootcamps", phase: 2, line: "AIML Bootcamp and Robotics Summer Camp.", cta: { href: "/learn#book", label: "Ask about the next batch" } },
   internships: { title: "Internships", phase: 2, line: "Build for real clients with Robokalam." },
@@ -20,5 +19,4 @@ export const planned: Record<string, { title: string; phase: number; line: strin
   refunds: { title: "Refunds", phase: 2, line: "Published refund terms and self-serve refund requests." },
   "child-safety": { title: "Child safety", phase: 2, line: "Our safeguarding policy, named Safeguarding Lead and response time.", cta: { href: "/fellows/safety", label: "Read the Fellow rules" } },
   "fellow-terms": { title: "Fellow terms", phase: 3, line: "Plain terms on rate, deductions, incentives and calculation, in English, Telugu and Hindi." },
-  app: { title: "Robokalam app", phase: 2, line: "The logged-in app for students, parents, Fellows, trainers and schools.", cta: { href: "/login", label: "Login" } },
 };

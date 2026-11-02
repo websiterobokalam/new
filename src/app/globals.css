@@ -254,3 +254,6 @@
 [data-on="true"] .lab-bench:nth-child(4n+2) .lab-screen { background: #98b844; box-shadow: 0 0 18px #98b84499; }
 .lab-progress { width: 0; background: var(--kalam-gradient); transition: width 2.4s var(--ease-out-soft) .3s; }
 [data-on="true"] .lab-progress, .no-js .lab-progress { width: 100%; }
+
+/* Telugu and Hindi: no letter-spacing or forced uppercase mono on labels (breaks conjuncts) */
+:lang(te) .eyebrow, :lang(hi) .eyebrow { font-family: var(--font-sans); letter-spacing: 0; text-transform: none; font-size: 0.85rem; }
