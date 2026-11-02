@@ -7,3 +7,8 @@ next-env.d.ts
 .data
 test-results
 playwright-report
+
+# Temporary files Next.js writes while loading next.config.ts. A committed copy
+# collides with the generated one and breaks config loading.
+*.next.config.*
+*.compiled.js
