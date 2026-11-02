@@ -41,7 +41,7 @@ export default async function BookPage({ params }: { params: Promise<{ batchId: 
               <div className="flex justify-between"><dt>Course fee</dt><dd>{inr(split!.net)}</dd></div>
               <div className="flex justify-between text-muted"><dt>GST</dt><dd>{inr(split!.gst)}</dd></div>
               <div className="flex justify-between border-t border-line pt-2 text-2xl font-bold text-heading"><dt>Total</dt><dd>{inr(split!.total)}</dd></div>
-              {b.sample && <dd className="mt-2 rounded-lg bg-[#fff4cc] px-3 py-2 text-sm font-semibold text-[#5c4500]">{t.sample_fee}</dd>}
+              {b.sample && <dd className="mt-2 rounded-lg bg-[#FEEBD0] px-3 py-2 text-sm font-semibold text-[#6B3F00]">{t.sample_fee}</dd>}
               {b.kit && <dd className="text-sm text-muted">Kit: {b.kit}</dd>}
             </dl>
           )}

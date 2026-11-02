@@ -128,7 +128,7 @@ export default function FellowsPage() {
 
       <Section label="Safety rules" className="bg-night text-[#e3eff5]">
         <div className="wrap">
-          <p className="eyebrow !text-[#6fd7f0]">Safety rules · stated with pride</p>
+          <p className="eyebrow !text-[#7FD0F2]">Safety rules · stated with pride</p>
           <h2 className="display-lg mt-3 max-w-3xl !text-white">The rules that make parents trust you.</h2>
           <ul className="mt-10 grid gap-3 md:grid-cols-2">
             {fellowRules.map((r) => <li key={r} data-stagger className="rounded-2xl border border-white/10 bg-white/5 p-5 text-[#e3eff5]">{r}</li>)}

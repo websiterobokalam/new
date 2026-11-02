@@ -17,7 +17,7 @@ export function TrustBar() {
       <ul className="glass flex flex-wrap items-center justify-center gap-x-6 gap-y-2 rounded-2xl px-5 py-4 shadow-[var(--shadow-soft)] sm:justify-between" aria-label="Why families and schools trust Robokalam">
         {items.map((t) => (
           <li key={t} className="flex items-center gap-2 text-sm font-semibold text-heading">
-            <svg viewBox="0 0 16 16" className="h-4 w-4 shrink-0" aria-hidden><circle cx="8" cy="8" r="7" fill="#00CBD6" opacity=".25" /><path d="m4.5 8.2 2.2 2.2 4.8-4.8" stroke="var(--link)" strokeWidth="2" fill="none" strokeLinecap="round" /></svg>
+            <svg viewBox="0 0 16 16" className="h-4 w-4 shrink-0" aria-hidden><circle cx="8" cy="8" r="7" fill="#5CC6EC" opacity=".25" /><path d="m4.5 8.2 2.2 2.2 4.8-4.8" stroke="var(--link)" strokeWidth="2" fill="none" strokeLinecap="round" /></svg>
             {t}
           </li>
         ))}
@@ -41,7 +41,7 @@ function WorldMotif({ shape, color }: { shape: string; color: string }) {
         </>
       )}
       {shape === "growth" && (<><path {...common} d="M4 82 C 60 80, 90 70, 120 50 S 170 12, 196 8" /><path d="M4 86 H196" stroke="var(--line)" strokeWidth="2" /></>)}
-      {shape === "orbit" && (<><ellipse cx="100" cy="45" rx="88" ry="28" {...common} transform="rotate(-12 100 45)" /><circle cx="100" cy="45" r="13" fill="#FFD31D" /><circle cx="176" cy="30" r="6" fill={color} /></>)}
+      {shape === "orbit" && (<><ellipse cx="100" cy="45" rx="88" ry="28" {...common} transform="rotate(-12 100 45)" /><circle cx="100" cy="45" r="13" fill="#F7A21C" /><circle cx="176" cy="30" r="6" fill={color} /></>)}
       {shape === "code" && (<><path {...common} d="M60 20 L30 45 L60 70 M140 20 L170 45 L140 70 M112 14 L88 76" /></>)}
     </svg>
   );
@@ -97,7 +97,7 @@ export function LearnerLadder() {
         <ol className="relative mt-12 grid gap-4 md:grid-cols-6">
           <svg aria-hidden viewBox="0 0 600 100" preserveAspectRatio="none" className="draw-on-power pointer-events-none absolute inset-x-0 top-6 hidden h-24 w-full md:block">
             <path data-draw pathLength={1} d="M10 95 C 120 95, 120 75, 110 75 S 220 60, 210 58 S 330 44, 320 42 S 430 28, 420 26 S 530 12, 590 6" fill="none" stroke="url(#kl-ladder)" strokeWidth="3" vectorEffect="non-scaling-stroke" />
-            <defs><linearGradient id="kl-ladder" x1="0" x2="1"><stop offset="0" stopColor="#0098D6" /><stop offset=".5" stopColor="#00CBD6" /><stop offset="1" stopColor="#98B844" /></linearGradient></defs>
+            <defs><linearGradient id="kl-ladder" x1="0" x2="1"><stop offset="0" stopColor="#1AB0E2" /><stop offset=".5" stopColor="#5CC6EC" /><stop offset="1" stopColor="#97BC3D" /></linearGradient></defs>
           </svg>
           {ladder.map((s, i) => (
             <li key={s.title} data-stagger className="relative md:pt-[calc(100px-var(--step))]" style={{ ["--step" as string]: `${i * 16}px` }}>
@@ -127,7 +127,7 @@ export function LabAtNight() {
   return (
     <section id="lab-at-night" aria-label="Lab at Night" className="relative overflow-hidden bg-night py-24 text-[#e3eff5] sm:py-32" data-anim-scope>
       <div data-power className="wrap">
-        <p className="eyebrow !text-[#6fd7f0]" data-stagger>Turnkey 21C STEM &amp; AI Lab</p>
+        <p className="eyebrow !text-[#7FD0F2]" data-stagger>Turnkey 21C STEM &amp; AI Lab</p>
         <h2 className="display-lg mt-3 max-w-3xl !text-white" data-stagger>
           Watch a school lab light up.{" "}
           <Claim id="lab.rollout" fallback={null} className="grad-text" />
@@ -148,8 +148,8 @@ export function LabAtNight() {
           <ol className="relative grid gap-5 border-l border-white/15 pl-6">
             {rollout.map((r, i) => (
               <li key={r.t} data-stagger className="relative">
-                <span aria-hidden className="absolute -left-[31px] top-1 h-3.5 w-3.5 rounded-full border-2 border-night bg-aqua shadow-[0_0_14px_#00CBD6]" />
-                <p className="font-mono text-xs uppercase tracking-wider text-[#6fd7f0]">Step {i + 1}</p>
+                <span aria-hidden className="absolute -left-[31px] top-1 h-3.5 w-3.5 rounded-full border-2 border-night bg-aqua shadow-[0_0_14px_#5CC6EC]" />
+                <p className="font-mono text-xs uppercase tracking-wider text-[#7FD0F2]">Step {i + 1}</p>
                 <h3 className="text-xl font-bold !text-white">{r.t}</h3>
                 <p className="text-[#a3bccb]">{r.d}</p>
               </li>
@@ -171,7 +171,7 @@ export function FellowsBand() {
     <Section id="fellows" label="Kalam Fellows" className="overflow-hidden">
       <div className="wrap">
         <div className="card grad-border relative overflow-hidden p-6 sm:p-12" data-lit="true">
-          <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(152,184,68,.28),transparent_65%)]" />
+          <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(151,188,61,.28),transparent_65%)]" />
           <p className="eyebrow" data-stagger>Kalam Fellows · for college students, 18+</p>
           <h2 className="display-xl mt-3 max-w-4xl" data-stagger>
             Teach what you love. <span className="grad-text">Earn while you study.</span>

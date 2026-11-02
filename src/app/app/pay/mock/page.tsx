@@ -19,7 +19,7 @@ export default async function MockPayPage({ searchParams }: { searchParams: Prom
     <section className="py-16">
       <div className="wrap max-w-md">
         <div className="card grid gap-4 p-6">
-          <p className="rounded-lg bg-[#fff4cc] px-3 py-2 text-sm font-semibold text-[#5c4500]">Test payment screen. No real money moves.</p>
+          <p className="rounded-lg bg-[#FEEBD0] px-3 py-2 text-sm font-semibold text-[#6B3F00]">Test payment screen. No real money moves.</p>
           <h1 className="text-2xl font-bold">Pay {inr(Number(amount ?? 0))}</h1>
           <MockPay order={order} paymentId={paymentId} signature={mockSign(order, paymentId)} />
         </div>

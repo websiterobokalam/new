@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { bricolage, instrument, jetbrains, anekTe, anekHi } from "./fonts";
+import { bricolage, instrument, jetbrains, anekTe, anekHi, brand } from "./fonts";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MotionRuntime } from "@/components/motion/MotionRuntime";
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   applicationName: "Robokalam",
   manifest: "/manifest.webmanifest",
   openGraph: { siteName: "Robokalam", type: "website", locale: "en_IN" },
-  icons: { icon: "/icon.svg" },
+  icons: { icon: [{ url: "/icon.svg", type: "image/svg+xml" }, { url: "/icon-192.png", sizes: "192x192", type: "image/png" }], apple: "/icon-192.png" },
 };
 
 export const viewport: Viewport = {
@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en-IN"
-      className={`no-js ${bricolage.variable} ${instrument.variable} ${jetbrains.variable} ${anekTe.variable} ${anekHi.variable}`}
+      className={`no-js ${brand.variable} ${bricolage.variable} ${instrument.variable} ${jetbrains.variable} ${anekTe.variable} ${anekHi.variable}`}
       suppressHydrationWarning
     >
       <head>

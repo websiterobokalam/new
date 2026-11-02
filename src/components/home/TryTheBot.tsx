@@ -100,7 +100,7 @@ export function TryTheBot() {
             <div className="relative h-full w-full p-1">
               <KalamBot className="h-full w-full" mood={status === "win" ? "wave" : "idle"} />
               <svg viewBox="0 0 20 20" className="absolute -right-1 -top-1 h-1/3 w-1/3 transition-transform duration-300" style={{ transform: `rotate(${-bot.dir * 90}deg)` }}>
-                <circle cx="10" cy="10" r="10" fill="#FFD31D" /><path d="M6 10h8m-3-3 3 3-3 3" stroke="#0A4060" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="10" cy="10" r="10" fill="#F7A21C" /><path d="M6 10h8m-3-3 3 3-3 3" stroke="#0B4168" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
           </div>
@@ -137,7 +137,7 @@ export function TryTheBot() {
           </div>
         </div>
         <div className="overflow-hidden rounded-[var(--radius-card)] bg-night p-4 sm:p-5">
-          <p className="font-mono text-xs uppercase tracking-wider text-[#6fd7f0]">Python, live</p>
+          <p className="font-mono text-xs uppercase tracking-wider text-[#7FD0F2]">Python, live</p>
           <pre className="mt-2 overflow-x-auto font-mono text-sm leading-relaxed text-[#e3eff5]"><code>{py.join("\n")}</code></pre>
         </div>
       </div>
