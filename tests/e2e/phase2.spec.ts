@@ -1,11 +1,11 @@
 import { test, expect } from "@playwright/test";
-import { login, addLearner, ownerQuery, randomPhone } from "../helpers";
+import { login, addLearner, ownerQuery, randomPhone, newId } from "../helpers";
 
 test.describe.configure({ mode: "parallel" });
 
 test("Free Build Session: age, OTP, consent, slot, booked", async ({ page }) => {
   // Each run gets its own roomy slot, scheduled earliest so it is listed first.
-  await ownerQuery("INSERT INTO batches (course_id, starts_at, duration_min, capacity, language, mode) SELECT id, now() + interval '65 minutes' + random() * interval '5 minutes', 60, 30, 'en', 'online' FROM courses WHERE slug = 'free-build-session'");
+  await ownerQuery("INSERT INTO batches (id, course_id, starts_at, duration_min, capacity, language, mode) SELECT $1, id, $2, 60, 30, 'en', 'online' FROM courses WHERE slug = 'free-build-session'", [newId(), new Date(Date.now() + (65 + Math.random() * 5) * 60_000)]);
   await page.goto("/learn/build-session");
   await page.locator("label.chip", { hasText: /^9-11$/ }).click();
   await page.locator("label.chip", { hasText: "IoT" }).click();
@@ -85,7 +85,7 @@ test("paid course: fee with GST shown before payment, mock payment, invoice, bal
 test("refund: self-serve request, ops approves, gateway refund, ledger reversal", async ({ page, browser }) => {
   await login(page);
   await addLearner(page, "Sana", "9-11");
-  const batch = (await ownerQuery<{ id: string }>("SELECT b.id FROM batches b JOIN courses c ON c.id = b.course_id WHERE c.slug = 'codo-ashaers-junior-l1' AND b.starts_at > now() + interval '30 hours' LIMIT 1"))[0];
+  const batch = (await ownerQuery<{ id: string }>("SELECT b.id FROM batches b JOIN courses c ON c.id = b.course_id WHERE c.slug = 'codo-ashaers-junior-l1' AND b.starts_at > now() + INTERVAL 30 HOUR LIMIT 1"))[0];
   await page.goto(`/app/book/${batch.id}`);
   await page.locator("label.chip", { hasText: "Sana" }).click();
   await page.getByRole("button", { name: /^Pay ₹/ }).click();

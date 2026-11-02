@@ -12,7 +12,7 @@ export default async function Ops() {
   if (account.role !== "ops") notFound();
   const d = await system(async (c) => ({
     refunds: (await c.query("SELECT r.id, r.amount_paise, r.reason, r.decision, r.created_at, o.invoice_no FROM refund_requests r JOIN orders o ON o.id = r.order_id WHERE r.status = 'requested' ORDER BY r.created_at")).rows,
-    sessions: (await c.query("SELECT bk.id, l.first_name, l.age_band, co.title, b.starts_at FROM bookings bk JOIN learners l ON l.id = bk.learner_id JOIN batches b ON b.id = bk.batch_id JOIN courses co ON co.id = b.course_id WHERE bk.status = 'confirmed' AND b.starts_at < now() + interval '1 day' ORDER BY b.starts_at LIMIT 50")).rows,
+    sessions: (await c.query("SELECT bk.id, l.first_name, l.age_band, co.title, b.starts_at FROM bookings bk JOIN learners l ON l.id = bk.learner_id JOIN batches b ON b.id = bk.batch_id JOIN courses co ON co.id = b.course_id WHERE bk.status = 'confirmed' AND b.starts_at < now() + INTERVAL 1 DAY ORDER BY b.starts_at LIMIT 50")).rows,
     projects: (await c.query("SELECT id, title FROM projects ORDER BY world, level")).rows,
   }));
   return (

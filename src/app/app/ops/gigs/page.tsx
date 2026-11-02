@@ -11,7 +11,7 @@ export default async function OpsGigs() {
   const { account } = await appContext("/app/ops/gigs");
   if (account.role !== "ops") notFound();
   const d = await system(async (c) => ({
-    gigs: (await c.query(`SELECT g.*, (SELECT string_agg(f.display_name || ' (' || ga.status || ')', ', ') FROM gig_assignments ga JOIN fellows f ON f.account_id = ga.fellow_id WHERE ga.gig_id = g.id AND ga.status <> 'declined') AS who,
+    gigs: (await c.query(`SELECT g.*, (SELECT GROUP_CONCAT(CONCAT(f.display_name, ' (', ga.status, ')') SEPARATOR ', ') FROM gig_assignments ga JOIN fellows f ON f.account_id = ga.fellow_id WHERE ga.gig_id = g.id AND ga.status <> 'declined') AS who,
       (SELECT ga.id FROM gig_assignments ga WHERE ga.gig_id = g.id AND ga.status = 'delivered' LIMIT 1) AS delivered_assignment
       FROM gigs g ORDER BY g.starts_at DESC LIMIT 100`)).rows,
     batches: (await c.query("SELECT b.id, c.title, b.starts_at FROM batches b JOIN courses c ON c.id = b.course_id WHERE b.starts_at > now() AND b.educator_fellow_id IS NULL ORDER BY b.starts_at LIMIT 50")).rows,

@@ -1,4 +1,5 @@
 import { anon } from "../db";
+import { FELLOW_PROFILES } from "@/lib/fellows/profiles";
 
 export type CourseCard = {
   id: string; slug: string; title: string; world: string; programme: string | null; age_min: number; age_max: number | null; outcome: string;
@@ -19,24 +20,26 @@ export async function listCourses(f: Filters): Promise<CourseCard[]> {
   const bw: string[] = ["b.course_id = c.id", "b.starts_at > now()"];
   if (f.lang) { p.push(f.lang); bw.push(`b.language = $${p.length}`); }
   if (f.mode) { p.push(f.mode); bw.push(`b.mode = $${p.length}`); }
-  if (f.time && TIME[f.time]) { p.push(TIME[f.time][0]); bw.push(`extract(hour from b.starts_at AT TIME ZONE 'Asia/Kolkata') >= $${p.length}`); p.push(TIME[f.time][1]); bw.push(`extract(hour from b.starts_at AT TIME ZONE 'Asia/Kolkata') < $${p.length}`); }
+  if (f.time && TIME[f.time]) { p.push(TIME[f.time][0]); bw.push(`HOUR(CONVERT_TZ(b.starts_at, '+00:00', '+05:30')) >= $${p.length}`); p.push(TIME[f.time][1]); bw.push(`HOUR(CONVERT_TZ(b.starts_at, '+00:00', '+05:30')) < $${p.length}`); }
   const batchFilter = f.lang || f.mode || f.time ? `AND EXISTS (SELECT 1 FROM batches b WHERE ${bw.join(" AND ")})` : "";
-  return anon(async (c) => (await c.query(
+  return anon(async (c) => ((await c.query(
     `SELECT c.id, c.slug, c.title, c.world, c.programme, c.age_min, c.age_max, c.outcome, c.batch_size_max, c.sessions, c.kit, c.fee_paise, c.fee_approved, c.sample,
        (SELECT min(b.starts_at) FROM batches b WHERE ${bw.join(" AND ")}) AS next_start,
-       coalesce((SELECT array_agg(DISTINCT b.language) FROM batches b WHERE b.course_id = c.id AND b.starts_at > now()), '{}') AS languages,
-       coalesce((SELECT array_agg(DISTINCT b.mode) FROM batches b WHERE b.course_id = c.id AND b.starts_at > now()), '{}') AS modes,
-       (SELECT coalesce(fp.display_name, b.educator_label) FROM batches b LEFT JOIN fellow_profiles fp ON fp.id = b.educator_fellow_id WHERE b.course_id = c.id AND b.starts_at > now() ORDER BY b.starts_at LIMIT 1) AS educator
+       (SELECT GROUP_CONCAT(DISTINCT b.language) FROM batches b WHERE b.course_id = c.id AND b.starts_at > now()) AS languages,
+       (SELECT GROUP_CONCAT(DISTINCT b.mode) FROM batches b WHERE b.course_id = c.id AND b.starts_at > now()) AS modes,
+       (SELECT coalesce(fp.display_name, b.educator_label) FROM batches b LEFT JOIN (${FELLOW_PROFILES}) fp ON fp.id = b.educator_fellow_id WHERE b.course_id = c.id AND b.starts_at > now() ORDER BY b.starts_at LIMIT 1) AS educator
      FROM courses c WHERE ${where.join(" AND ")} ${batchFilter} ORDER BY c.age_min, c.title`,
     p,
-  )).rows);
+  )).rows as (Omit<CourseCard, "languages" | "modes"> & { languages: string | null; modes: string | null })[]).map((r) => ({
+    ...r, languages: r.languages ? r.languages.split(",") : [], modes: r.modes ? r.modes.split(",") : [],
+  })));
 }
 
 export async function getCourse(slug: string) {
   return anon(async (c) => {
     const course = (await c.query("SELECT * FROM courses WHERE slug = $1 AND published AND kind = 'course'", [slug])).rows[0];
     if (!course) return null;
-    const batches = (await c.query("SELECT b.id, b.starts_at, b.duration_min, b.language, b.mode, b.location, coalesce(fp.display_name, b.educator_label) AS educator_label, fp.id AS fellow_id FROM batches b LEFT JOIN fellow_profiles fp ON fp.id = b.educator_fellow_id WHERE b.course_id = $1 AND b.starts_at > now() ORDER BY b.starts_at LIMIT 20", [course.id])).rows;
+    const batches = (await c.query(`SELECT b.id, b.starts_at, b.duration_min, b.language, b.mode, b.location, coalesce(fp.display_name, b.educator_label) AS educator_label, fp.id AS fellow_id FROM batches b LEFT JOIN (${FELLOW_PROFILES}) fp ON fp.id = b.educator_fellow_id WHERE b.course_id = $1 AND b.starts_at > now() ORDER BY b.starts_at LIMIT 20`, [course.id])).rows;
     return { course, batches };
   });
 }

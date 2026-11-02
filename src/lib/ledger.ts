@@ -1,20 +1,20 @@
-import type { Tx } from "./db";
+import { insertOnce, type Tx } from "./db";
 
 export type LedgerAccount = "gateway_clearing" | "learner_escrow" | "gst_payable" | "platform_revenue" | "educator_payable" | "refunds" | "platform_expense" | "deductions_payable" | "payouts_bank";
 type Posting = [LedgerAccount, number]; // debit positive, credit negative
 
 /**
  * Post a balanced journal. Idempotent on (kind, ref): a repeated webhook
- * returns false instead of double-posting. The database also rejects any
- * journal that does not sum to zero.
+ * returns false instead of double-posting. Unbalanced journals are refused
+ * before anything is written, inside the caller's transaction.
  */
 export async function post(c: Tx, kind: string, ref: string, postings: Posting[]): Promise<boolean> {
   const sum = postings.reduce((s, [, a]) => s + a, 0);
   if (sum !== 0) throw new Error(`Unbalanced journal ${kind}/${ref}: ${sum}`);
-  const { rows } = await c.query("INSERT INTO ledger_journals (kind, ref) VALUES ($1, $2) ON CONFLICT (kind, ref) DO NOTHING RETURNING id", [kind, ref]);
-  if (!rows[0]) return false;
+  if (!(await insertOnce(c, "INSERT INTO ledger_journals (kind, ref) VALUES ($1, $2)", [kind, ref]))) return false; // already posted
+  const journalId = (await c.query("SELECT id FROM ledger_journals WHERE kind = $1 AND ref = $2", [kind, ref])).rows[0].id;
   for (const [account, amount] of postings) {
-    if (amount !== 0) await c.query("INSERT INTO ledger_postings (journal_id, account, amount_paise) VALUES ($1, $2, $3)", [rows[0].id, account, amount]);
+    if (amount !== 0) await c.query("INSERT INTO ledger_postings (journal_id, account, amount_paise) VALUES ($1, $2, $3)", [journalId, account, amount]);
   }
   return true;
 }

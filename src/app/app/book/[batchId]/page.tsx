@@ -17,7 +17,7 @@ export default async function BookPage({ params }: { params: Promise<{ batchId: 
   const d = await asAccount(account, async (c) => {
     const b = (await c.query("SELECT b.id, b.starts_at, b.mode, b.location, b.language, c.title, c.slug, c.sessions, c.age_min, c.age_max, c.fee_paise, c.fee_approved, c.sample, c.kit FROM batches b JOIN courses c ON c.id = b.course_id WHERE b.id = $1", [batchId])).rows[0];
     if (!b) return null;
-    const ls = (await c.query("SELECT id, first_name, age_band FROM learners WHERE erased_at IS NULL ORDER BY created_at")).rows;
+    const ls = (await c.query("SELECT id, first_name, age_band FROM learners WHERE guardian_account_id = $1 AND erased_at IS NULL ORDER BY created_at", [account.id])).rows;
     const learners = await Promise.all(ls.map(async (l) => ({ ...l, ready: hasRequired(await currentConsents(c, l.id)), fits: ageFits(l.age_band, b.age_min, b.age_max) })));
     return { b, learners };
   });

@@ -1,5 +1,5 @@
 import { createHmac, randomInt, timingSafeEqual } from "node:crypto";
-import { system } from "../db";
+import { system, uuid } from "../db";
 import { testProvidersAllowed } from "../providers";
 
 const TTL_MS = 5 * 60_000;
@@ -43,11 +43,11 @@ export async function sendOtp(phone: string) {
   const prov = provider();
   const code = prov.name === "test" ? "123456" : String(randomInt(0, 1_000_000)).padStart(6, "0");
   await system(async (c) => {
-    const { rows } = await c.query("SELECT count(*)::int AS n FROM otp_challenges WHERE phone_e164 = $1 AND created_at > now() - interval '15 minutes'", [phone]);
+    const { rows } = await c.query("SELECT COUNT(*) AS n FROM otp_challenges WHERE phone_e164 = $1 AND created_at > UTC_TIMESTAMP(3) - INTERVAL 15 MINUTE", [phone]);
     if (rows[0].n >= MAX_SENDS_PER_15_MIN) throw new OtpRateLimited();
     // Only the newest challenge for a phone is valid.
-    await c.query("UPDATE otp_challenges SET consumed_at = now() WHERE phone_e164 = $1 AND consumed_at IS NULL", [phone]);
-    await c.query("INSERT INTO otp_challenges (phone_e164, code_hash, expires_at) VALUES ($1, $2, now() + $3 * interval '1 millisecond')", [phone, hashCode(phone, code), TTL_MS]);
+    await c.query("UPDATE otp_challenges SET consumed_at = UTC_TIMESTAMP(3) WHERE phone_e164 = $1 AND consumed_at IS NULL", [phone]);
+    await c.query("INSERT INTO otp_challenges (id, phone_e164, code_hash, expires_at) VALUES ($1, $2, $3, $4)", [uuid(), phone, hashCode(phone, code), new Date(Date.now() + TTL_MS)]);
   });
   await prov.send(phone, code);
 }
@@ -57,7 +57,7 @@ export type VerifyResult = { ok: true } | { ok: false; reason: "expired" | "wron
 export async function verifyOtp(phone: string, code: string): Promise<VerifyResult> {
   return system(async (c) => {
     const { rows } = await c.query(
-      "SELECT id, code_hash, attempts, expires_at < now() AS expired FROM otp_challenges WHERE phone_e164 = $1 AND consumed_at IS NULL ORDER BY created_at DESC LIMIT 1 FOR UPDATE",
+      "SELECT id, code_hash, attempts, (expires_at < UTC_TIMESTAMP(3)) AS expired FROM otp_challenges WHERE phone_e164 = $1 AND consumed_at IS NULL ORDER BY created_at DESC LIMIT 1 FOR UPDATE",
       [phone],
     );
     const ch = rows[0];
@@ -69,7 +69,7 @@ export async function verifyOtp(phone: string, code: string): Promise<VerifyResu
       await c.query("UPDATE otp_challenges SET attempts = attempts + 1 WHERE id = $1", [ch.id]);
       return { ok: false, reason: ch.attempts + 1 >= MAX_ATTEMPTS ? "locked" : "wrong" } as const;
     }
-    await c.query("UPDATE otp_challenges SET consumed_at = now() WHERE id = $1", [ch.id]);
+    await c.query("UPDATE otp_challenges SET consumed_at = UTC_TIMESTAMP(3) WHERE id = $1", [ch.id]);
     return { ok: true } as const;
   });
 }

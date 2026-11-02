@@ -9,7 +9,7 @@ export default async function Support() {
   const { account, fellow } = await fellowContext("/app/fellow/support");
   const d = await asAccount(account, async (c) => ({
     disputes: (await c.query("SELECT id, subject, details, status, resolution, created_at FROM disputes WHERE raised_by = $1 ORDER BY created_at DESC", [account.id])).rows,
-    cases: (await c.query("SELECT id, reasons, child_safety, notice_until, status, (SELECT count(*) FROM removal_responses r WHERE r.case_id = removal_cases.id)::int AS responses FROM removal_cases WHERE fellow_id = $1 ORDER BY opened_at DESC", [account.id])).rows,
+    cases: (await c.query("SELECT id, reasons, child_safety, notice_until, status, (SELECT count(*) FROM removal_responses r WHERE r.case_id = removal_cases.id) AS responses FROM removal_cases WHERE fellow_id = $1 ORDER BY opened_at DESC", [account.id])).rows,
     quality: (await c.query("SELECT q.kind, q.rubric, q.notes, q.created_at FROM quality_reviews q JOIN gig_assignments ga ON ga.id = q.assignment_id WHERE ga.fellow_id = $1 ORDER BY q.created_at DESC LIMIT 10", [account.id])).rows,
   }));
   return (

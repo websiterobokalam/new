@@ -9,12 +9,16 @@ export const metadata = { title: "Payments and refunds" };
 
 export default async function Orders() {
   const { account, t } = await appContext("/app/orders");
-  const orders = await asAccount(account, async (c) => (await c.query(
-    `SELECT o.id, o.amount_paise, o.gst_paise, o.status, o.invoice_no, o.paid_at, co.title, l.first_name,
-            (SELECT json_agg(json_build_object('status', r.status, 'amount', r.amount_paise, 'decision', r.decision, 'at', r.created_at) ORDER BY r.created_at DESC) FROM refund_requests r WHERE r.order_id = o.id) AS refunds
+  const orders = await asAccount(account, async (c) => {
+    const refunds = (await c.query("SELECT order_id, status, amount_paise AS amount, decision, created_at AS at FROM refund_requests WHERE account_id = $1 ORDER BY created_at DESC", [account.id])).rows;
+    const os = (await c.query(
+    `SELECT o.id, o.amount_paise, o.gst_paise, o.status, o.invoice_no, o.paid_at, co.title, l.first_name
      FROM orders o JOIN bookings b ON b.id = o.booking_id JOIN batches bt ON bt.id = b.batch_id JOIN courses co ON co.id = bt.course_id JOIN learners l ON l.id = b.learner_id
-     WHERE o.status <> 'created' ORDER BY o.created_at DESC`,
-  )).rows);
+     WHERE o.account_id = $1 AND o.status <> 'created' ORDER BY o.created_at DESC`,
+    [account.id],
+  )).rows;
+    return os.map((o) => { const r = refunds.filter((x) => x.order_id === o.id); return { ...o, refunds: r.length ? r : null }; });
+  });
   return (
     <section className="py-10">
       <div className="wrap grid max-w-4xl gap-6">

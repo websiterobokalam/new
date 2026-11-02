@@ -1,4 +1,4 @@
-import type { Tx } from "../db";
+import { insertOnce, uuid, type Tx } from "../db";
 import { post } from "../ledger";
 
 /**
@@ -16,18 +16,19 @@ export type DeductionLine = { code: string; label: string; percent: number; pais
 
 /** Only approved deductions apply, and each is shown before a gig is accepted. */
 export async function deductionsFor(c: Tx, gross: number): Promise<DeductionLine[]> {
-  const rows = (await c.query("SELECT code, label, percent::float AS percent FROM deductions WHERE approved ORDER BY code")).rows;
+  const rows = (await c.query("SELECT code, label, percent AS percent FROM deductions WHERE approved ORDER BY code")).rows;
   return rows.map((d) => ({ ...d, paise: Math.round((gross * d.percent) / 100) }));
 }
 
 export async function addEarning(c: Tx, fellowId: string, e: { kind: string; description: string; gross: number; assignmentId?: string }) {
   const ded = await deductionsFor(c, e.gross);
   const net = e.gross - ded.reduce((s, d) => s + d.paise, 0);
-  const { rows } = await c.query(
-    `INSERT INTO earnings_lines (fellow_id, assignment_id, kind, description, gross_paise, deductions, net_paise) VALUES ($1,$2,$3,$4,$5,$6,$7)
-     ON CONFLICT DO NOTHING RETURNING id`,
-    [fellowId, e.assignmentId ?? null, e.kind, e.description, e.gross, JSON.stringify(ded), net],
+  const id = uuid();
+  const wrote = await insertOnce(c,
+    "INSERT INTO earnings_lines (id, fellow_id, assignment_id, kind, description, gross_paise, deductions, net_paise) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
+    [id, fellowId, e.assignmentId ?? null, e.kind, e.description.slice(0, 255), e.gross, JSON.stringify(ded), net],
   );
+  const rows = wrote ? [{ id }] : [];
   // Educator earned: platform expense becomes a payable to the Fellow.
   if (rows[0]) await post(c, "educator_earned", rows[0].id, [["platform_expense", e.gross], ["educator_payable", -e.gross]]);
   return rows[0]?.id as string | undefined;

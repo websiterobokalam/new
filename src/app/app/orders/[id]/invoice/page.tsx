@@ -12,8 +12,8 @@ export default async function Invoice({ params }: { params: Promise<{ id: string
   if (!/^[0-9a-f-]{36}$/.test(id)) notFound();
   const { account } = await appContext(`/app/orders/${id}/invoice`);
   const o = await asAccount(account, async (c) => (await c.query(
-    "SELECT o.*, co.title, l.first_name FROM orders o JOIN bookings b ON b.id = o.booking_id JOIN batches bt ON bt.id = b.batch_id JOIN courses co ON co.id = bt.course_id JOIN learners l ON l.id = b.learner_id WHERE o.id = $1 AND o.invoice_no IS NOT NULL",
-    [id],
+    "SELECT o.*, co.title, l.first_name FROM orders o JOIN bookings b ON b.id = o.booking_id JOIN batches bt ON bt.id = b.batch_id JOIN courses co ON co.id = bt.course_id JOIN learners l ON l.id = b.learner_id WHERE o.id = $1 AND o.account_id = $2 AND o.invoice_no IS NOT NULL",
+    [id, account.id],
   )).rows[0]);
   if (!o) notFound();
   const half = Math.round(o.gst_paise / 2);

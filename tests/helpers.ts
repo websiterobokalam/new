@@ -1,15 +1,23 @@
 import { expect, type Page } from "@playwright/test";
-import pg from "pg";
+import mysql from "mysql2/promise";
 import { readFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
+import { toMysql, typeCast } from "../src/lib/db";
 
 const env = Object.fromEntries(readFileSync("scripts/test.env", "utf8").split("\n").filter((l) => l && !l.startsWith("#")).map((l) => l.split(/=(.*)/s).slice(0, 2)));
 
-/** Owner connection for test assertions and setup (bypasses RLS on purpose). */
-export async function ownerQuery<T = Record<string, unknown>>(sql: string, params: unknown[] = []): Promise<T[]> {
-  const c = new pg.Client({ connectionString: env.DATABASE_OWNER_URL });
-  await c.connect();
-  try { return (await c.query(sql, params)).rows as T[]; } finally { await c.end(); }
+/** Direct database access for test setup and assertions (bypasses app-level checks on purpose). */
+export async function ownerQuery<T = Record<string, any>>(sql: string, params: unknown[] = []): Promise<T[]> {
+  const c = await mysql.createConnection({ uri: env.DATABASE_URL, timezone: "Z", decimalNumbers: true, supportBigNumbers: true, typeCast: typeCast as never });
+  try {
+    await c.query("SET time_zone = '+00:00'");
+    const q = toMysql(sql, params);
+    const [rows] = await c.query(q.sql, q.params);
+    return (Array.isArray(rows) ? rows : []) as T[];
+  } finally { await c.end(); }
 }
+
+export const newId = () => randomUUID();
 
 export const randomPhone = () => "9" + String(Math.floor(Math.random() * 1e9)).padStart(9, "0");
 
@@ -61,7 +69,7 @@ export async function accountId(phone: string) {
 /** Test shortcut for steps a person reviews: mark checks passed, optionally go live. */
 export async function passSteps(phone: string, steps: string[], live = false) {
   const id = await accountId(phone);
-  await ownerQuery("UPDATE vetting_steps SET status = 'passed' WHERE fellow_id = $1 AND step = ANY($2)", [id, steps]);
+  await ownerQuery("UPDATE vetting_steps SET status = 'passed' WHERE fellow_id = $1 AND step IN ($2)", [id, steps]);
   if (live) await ownerQuery("UPDATE fellows SET status = 'live', went_live_at = now() WHERE account_id = $1", [id]);
   return id;
 }

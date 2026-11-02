@@ -11,7 +11,7 @@ export default async function FellowTerms({ searchParams }: { searchParams: Prom
   const lang = q === "te" || q === "hi" ? q : "en";
   let docs;
   try {
-    docs = await anon(async (c) => (await c.query("SELECT DISTINCT ON (kind) id, kind, title, body, effective_at FROM terms_versions WHERE language = $1 AND effective_at <= now() ORDER BY kind, effective_at DESC", [lang])).rows);
+    docs = await anon(async (c) => (await c.query(`SELECT id, kind, title, body, effective_at FROM (SELECT id, kind, title, body, effective_at, ROW_NUMBER() OVER (PARTITION BY kind ORDER BY effective_at DESC) AS rn FROM terms_versions WHERE language = $1 AND effective_at <= now()) t WHERE rn = 1 ORDER BY kind`, [lang])).rows);
   } catch { return <DbDown />; }
   return (
     <section className="py-12 sm:py-20"><div className="wrap grid max-w-3xl gap-6">
