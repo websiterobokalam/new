@@ -89,11 +89,11 @@ test("fellow waitlist requires 18+ and accepts a valid application", async ({ pa
   await expect(page.getByText("You're on the Fellows waitlist")).toBeVisible();
 });
 
-test("login: OTP is honest that accounts are not live yet", async ({ page }) => {
-  await page.goto("/login/learner");
+test("login: school OTP is honest that accounts are not live yet", async ({ page }) => {
+  await page.goto("/login/school");
   await page.getByLabel(/mobile number/).fill("9876543210");
   await page.getByRole("button", { name: "Send OTP" }).click();
-  await expect(page.getByRole("status").filter({ hasText: "Accounts open in Phase 2" })).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: "open in a later phase" })).toBeVisible();
 });
 
 test("legacy URL 301s to the new page", async ({ request }) => {
