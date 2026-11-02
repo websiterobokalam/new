@@ -9,11 +9,25 @@ const g = globalThis as unknown as { __rkPool?: pg.Pool };
 
 export function pool(): pg.Pool {
   if (!process.env.DATABASE_URL) throw new DbUnavailable("DATABASE_URL is not set");
-  g.__rkPool ??= new pg.Pool({ connectionString: process.env.DATABASE_URL, max: Number(process.env.DB_POOL_MAX ?? 10), idleTimeoutMillis: 30_000 });
+  g.__rkPool ??= new pg.Pool({ ...connectionConfig(process.env.DATABASE_URL), max: Number(process.env.DB_POOL_MAX ?? 10), idleTimeoutMillis: 30_000 });
   return g.__rkPool;
 }
 
 export class DbUnavailable extends Error {}
+
+/**
+ * TLS for managed Postgres. Providers such as Supabase sign their certificates
+ * with their own CA, so set DATABASE_CA_CERT to that CA (the PEM text) and the
+ * connection is fully verified. Any sslmode in the URL is then ignored, because
+ * the driver would otherwise override this config.
+ */
+export function connectionConfig(url: string): pg.PoolConfig {
+  const ca = process.env.DATABASE_CA_CERT?.replace(/\\n/g, "\n").trim();
+  if (!ca) return { connectionString: url };
+  const u = new URL(url);
+  u.searchParams.delete("sslmode");
+  return { connectionString: u.toString(), ssl: { ca, rejectUnauthorized: true } };
+}
 
 export type Ctx = { accountId?: string | null; role?: string; system?: boolean };
 export type Tx = pg.PoolClient;

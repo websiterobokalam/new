@@ -12,7 +12,10 @@ const reset = process.argv.includes("--reset");
 if (sample && process.env.NODE_ENV === "production" && process.env.ALLOW_SAMPLE_DATA !== "1") throw new Error("Refusing to load sample data in production");
 
 const root = new URL("..", import.meta.url).pathname;
-const c = new pg.Client({ connectionString: url });
+// Same TLS handling as src/lib/db.ts: DATABASE_CA_CERT = the provider's CA (PEM).
+const ca = process.env.DATABASE_CA_CERT?.replace(/\\n/g, "\n").trim();
+const cfg = ca ? (() => { const u = new URL(url); u.searchParams.delete("sslmode"); return { connectionString: u.toString(), ssl: { ca, rejectUnauthorized: true } }; })() : { connectionString: url };
+const c = new pg.Client(cfg);
 await c.connect();
 try {
   if (reset) {
