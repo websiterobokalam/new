@@ -60,12 +60,12 @@ export const worlds: {
   href: string;
   note?: string;
 }[] = [
-  { id: "robotics", name: "Robotics", line: "Wire it, code it, watch it move.", shape: "circuit", accent: "#0098D6", ink: "#075a80", href: "/courses?world=robotics" },
-  { id: "iot", name: "IoT", line: "Make everyday things sense and talk.", shape: "pulse", accent: "#00CBD6", ink: "#05666b", href: "/courses?world=iot" },
-  { id: "ai", name: "AI", line: "Train a model. Then question it.", shape: "neural", accent: "#6C5CE7", ink: "#4434b8", href: "/courses?world=ai" },
-  { id: "finlit", name: "Financial Literacy", line: "Money basics: earn, save, plan, start up.", shape: "growth", accent: "#98B844", ink: "#4d6418", href: "/courses?world=financial-literacy", note: "Money basics only. No stock tips, trading or crypto." },
-  { id: "space", name: "Space Education", line: "Orbits, satellites and safe model rockets.", shape: "orbit", accent: "#0A4060", ink: "#0A4060", href: "/courses?world=space", note: "Safe models only." },
-  { id: "coding", name: "Coding", line: "The shared skill under every world: blocks to Python.", shape: "code", accent: "#0B2B3D", ink: "#0B2B3D", href: "/courses?world=coding" },
+  { id: "robotics", name: "Robotics", line: "Wire it, code it, watch it move.", shape: "circuit", accent: "#1AB0E2", ink: "#075a80", href: "/courses?world=robotics" },
+  { id: "iot", name: "IoT", line: "Make everyday things sense and talk.", shape: "pulse", accent: "#1590BC", ink: "#0B5C7A", href: "/courses?world=iot" },
+  { id: "ai", name: "AI", line: "Train a model. Then question it.", shape: "neural", accent: "#F7A21C", ink: "#8A4B00", href: "/courses?world=ai" },
+  { id: "finlit", name: "Financial Literacy", line: "Money basics: earn, save, plan, start up.", shape: "growth", accent: "#97BC3D", ink: "#4d6418", href: "/courses?world=financial-literacy", note: "Money basics only. No stock tips, trading or crypto." },
+  { id: "space", name: "Space Education", line: "Orbits, satellites and safe model rockets.", shape: "orbit", accent: "#0B4168", ink: "#0B4168", href: "/courses?world=space", note: "Safe models only." },
+  { id: "coding", name: "Coding", line: "The shared skill under every world: blocks to Python.", shape: "code", accent: "#0B4168", ink: "#0B4168", href: "/courses?world=coding" },
 ];
 
 /** Names and ages reused exactly from the brief. Outcome lines are draft. */

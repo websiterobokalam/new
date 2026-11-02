@@ -55,7 +55,7 @@ export default async function FamilyHome() {
                   </div>
                   <div className="mt-3 h-2 rounded-full bg-panel"><div className="h-2 rounded-full bg-gradient-to-r from-sky via-aqua to-leaf" style={{ width: `${Math.max(4, (l.built / l.total) * 100)}%` }} /></div>
                   <p className="mt-3">{l.summary}</p>
-                  {!l.ready && <p className="mt-2 text-sm font-semibold text-[#8a5a00] dark:text-spark">Classes paused: a required consent is off. <Link className="underline" href="/app/consent">Review</Link></p>}
+                  {!l.ready && <p className="mt-2 text-sm font-semibold text-[#8A4B00] dark:text-spark">Classes paused: a required consent is off. <Link className="underline" href="/app/consent">Review</Link></p>}
                   <div className="mt-4 flex flex-wrap gap-3 text-sm font-semibold">
                     <Link className="text-link underline" href={`/app/learners/${l.id}`}>{t.journey}</Link>
                     <Link className="text-link underline" href={`/app/learners/${l.id}/space`}>{t.learner_mode}</Link>
