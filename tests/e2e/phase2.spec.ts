@@ -88,7 +88,8 @@ test("refund: self-serve request, ops approves, gateway refund, ledger reversal"
   await page.getByRole("button", { name: "Pay (test)" }).click();
   await expect(page).toHaveURL(/\/app\/orders$/);
   await page.getByRole("button", { name: "Request a refund" }).click();
-  await page.getByLabel("Reason").fill("Timing does not work for us");
+  const reason = `Timing does not work for us ${Math.random().toString(36).slice(2, 8)}`;
+  await page.getByLabel("Reason").fill(reason);
   await page.getByRole("button", { name: "Send refund request" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Full refund" })).toBeVisible();
   await expect(page.getByText(/Refund: requested/)).toBeVisible();
@@ -98,8 +99,8 @@ test("refund: self-serve request, ops approves, gateway refund, ledger reversal"
   await login(ops, opsPhone);
   await ownerQuery("UPDATE accounts SET role = 'ops' WHERE phone_e164 = $1", ["+91" + opsPhone]);
   await ops.goto("/app/ops");
-  await ops.locator("li", { hasText: "Timing does not work for us" }).getByRole("button", { name: "Approve and pay" }).click();
-  await expect(ops.getByText("Timing does not work for us")).toHaveCount(0);
+  await ops.locator("li", { hasText: reason }).getByRole("button", { name: "Approve and pay" }).click();
+  await expect(ops.getByText(reason)).toHaveCount(0);
   await page.reload();
   await expect(page.getByText(/Refund: paid/)).toBeVisible();
   const j = await ownerQuery<{ n: string }>("SELECT count(*) AS n FROM ledger_journals WHERE kind = 'refund_paid'");
