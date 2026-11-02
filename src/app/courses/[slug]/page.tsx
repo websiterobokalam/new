@@ -40,7 +40,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
             <ul className="mt-3 grid gap-2">
               {batches.map((b) => (
                 <li key={b.id} className="flex items-center justify-between gap-3 rounded-xl border border-line p-3">
-                  <span className="text-sm"><span className="block font-semibold">{new Date(b.starts_at).toLocaleString("en-IN", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" })}</span><span className="text-muted">{b.mode === "online" ? "Online" : b.location} · {LANG[b.language] ?? b.language}</span></span>
+                  <span className="text-sm"><span className="block font-semibold">{new Date(b.starts_at).toLocaleString("en-IN", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" })}</span><span className="text-muted">{b.mode === "online" ? "Online" : b.location} · {LANG[b.language] ?? b.language}{b.educator_label ? <> · {b.fellow_id ? <Link className="underline" href={`/educators/${b.fellow_id}`}>{b.educator_label}</Link> : b.educator_label}</> : ""}</span></span>
                   <Link href={`/app/book/${b.id}`} className="btn btn-primary !min-h-10 !px-4 text-sm">Book</Link>
                 </li>
               ))}

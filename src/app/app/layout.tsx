@@ -6,6 +6,9 @@ import { ReportButton } from "@/components/app/ReportButton";
 import { LangSwitch, LogoutButton } from "@/components/app/LangSwitch";
 
 export const dynamic = "force-dynamic";
+
+const FELLOW_NAV = [["/app/fellow", "Home"], ["/app/fellow/gigs", "Gig board"], ["/app/fellow/earnings", "Earnings"], ["/app/fellow/growth", "Growth"], ["/app/messages", "Messages"], ["/app/fellow/support", "Support"]];
+const OPS_NAV = [["/app/ops", "Refunds and sessions"], ["/app/ops/fellows", "Fellows"], ["/app/ops/gigs", "Gigs"], ["/app/ops/payouts", "Payouts"], ["/app/ops/cases", "Disputes and cases"]];
 export const metadata: Metadata = { title: { default: "Family home", template: "%s | Robokalam" }, robots: { index: false, follow: false } };
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -17,10 +20,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       {a && (
         <nav aria-label="Family app" className="border-b border-line bg-surface">
           <div className="wrap flex flex-wrap items-center gap-x-5 gap-y-2 py-3 text-sm font-semibold">
-            <Link href="/app" className="text-heading hover:underline">{t.app_home}</Link>
-            <Link href="/app/consent" className="text-heading hover:underline">{t.consent_centre}</Link>
-            <Link href="/app/orders" className="text-heading hover:underline">{t.orders}</Link>
-            <Link href="/courses" className="text-heading hover:underline">{t.browse_courses}</Link>
+            {(a.role === "fellow" ? FELLOW_NAV : a.role === "ops" ? OPS_NAV : a.role === "safeguarding" ? [["/app/safeguarding", "Safeguarding queue"]] : [["/app", t.app_home], ["/app/consent", t.consent_centre], ["/app/orders", t.orders], ["/app/messages", "Messages"], ["/courses", t.browse_courses]]).map(([href, label]) => (
+              <Link key={href} href={href} className="text-heading hover:underline">{label}</Link>
+            ))}
             <span className="ml-auto flex items-center gap-4">
               <LangSwitch current={locale} label={t.language} />
               <LogoutButton label={t.logout} />

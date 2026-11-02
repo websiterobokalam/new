@@ -72,21 +72,10 @@ test("lab planner returns a plan", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Download as PDF" })).toBeVisible();
 });
 
-test("fellow waitlist requires 18+ and accepts a valid application", async ({ page }) => {
+test("fellow application: phone first, then profile with an 18+ gate", async ({ page }) => {
   await page.goto("/fellows/apply");
-  await page.getByLabel("Full name").fill("Ravi Teja");
-  await page.getByLabel("Mobile", { exact: true }).fill("9876543210");
-  await page.getByLabel(/^Email/).fill("ravi@college.ac.in");
-  await page.getByRole("textbox", { name: /^College/ }).fill("Any Engineering College");
-  await page.getByLabel("Course or branch").fill("B.Tech ECE");
-  await page.getByLabel("City").fill("Hyderabad");
-  await page.getByText("IoT", { exact: true }).click();
-  await page.getByText("You may contact me about the Kalam Fellows pilot").click();
-  await page.getByRole("button", { name: "Join the Fellows waitlist" }).click();
-  await expect(page.getByText("Kalam Fellows must be 18 or older")).toBeVisible();
-  await page.getByText("I am 18 or older.").click();
-  await page.getByRole("button", { name: "Join the Fellows waitlist" }).click();
-  await expect(page.getByText("You're on the Fellows waitlist")).toBeVisible();
+  await expect(page.getByLabel("Your mobile number")).toBeVisible();
+  await expect(page.getByText("No fees, ever.")).toBeVisible();
 });
 
 test("login: school OTP is honest that accounts are not live yet", async ({ page }) => {

@@ -179,7 +179,7 @@
     display: inline-flex; align-items: center; gap: 0.4rem; min-height: 2.75rem; padding: 0.5rem 1rem;
     border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); font-weight: 550; cursor: pointer;
   }
-  .chip[aria-pressed="true"], .chip:has(input:checked) { border-color: var(--btn); background: var(--btn); color: var(--btn-fg); }
+  .chip[aria-pressed="true"], .chip[aria-current="true"], .chip:has(input:checked) { border-color: var(--btn); background: var(--btn); color: var(--btn-fg); }
   .chip:has(input:focus-visible) { outline: 3px solid var(--color-navy); outline-offset: 2px; }
 }
 

@@ -5,8 +5,9 @@ import { ConsentToggle, DeleteLearner } from "@/components/app/ConsentControls";
 
 export const metadata = { title: "Consent centre" };
 
-export default async function ConsentCentre() {
+export default async function ConsentCentre({ searchParams }: { searchParams: Promise<{ deleted?: string }> }) {
   const { account, t } = await appContext("/app/consent");
+  const deleted = (await searchParams).deleted === "1";
   const d = await asAccount(account, async (c) => {
     const notice = await getNotice(c, account.language);
     const learners = (await c.query("SELECT id, first_name, age_band FROM learners WHERE erased_at IS NULL ORDER BY created_at")).rows;
@@ -23,6 +24,7 @@ export default async function ConsentCentre() {
           <h1 className="display-lg mt-2">Your family&apos;s data, your call.</h1>
           <p className="lede mt-2">Turn each item on or off at any time. Withdrawing is as easy as agreeing.</p>
         </header>
+        {deleted && <p role="status" className="rounded-2xl bg-leafmist p-4 font-semibold text-navy dark:bg-panel-2 dark:text-heading">{t.delete_requested}</p>}
         {d.learners.length === 0 && <p className="text-muted">No learners yet.</p>}
         {d.learners.map((l) => (
           <section key={l.id} className="card overflow-hidden" aria-labelledby={`c-${l.id}`}>

@@ -37,6 +37,19 @@ try {
     const sha = createHash("sha256").update(JSON.stringify({ title: n.title, ...body })).digest("hex");
     await c.query("INSERT INTO consent_notices (id, language, title, body, sha256) VALUES ($1,$2,$3,$4,$5) ON CONFLICT (id) DO NOTHING", [n.id, lang, n.title, body, sha]);
   }
+  // Fellow terms and code of conduct: the first versions are effective at once;
+  // any later version must give 14 days' notice (enforced by a CHECK).
+  if (done.has("002_fellows.sql") || (await c.query("SELECT to_regclass('terms_versions') AS t")).rows[0].t) {
+    const terms = JSON.parse(readFileSync(join(root, "db/seed/fellow-terms.json"), "utf8"));
+    for (const kind of ["fellow_terms", "code_of_conduct"]) {
+      for (const lang of ["en", "te", "hi"]) {
+        const t = terms[kind][lang];
+        const id = `${kind.replace("_", "-")}-2026-11-${lang}`;
+        const sha = createHash("sha256").update(JSON.stringify(t)).digest("hex");
+        await c.query("INSERT INTO terms_versions (id, kind, language, title, body, sha256, initial, effective_at) VALUES ($1,$2,$3,$4,$5,$6,true,now()) ON CONFLICT (id) DO NOTHING", [id, kind, lang, t.title, { sections: t.sections }, sha]);
+      }
+    }
+  }
   await c.query(readFileSync(join(root, "db/seed/base.sql"), "utf8"));
   if (sample) { await c.query(readFileSync(join(root, "db/seed/sample.sql"), "utf8")); console.log("sample fixtures loaded"); }
   console.log("ok");

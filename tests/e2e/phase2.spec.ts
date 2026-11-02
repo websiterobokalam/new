@@ -4,11 +4,14 @@ import { login, addLearner, ownerQuery, randomPhone } from "../helpers";
 test.describe.configure({ mode: "parallel" });
 
 test("Free Build Session: age, OTP, consent, slot, booked", async ({ page }) => {
+  // Each run gets its own roomy slot, scheduled earliest so it is listed first.
+  await ownerQuery("INSERT INTO batches (course_id, starts_at, duration_min, capacity, language, mode) SELECT id, now() + interval '65 minutes' + random() * interval '5 minutes', 60, 30, 'en', 'online' FROM courses WHERE slug = 'free-build-session'");
   await page.goto("/learn/build-session");
   await page.locator("label.chip", { hasText: /^9-11$/ }).click();
   await page.locator("label.chip", { hasText: "IoT" }).click();
   await page.getByRole("button", { name: "Continue" }).click();
-  await page.getByLabel("Parent's mobile number").fill(randomPhone());
+  const parentPhone = randomPhone();
+  await page.getByLabel("Parent's mobile number").fill(parentPhone);
   await page.getByRole("button", { name: "Send code" }).click();
   await page.getByLabel("6-digit code").fill("123456");
   await page.getByText("I am 18 or older, and I am the parent").click();
@@ -19,7 +22,8 @@ test("Free Build Session: age, OTP, consent, slot, booked", async ({ page }) => 
   await expect(page.getByRole("button", { name: "Save and continue" })).toBeDisabled(); // guardian declaration required
   await page.getByText("I am this child's parent or lawful guardian").click();
   await page.getByRole("button", { name: "Save and continue" }).click();
-  await page.locator("label.chip").first().click();
+  await expect(page.getByRole("heading", { name: "Pick a time" })).toBeVisible();
+  await page.getByRole("group", { name: "Available times" }).locator("label.chip").first().click();
   await page.getByRole("button", { name: "Book my free session" }).click();
   await expect(page.getByRole("heading", { name: "Booked. See you there." })).toBeVisible();
   await expect(page.getByText("Your mini mission")).toBeVisible();
@@ -27,7 +31,7 @@ test("Free Build Session: age, OTP, consent, slot, booked", async ({ page }) => 
   await expect(page.getByText("Free Build Session · Meera")).toBeVisible();
   // Optional consents default to OFF; required ones are recorded ON against the notice hash
   const rows = await ownerQuery<{ purpose: string; granted: boolean; evidence: { notice_sha256: string } }>(
-    "SELECT e.purpose, e.granted, e.evidence FROM consent_events e JOIN learners l ON l.id = e.learner_id WHERE l.first_name = 'Meera' ORDER BY e.id DESC LIMIT 7");
+    "SELECT e.purpose, e.granted, e.evidence FROM consent_events e JOIN accounts a ON a.id = e.guardian_account_id WHERE a.phone_e164 = $1 ORDER BY e.id DESC", ["+91" + parentPhone]);
   const map = Object.fromEntries(rows.map((r) => [r.purpose, r.granted]));
   expect(map).toMatchObject({ account: true, live_classes: true, class_recording: true, whatsapp: false, follow_up: false, ai_helper: false, portfolio_sharing: false });
   expect(rows[0].evidence.notice_sha256).toMatch(/^[0-9a-f]{64}$/);
@@ -91,7 +95,8 @@ test("refund: self-serve request, ops approves, gateway refund, ledger reversal"
   const reason = `Timing does not work for us ${Math.random().toString(36).slice(2, 8)}`;
   await page.getByLabel("Reason").fill(reason);
   await page.getByRole("button", { name: "Send refund request" }).click();
-  await expect(page.getByRole("status").filter({ hasText: "Full refund" })).toBeVisible();
+  // The form closes once a refund is open; the order shows the policy decision.
+  await expect(page.getByText(/Full refund: requested \d+ hours before the first class/)).toBeVisible();
   await expect(page.getByText(/Refund: requested/)).toBeVisible();
   // Ops reviews (policy not yet approved, so nothing is auto-decided)
   const opsPhone = randomPhone();

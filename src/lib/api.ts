@@ -6,6 +6,7 @@ import { rateLimit, clientIp } from "./rateLimit";
 import { BookingError } from "./learn/booking";
 import { RefundError } from "./learn/refunds";
 import { PaymentsNotConfigured } from "./payments";
+import { FellowError } from "./fellows/core";
 
 export const ok = (data: object = {}, init?: ResponseInit) => NextResponse.json({ ok: true, ...data }, init);
 export const fail = (status: number, error: string, extra: object = {}) => NextResponse.json({ ok: false, error, ...extra }, { status });
@@ -47,6 +48,8 @@ export function handler(fn: (req: Request, ctx: { params: Promise<Record<string,
       if (e instanceof DbUnavailable) return fail(503, "We're having trouble right now. Please try again shortly.");
       if (e instanceof BookingError) return fail(409, e.message, { code: e.code });
       if (e instanceof RefundError) return fail(409, e.message);
+      if (e instanceof FellowError) return fail(e.status, e.message);
+      if ((e as { code?: string }).code === "42501") return fail(403, "Not allowed");
       if (e instanceof PaymentsNotConfigured) return fail(503, "Online payment is not available yet.");
       console.error("api error", (e as Error).message);
       return fail(500, "Something went wrong on our side.");

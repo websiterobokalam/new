@@ -1,0 +1,40 @@
+import { fellowContext } from "@/lib/fellows/context";
+import { asAccount } from "@/lib/auth/session";
+import { metrics, suggestTier, TIER_RULES } from "@/lib/fellows/tiers";
+import { SITE } from "@/lib/site";
+
+export const metadata = { title: "Growth" };
+
+export default async function Growth() {
+  const { account, fellow } = await fellowContext("/app/fellow/growth");
+  const { m, hours } = await asAccount(account, async (c) => ({
+    m: await metrics(c, account.id),
+    hours: (await c.query("SELECT coalesce(sum(g.duration_min),0)::int AS m FROM gig_assignments ga JOIN gigs g ON g.id = ga.gig_id WHERE ga.fellow_id = $1 AND ga.status = 'delivered'", [account.id])).rows[0].m / 60,
+  }));
+  const pct = (v: number | null) => (v === null ? "—" : `${Math.round(v * 100)}%`);
+  return (
+    <section className="py-10"><div className="wrap grid gap-8 [&>*]:min-w-0">
+      <header><p className="eyebrow">Growth · tier: {fellow.tier}</p><h1 className="display-lg mt-2">Rise on reliability, progress and feedback.</h1>
+        <p className="lede mt-2">Not popularity. Not hours. Not how often you say yes.</p></header>
+      <div className="grid gap-4 sm:grid-cols-4">
+        {[["Sessions delivered", String(m.delivered)], ["Reliability", pct(m.reliability)], ["Builds per session", m.progress === null ? "—" : m.progress.toFixed(1)], ["Verified rating", m.rating === null ? "—" : `${m.rating} (${m.reviews})`]].map(([k, v]) => <div key={k} className="card p-5"><p className="text-sm text-muted">{k}</p><p className="mt-1 text-2xl font-bold text-heading">{v}</p></div>)}
+      </div>
+      <section id="formula" className="card p-6">
+        <h2 className="text-xl font-bold">How tiers work (the formula)</h2>
+        <p className="mt-1 text-sm text-muted">Reliability = sessions delivered ÷ sessions you committed to that went ahead. Declines and Exam Mode never count. A person confirms every tier change, and tiers are never lowered automatically. Draft thresholds.</p>
+        <div className="mt-4 overflow-x-auto" tabIndex={0} role="region" aria-label="Tier thresholds">
+          <table className="w-full min-w-[520px] text-left text-sm"><thead><tr className="border-b border-line text-muted"><th className="py-2">Tier</th><th>Sessions</th><th>Reliability</th><th>Builds/session</th><th>Rating</th></tr></thead>
+            <tbody>{TIER_RULES.map((r) => <tr key={r.tier} className="border-b border-line/60"><td className="py-2 font-semibold capitalize">{r.tier}</td><td>{r.delivered}+</td><td>{Math.round(r.reliability * 100)}%+</td><td>{r.progress}+</td><td>{r.rating ? `${r.rating}+ from ${r.reviews}+ reviews` : "—"}</td></tr>)}</tbody></table>
+        </div>
+        <p className="mt-3 text-sm">Your numbers suggest: <strong className="capitalize">{suggestTier(m)}</strong></p>
+        <h3 className="mt-6 font-bold">How gig matching works</h3>
+        <p className="mt-1 text-sm text-muted">You see open gigs that match your tier, a language you teach in, and your city for in-person gigs. They are ordered by your worlds first, then earliest start. We do not collect or use religion, caste, gender, place of birth, disability or any similar characteristic, and declines are never used. Changes come with 14 days&apos; notice.</p>
+      </section>
+      <section className="card p-6">
+        <h2 className="text-xl font-bold">Proof of teaching</h2>
+        <p className="mt-2">This letter confirms that <strong>{fellow.full_name}</strong> of {fellow.college} has delivered <strong>{hours.toFixed(1)} verified teaching hours</strong> with {SITE.legalName} as a Kalam Fellow, as of {new Date().toLocaleDateString("en-IN", { dateStyle: "long" })}.</p>
+        <p className="mt-2 text-sm text-muted">Signed letters and the Kalam Fellow teaching certificate become verifiable at /validate once that service is connected. Fellows with strong records get first look at Robokalam internships and jobs.</p>
+      </section>
+    </div></section>
+  );
+}
