@@ -1,0 +1,65 @@
+{
+  "_note": "301 map from old.robokalam.com / robokalam.com URLs. Only /forschools.html is confirmed; verify the rest against a crawl of the old site before launch.",
+  "redirects": [
+    {
+      "from": "/forschools.html",
+      "to": "/21c-lab",
+      "verified": true
+    },
+    {
+      "from": "/index.html",
+      "to": "/",
+      "verified": false
+    },
+    {
+      "from": "/about.html",
+      "to": "/about",
+      "verified": false
+    },
+    {
+      "from": "/contact.html",
+      "to": "/contact",
+      "verified": false
+    },
+    {
+      "from": "/careers.html",
+      "to": "/careers",
+      "verified": false
+    },
+    {
+      "from": "/programs.html",
+      "to": "/programs",
+      "verified": false
+    },
+    {
+      "from": "/courses.html",
+      "to": "/courses",
+      "verified": false
+    },
+    {
+      "from": "/forstudents.html",
+      "to": "/learn",
+      "verified": false
+    },
+    {
+      "from": "/forparents.html",
+      "to": "/learn",
+      "verified": false
+    },
+    {
+      "from": "/impact.html",
+      "to": "/impact",
+      "verified": false
+    },
+    {
+      "from": "/faq.html",
+      "to": "/faq",
+      "verified": false
+    },
+    {
+      "from": "/turnkey-lab",
+      "to": "/21c-lab",
+      "verified": false
+    }
+  ]
+}
