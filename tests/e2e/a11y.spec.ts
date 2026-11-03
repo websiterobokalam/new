@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { login, addLearner, applyAsFellow, passSteps, ALL_STEPS, staffPage } from "../helpers";
+import { login, addLearner, applyAsFellow, passSteps, ALL_STEPS, staffPage, makeSchool, startedSession, loginSchool, ownerQuery, newId } from "../helpers";
 
 for (const theme of ["light", "dark"] as const) {
   for (const path of ["/", "/learn", "/21c-lab", "/21c-lab/planner", "/fellows", "/fellows/apply", "/login/learner"]) {
@@ -57,5 +57,36 @@ for (const theme of ["light", "dark"] as const) {
     const ops = await staffPage(browser, "ops");
     await ops.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
     for (const path of ["/app/ops/fellows", "/app/ops/gigs", "/app/ops/payouts", "/app/ops/cases"]) await check(ops, path);
+  });
+}
+
+
+for (const theme of ["light", "dark"] as const) {
+  test(`a11y ${theme} school portal, trainer and ops school screens`, async ({ page, browser }) => {
+    test.setTimeout(60_000);
+    const s = await makeSchool();
+    const sessionId = await startedSession(s.classId);
+    await ownerQuery(
+      `INSERT INTO hardware_tickets (id, ref, school_id, lab_id, raised_by, category, summary, sla_hours, raised_at, due_at)
+       VALUES ($1,$2,$3,$4,$5,'network','Wi-Fi down',72, UTC_TIMESTAMP(3) - INTERVAL 80 HOUR, UTC_TIMESTAMP(3) - INTERVAL 80 HOUR + INTERVAL 72 HOUR)`,
+      [newId(), `HW-A${newId().slice(0, 6)}`, s.schoolId, s.labId, s.adminId],
+    );
+    const check = async (p: import("@playwright/test").Page, paths: string[]) => {
+      await p.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+      for (const path of paths) {
+        await p.goto(path);
+        const r = await new AxeBuilder({ page: p }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+        const issues = r.violations.map((v) => `${path} ${v.id}: ${v.nodes.slice(0, 3).map((n) => n.target.join(" ")).join(", ")}`);
+        expect(issues, issues.join("\n")).toEqual([]);
+      }
+    };
+    await check(page, ["/login/school"]);
+    await loginSchool(page, s.adminPhone);
+    await check(page, ["/app/school", "/app/school/timetable", "/app/school/tickets", "/app/school/fellows", "/app/school/staff"]);
+    const t = await (await browser.newContext()).newPage();
+    await loginSchool(t, s.trainerPhone);
+    await check(t, ["/app/trainer", `/app/trainer/sessions/${sessionId}`]);
+    const ops = await staffPage(browser, "ops");
+    await check(ops, ["/app/ops/schools", "/app/ops/tickets"]);
   });
 }

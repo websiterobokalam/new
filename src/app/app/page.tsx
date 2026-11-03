@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { appContext, fmtDate } from "@/lib/app";
 import { asAccount } from "@/lib/auth/session";
 import { loadJourney, plainProgress } from "@/lib/learn/journey";
@@ -10,6 +11,8 @@ export const metadata = { title: "Family home" };
 
 export default async function FamilyHome() {
   const { account, locale, t } = await appContext("/app");
+  if (account.role === "school_admin") redirect("/app/school");
+  if (account.role === "trainer") redirect("/app/trainer");
   const data = await asAccount(account, async (c) => {
     const learners = (await c.query("SELECT id, first_name, age_band, interests FROM learners WHERE guardian_account_id = $1 AND erased_at IS NULL ORDER BY created_at", [account.id])).rows;
     const withProgress = await Promise.all(learners.map(async (l) => {

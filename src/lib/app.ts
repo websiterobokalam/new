@@ -4,9 +4,9 @@ import { dict, getLocale, type Locale } from "@/i18n";
 import type { Dict } from "@/i18n/en";
 
 /** For /app pages: the signed-in account, its locale and dictionary, or a redirect to login. */
-export async function appContext(next: string): Promise<{ account: Account; locale: Locale; t: Dict }> {
+export async function appContext(next: string, door: "learner" | "school" | "educator" = "learner"): Promise<{ account: Account; locale: Locale; t: Dict }> {
   const account = await currentAccount();
-  if (!account) redirect(`/login/learner?next=${encodeURIComponent(next)}`);
+  if (!account) redirect(`/login/${door}?next=${encodeURIComponent(next)}`);
   const locale = await getLocale(account.language);
   return { account, locale, t: dict(locale) };
 }

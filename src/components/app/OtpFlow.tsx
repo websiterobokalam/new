@@ -4,7 +4,7 @@ import { post } from "./client";
 import { Field, FormError, Check } from "../forms/ui";
 
 /** Phone OTP sign-in. Calls onDone after the session cookie is set. */
-export function OtpFlow({ onDone, askAdult = true, cta = "Send code", phoneLabel = "Parent's mobile number" }: { onDone: () => void; askAdult?: boolean; cta?: string; phoneLabel?: string }) {
+export function OtpFlow({ onDone, askAdult = true, cta = "Send code", phoneLabel = "Parent's mobile number", door }: { onDone: (role: string) => void; askAdult?: boolean; cta?: string; phoneLabel?: string; door?: "school" }) {
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
   const [adult, setAdult] = useState(false);
@@ -26,10 +26,10 @@ export function OtpFlow({ onDone, askAdult = true, cta = "Send code", phoneLabel
     if (askAdult && !adult) return setErr("Please confirm you are 18 or older and the child's parent or guardian.");
     setBusy(true); setErr(undefined);
     const region = document.cookie.match(/(?:^|; )rk_region=([^;]+)/)?.[1];
-    const r = await post("/api/auth/otp/verify", { phone, code, adultDeclared: adult, region });
+    const r = await post<{ role: string }>("/api/auth/otp/verify", { phone, code, adultDeclared: adult, region, door });
     setBusy(false);
     if (!r.ok) return setErr(r.fields?.code ?? r.error);
-    onDone();
+    onDone(r.role);
   }
 
   return stage === "phone" ? (

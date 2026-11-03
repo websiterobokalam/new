@@ -3,9 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { doors, type DoorId } from "@/content/site";
 import { Suspense } from "react";
-import { OtpLogin } from "@/components/forms/OtpLogin";
 import { LearnerLogin } from "@/components/app/LearnerLogin";
-import { FellowLogin } from "@/components/app/DoorLogin";
+import { FellowLogin, SchoolLogin } from "@/components/app/DoorLogin";
 
 export const dynamicParams = false;
 export function generateStaticParams() {
@@ -22,7 +21,7 @@ const copy: Record<DoorId, { title: string; who: string; notes: string[] }> = {
       "Students under 18 sign in through a parent-managed or school-issued account, never on their own.",
     ],
   },
-  school: { title: "School login", who: "Staff", notes: ["For school admins, trainers and lab instructors. Your school admin adds you first."] },
+  school: { title: "School login", who: "Staff", notes: ["For school admins, trainers and lab instructors. Your school admin adds you first.", "Students use the school-issued AADHYA login from their trainer, not this page."] },
   educator: { title: "Fellow login", who: "Your", notes: ["For vetted Kalam Fellows. Not a Fellow yet?"] },
 };
 
@@ -42,8 +41,8 @@ export default async function DoorLogin({ params }: { params: Promise<{ door: st
           <p className="mt-6 text-sm text-muted"><Link className="underline" href="/login">Choose a different door</Link></p>
         </div>
         <div className="card p-6 sm:p-8">
-          {d.id === "learner" ? <Suspense><LearnerLogin /></Suspense> : d.id === "educator" ? <Suspense><FellowLogin /></Suspense> : <OtpLogin who={c.who} />}
-          <p className="mt-4 text-xs text-muted">We will text a one-time code. {d.id === "school" ? "School accounts open in Phase 4." : ""}</p>
+          {d.id === "learner" ? <Suspense><LearnerLogin /></Suspense> : d.id === "educator" ? <Suspense><FellowLogin /></Suspense> : <Suspense><SchoolLogin /></Suspense>}
+          <p className="mt-4 text-xs text-muted">We will text a one-time code. {d.id === "school" ? "No account yet? Your school admin adds staff from the school portal." : ""}</p>
         </div>
       </div>
     </section>
