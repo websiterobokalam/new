@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
-import { applyAsFellow, accountId, passSteps, ALL_STEPS, PRE_CONTACT, staffPage, ownerQuery, login, addLearner } from "../helpers";
+import { applyAsFellow, accountId, passSteps, ALL_STEPS, PRE_CONTACT, staffPage, ownerQuery, login, addLearner, newId } from "../helpers";
+import { rosterFor } from "../../src/lib/fellows/gigs";
 import { academy } from "../../src/content/fellows/academy";
 import { subjectTests } from "../../src/content/fellows/subject-tests";
 
@@ -18,12 +19,13 @@ async function answerQuiz(page: Page, quiz: { options: string[]; answer: number 
 async function makeGig(kind: string, opts: { batchId?: string; startsInHours?: number; minutes?: number; title?: string } = {}) {
   const rate = (await ownerQuery<{ per_session_paise: number }>("SELECT per_session_paise FROM rate_card WHERE gig_kind = $1", [kind]))[0];
   const title = opts.title ?? `${kind} ${Math.random().toString(36).slice(2, 8)}`;
-  const g = await ownerQuery<{ id: string }>(
-    `INSERT INTO gigs (kind, batch_id, title, world, language, starts_at, duration_min, mode, city, pay_paise, rate_sample)
-     VALUES ($1,$2,$3,'robotics','en', now() + $4 * interval '1 hour', $5, 'online', 'Hyderabad', $6, true) RETURNING id`,
-    [kind, opts.batchId ?? null, title, opts.startsInHours ?? 30, opts.minutes ?? 60, rate.per_session_paise],
+  const id = newId();
+  await ownerQuery(
+    `INSERT INTO gigs (id, kind, batch_id, title, world, language, starts_at, duration_min, mode, city, pay_paise, rate_sample)
+     VALUES ($7,$1,$2,$3,'robotics','en', $4, $5, 'online', 'Hyderabad', $6, true)`,
+    [kind, opts.batchId ?? null, title, new Date(Date.now() + (opts.startsInHours ?? 30) * 3600_000), opts.minutes ?? 60, rate.per_session_paise, id],
   );
-  return { id: g[0].id, title };
+  return { id, title };
 }
 
 test("apply: pilot city goes to vetting, other cities to the waitlist", async ({ page, browser }) => {
@@ -94,7 +96,7 @@ test("gig board: pay shown first, decline has no penalty, weekly cap and Exam Mo
   await expect(page.locator("li", { hasText: a.title }).getByRole("link", { name: "Teach mode" })).toBeVisible();
   await expect(page.locator("li", { hasText: b.title }).getByText("Over your 1-hour weekly cap")).toBeVisible();
   // Declines never count in tier metrics.
-  const m = await ownerQuery<{ n: number }>("SELECT count(*)::int AS n FROM gig_assignments WHERE fellow_id = $1 AND status IN ('delivered','no_show')", [id]);
+  const m = await ownerQuery<{ n: number }>("SELECT COUNT(*) AS n FROM gig_assignments WHERE fellow_id = $1 AND status IN ('delivered','no_show')", [id]);
   expect(m[0].n).toBe(0);
   await page.goto("/app/fellow");
   const until = new Date(Date.now() + 5 * 86400_000).toISOString().slice(0, 10);
@@ -110,8 +112,8 @@ test("teach mode: minimal roster, attendance and builds, pay line, escrow releas
   const parent = await (await browser.newContext()).newPage();
   await login(parent);
   const learnerId = await addLearner(parent, "Kavya", "9-11");
-  const batch = (await ownerQuery<{ id: string }>(
-    "INSERT INTO batches (course_id, starts_at, duration_min, capacity, language, mode) SELECT id, now() + interval '3 days', 60, 6, 'en', 'online' FROM courses WHERE slug = 'robo-ashaers-junior-l1' RETURNING id"))[0];
+  const batch = { id: newId() };
+  await ownerQuery("INSERT INTO batches (id, course_id, starts_at, duration_min, capacity, language, mode) SELECT $1, id, now() + INTERVAL 3 DAY, 60, 6, 'en', 'online' FROM courses WHERE slug = 'robo-ashaers-junior-l1'", [batch.id]);
   await parent.goto(`/app/book/${batch.id}`);
   await parent.locator("label.chip", { hasText: "Kavya" }).click();
   await parent.getByRole("button", { name: /^Pay ₹/ }).click();
@@ -130,14 +132,18 @@ test("teach mode: minimal roster, attendance and builds, pay line, escrow releas
   await expect(parent.getByRole("link", { name: "Sana I." })).toBeVisible();
 
   // Session time arrives.
-  await ownerQuery("UPDATE gigs SET starts_at = now() - interval '5 minutes' WHERE id = $1", [gig.id]);
-  await ownerQuery("UPDATE batches SET starts_at = now() - interval '5 hours' WHERE id = $1", [batch.id]);
+  await ownerQuery("UPDATE gigs SET starts_at = now() - INTERVAL 5 MINUTE WHERE id = $1", [gig.id]);
+  await ownerQuery("UPDATE batches SET starts_at = now() - INTERVAL 5 HOUR WHERE id = $1", [batch.id]);
   await page.goto(`/app/fellow/gigs/${gig.id}`);
   const fs = page.locator("fieldset", { hasText: "Kavya · 9-11" });
   await expect(fs).toBeVisible();
   // Fellows never get child data beyond first name, age band and progress.
-  const cols = await ownerQuery<{ attname: string }>("SELECT unnest(proargnames) AS attname FROM pg_proc WHERE proname = 'fellow_roster'");
-  expect(cols.map((c) => c.attname).filter((n) => n !== "p_gig").sort()).toEqual(["age_band", "booking_id", "built", "first_name", "status"]);
+  // Run the app's own roster query: exactly these fields, nothing else about the child or parent.
+  const roster = await rosterFor({ query: async (sql: string, params?: unknown[]) => ({ rows: await ownerQuery(sql, params), affectedRows: 0, insertId: 0 }) }, gig.id, fid);
+  expect(roster.length).toBe(1);
+  expect(Object.keys(roster[0]).sort()).toEqual(["age_band", "booking_id", "built", "first_name", "status"]);
+  // ...and nothing for a Fellow who has not accepted this class.
+  expect(await rosterFor({ query: async (sql: string, params?: unknown[]) => ({ rows: await ownerQuery(sql, params), affectedRows: 0, insertId: 0 }) }, gig.id, newId())).toEqual([]);
   await fs.getByLabel("Built today").selectOption({ label: "First light" });
   await fs.getByLabel("One line for the parent").fill("Kavya wired her first circuit and fixed a reversed LED herself.");
   await page.getByRole("button", { name: "Mark session delivered" }).click();
@@ -147,7 +153,7 @@ test("teach mode: minimal roster, attendance and builds, pay line, escrow releas
   expect(prog.length).toBe(1);
   const lines = await ownerQuery<{ kind: string }>("SELECT kind FROM earnings_lines WHERE fellow_id = $1", [fid]);
   expect(lines.map((l) => l.kind)).toContain("session");
-  const rel = await ownerQuery<{ n: number }>("SELECT count(*)::int AS n FROM ledger_journals WHERE kind = 'escrow_release' AND ref LIKE $1", [`%`]);
+  const rel = await ownerQuery<{ n: number }>("SELECT COUNT(*) AS n FROM ledger_journals WHERE kind = 'escrow_release' AND ref LIKE $1", [`%`]);
   expect(rel[0].n).toBeGreaterThan(0);
   const bal = await ownerQuery<{ s: string }>("SELECT coalesce(sum(amount_paise),0) AS s FROM ledger_postings");
   expect(Number(bal[0].s)).toBe(0);
@@ -168,8 +174,8 @@ test("messages: contact details are blocked and flagged; normal messages flow bo
   const parent = await (await browser.newContext()).newPage();
   await login(parent);
   const lid = await addLearner(parent, "Rohan", "9-11");
-  const batch = (await ownerQuery<{ id: string }>(
-    "INSERT INTO batches (course_id, starts_at, duration_min, capacity, language, mode) SELECT id, now() + interval '4 days', 60, 6, 'en', 'online' FROM courses WHERE slug = 'free-build-session' RETURNING id"))[0];
+  const batch = { id: newId() };
+  await ownerQuery("INSERT INTO batches (id, course_id, starts_at, duration_min, capacity, language, mode) SELECT $1, id, now() + INTERVAL 4 DAY, 60, 6, 'en', 'online' FROM courses WHERE slug = 'free-build-session'", [batch.id]);
   await parent.request.post("/api/app/bookings", { data: { learnerId: lid, batchId: batch.id } });
   const phone = await applyAsFellow(page, { name: "Meghana Rao" });
   await passSteps(phone, ALL_STEPS, true);
@@ -202,7 +208,7 @@ test("payouts: weekly run, bank reference, balanced ledger, visible to the Fello
   await page.goto("/app/fellow/gigs");
   await page.locator("li", { hasText: gig.title }).getByRole("button", { name: "Accept" }).click();
   await expect(page.locator("li", { hasText: gig.title }).getByRole("link", { name: "Teach mode" })).toBeVisible();
-  await ownerQuery("UPDATE gigs SET starts_at = now() - interval '1 hour' WHERE id = $1", [gig.id]);
+  await ownerQuery("UPDATE gigs SET starts_at = now() - INTERVAL 1 HOUR WHERE id = $1", [gig.id]);
   await page.goto(`/app/fellow/gigs/${gig.id}`);
   await page.getByRole("button", { name: "Mark session delivered" }).click();
   await expect(page.getByText("Session recorded.")).toBeVisible();
@@ -216,7 +222,7 @@ test("payouts: weekly run, bank reference, balanced ledger, visible to the Fello
   await row.getByLabel("Bank / UTR reference").fill("UTR123TEST");
   await row.getByRole("button", { name: "Mark paid" }).click();
   await expect(row.getByText(/paid · UTR123TEST/)).toBeVisible();
-  const j = await ownerQuery("SELECT 1 FROM ledger_journals j JOIN payouts p ON p.id::text = j.ref WHERE j.kind = 'payout_paid' AND p.fellow_id = $1", [fid]);
+  const j = await ownerQuery("SELECT 1 FROM ledger_journals j JOIN payouts p ON p.id = j.ref WHERE j.kind = 'payout_paid' AND p.fellow_id = $1", [fid]);
   expect(j.length).toBe(1);
   const bal = await ownerQuery<{ s: string }>("SELECT coalesce(sum(amount_paise),0) AS s FROM ledger_postings");
   expect(Number(bal[0].s)).toBe(0);
@@ -253,21 +259,29 @@ test("fair removal: 7 days' notice with a response; child safety suspends at onc
   await expect(page).toHaveURL(/\/login\/educator/); // sessions revoked at once
 });
 
-test("fellow cannot change their own status or read learners directly", async ({ page }) => {
+test("fellow cannot change their own status, and sees no family data", async ({ page, browser }) => {
   const phone = await applyAsFellow(page);
   const fid = await accountId(phone);
-  const pg = (await import("pg")).default;
-  const c = new pg.Client({ connectionString: "postgres://rk_app:rk_app_dev@localhost:5432/robokalam_test" });
-  await c.connect();
+  // Database guard (installed where the host allows triggers): a Fellow's
+  // transaction cannot change staff-only fields.
+  const mysql = (await import("mysql2/promise")).default;
+  const { readFileSync } = await import("node:fs");
+  const url = readFileSync("scripts/test.env", "utf8").match(/^DATABASE_URL=(.*)$/m)![1];
+  const c = await mysql.createConnection(url);
   try {
-    await c.query("BEGIN");
-    await c.query("SELECT set_config('rk.account_id', $1, true), set_config('rk.role', 'fellow', true)", [fid]);
-    await expect(c.query("UPDATE fellows SET status = 'live' WHERE account_id = $1", [fid])).rejects.toThrow(/only Robokalam staff/);
-    await c.query("ROLLBACK");
-    await c.query("BEGIN");
-    await c.query("SELECT set_config('rk.account_id', $1, true), set_config('rk.role', 'fellow', true)", [fid]);
-    const l = await c.query("SELECT count(*)::int AS n FROM learners");
-    expect(l.rows[0].n).toBe(0);
-    await c.query("ROLLBACK");
+    await c.query("SET @rk_role = 'fellow', @rk_account = ?", [fid]);
+    await expect(c.query("UPDATE fellows SET status = 'live' WHERE account_id = ?", [fid])).rejects.toThrow(/only Robokalam staff/);
+    await c.query("UPDATE fellows SET exam_mode_until = CURDATE() WHERE account_id = ?", [fid]); // availability is theirs
   } finally { await c.end(); }
+  // App level: a parent's child exists, but the Fellow's account sees none of it.
+  const parent = await (await browser.newContext()).newPage();
+  await login(parent);
+  const lid = await addLearner(parent, "Nikhil", "9-11");
+  const exp = await (await page.request.get("/api/app/export")).json();
+  expect(exp.learners).toEqual([]);
+  expect(exp.consentHistory).toEqual([]);
+  const me = await (await page.request.get("/api/app/me")).json();
+  expect(me.learners).toEqual([]);
+  await page.goto(`/app/learners/${lid}`);
+  await expect(page.getByText("Nikhil")).toHaveCount(0);
 });

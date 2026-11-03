@@ -26,15 +26,15 @@ export function suggestTier(m: Metrics): string {
 
 export async function metrics(c: Tx, fellowId: string): Promise<Metrics> {
   const a = (await c.query(
-    `SELECT count(*) FILTER (WHERE status = 'delivered')::int AS delivered, count(*) FILTER (WHERE status = 'no_show')::int AS no_shows
+    `SELECT COALESCE(SUM(status = 'delivered'), 0) AS delivered, COALESCE(SUM(status = 'no_show'), 0) AS no_shows
      FROM gig_assignments WHERE fellow_id = $1 AND status IN ('delivered','no_show')`,
     [fellowId],
   )).rows[0];
   const p = (await c.query(
-    `SELECT count(*)::int AS builds FROM learner_progress lp WHERE lp.reviewed_by = 'fellow:' || $1`,
+    `SELECT count(*) AS builds FROM learner_progress lp WHERE lp.reviewed_by = CONCAT('fellow:', $1)`,
     [fellowId],
   )).rows[0];
-  const r = (await c.query("SELECT avg(rating)::float AS rating, count(*)::int AS n FROM reviews WHERE fellow_id = $1 AND NOT hidden", [fellowId])).rows[0];
+  const r = (await c.query("SELECT avg(rating) AS rating, count(*) AS n FROM reviews WHERE fellow_id = $1 AND NOT hidden", [fellowId])).rows[0];
   const committed = a.delivered + a.no_shows;
   return {
     delivered: a.delivered, noShows: a.no_shows,

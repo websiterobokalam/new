@@ -20,6 +20,8 @@ Status: built and tested. Stopped for review. Not merged.
 
 ## Security and privacy built in
 
+> Since moving to Hostinger MySQL, the row-level-security points below are enforced in application code instead, with the same tests. See `docs/DATABASE.md`.
+
 - **Row-level security on every family table.** The app connects as `rk_app`, which is not the table owner, so policies always apply. Tests prove one family can't read another's learner.
 - Consent events and the audit log are append-only: the app role has no UPDATE or DELETE on them.
 - Children's data is first name and age band only. No date of birth, school or address. Portfolios are private by default.

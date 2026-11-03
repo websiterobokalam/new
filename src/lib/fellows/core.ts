@@ -1,4 +1,4 @@
-import { system, type Tx } from "../db";
+import { insertOnce, system, type Tx } from "../db";
 import { asAccount, type Account } from "../auth/session";
 import { academy, gradeModule, mandatoryModules } from "@/content/fellows/academy";
 import { gradeSubject, subjectTests } from "@/content/fellows/subject-tests";
@@ -50,7 +50,7 @@ export type Application = { fullName: string; college: string; course: string; y
 /** Step 1-2 of the journey: phone OTP is done; record the profile, worlds and hours. */
 export async function apply(a: Account, app: Application) {
   return system(async (c) => {
-    const acc = (await c.query("SELECT role, (SELECT count(*) FROM learners l WHERE l.guardian_account_id = a.id AND l.erased_at IS NULL)::int AS kids FROM accounts a WHERE id = $1", [a.id])).rows[0];
+    const acc = (await c.query("SELECT role, (SELECT count(*) FROM learners l WHERE l.guardian_account_id = a.id AND l.erased_at IS NULL) AS kids FROM accounts a WHERE id = $1", [a.id])).rows[0];
     if (acc.role !== "parent" && acc.role !== "fellow") throw new FellowError(409, "This number belongs to a staff account");
     if (acc.kids > 0) throw new FellowError(409, "This number manages a learner account. Please apply with your own number.");
     const inPilot = app.city.trim().toLowerCase() === PILOT.city.toLowerCase();
@@ -58,18 +58,18 @@ export async function apply(a: Account, app: Application) {
     await c.query(
       `INSERT INTO fellows (account_id, full_name, display_name, college, course, year, college_email, worlds, languages, hours_per_week, city, status, age_confirmed_at)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12, now())
-       ON CONFLICT (account_id) DO UPDATE SET college = EXCLUDED.college, course = EXCLUDED.course, year = EXCLUDED.year, worlds = EXCLUDED.worlds,
-         languages = EXCLUDED.languages, hours_per_week = EXCLUDED.hours_per_week`,
+       ON DUPLICATE KEY UPDATE college = VALUES(college), course = VALUES(course), year = VALUES(year), worlds = VALUES(worlds),
+         languages = VALUES(languages), hours_per_week = VALUES(hours_per_week)`,
       [a.id, app.fullName.trim(), displayName(app.fullName), app.college.trim(), app.course.trim(), app.year, app.collegeEmail || null, app.worlds, app.languages, app.hoursPerWeek, app.city.trim(), inPilot ? "vetting" : "waitlisted"],
     );
-    for (const s of STEPS) await c.query("INSERT INTO vetting_steps (fellow_id, step) VALUES ($1,$2) ON CONFLICT DO NOTHING", [a.id, s]);
+    for (const s of STEPS) await insertOnce(c, "INSERT INTO vetting_steps (fellow_id, step, detail) VALUES ($1,$2,'{}')", [a.id, s]);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,'fellow_applied','fellow',$2,$3)", [a.id, a.id, { city: app.city, inPilot }]);
     return { status: inPilot ? "vetting" : "waitlisted" };
   });
 }
 
 async function setStep(c: Tx, fellowId: string, step: Step, status: string, detail: Record<string, unknown>, reviewer?: string) {
-  await c.query("UPDATE vetting_steps SET status = $3, detail = detail || $4, reviewed_by = $5, updated_at = now() WHERE fellow_id = $1 AND step = $2", [fellowId, step, status, detail, reviewer ?? null]);
+  await c.query("UPDATE vetting_steps SET status = $3, detail = JSON_MERGE_PATCH(detail, $4), reviewed_by = $5, updated_at = now() WHERE fellow_id = $1 AND step = $2", [fellowId, step, status, detail, reviewer ?? null]);
 }
 
 /** Step 3: subject test. Two attempts, then a person reviews. */
@@ -105,7 +105,7 @@ export async function completeModule(a: Account, moduleId: string, answers: numb
   const g = gradeModule(m, answers);
   if (!g.passed) return { ...g, academyDone: false };
   return system(async (c) => {
-    await c.query("INSERT INTO academy_progress (fellow_id, module_id, score) VALUES ($1,$2,$3) ON CONFLICT (fellow_id, module_id) DO NOTHING", [a.id, m.id, g.score]);
+    await insertOnce(c, "INSERT INTO academy_progress (fellow_id, module_id, score) VALUES ($1,$2,$3)", [a.id, m.id, g.score]);
     const rate = await rateFor(c, "training_hour");
     if (rate) await addEarning(c, fellow.account_id, { kind: "training", description: `Kalam Academy: ${m.title}`, gross: Math.round((rate.per_session_paise * m.minutes) / 60) });
     const done = (await c.query("SELECT module_id FROM academy_progress WHERE fellow_id = $1", [a.id])).rows.map((r) => r.module_id);
@@ -120,11 +120,13 @@ export async function acceptTerms(a: Account, termIds: string[]) {
   await requireFellow(a);
   return system(async (c) => {
     const current = (await c.query(
-      "SELECT DISTINCT ON (kind) id, kind FROM terms_versions WHERE id = ANY($1) AND effective_at <= now() ORDER BY kind, effective_at DESC",
+      // Latest effective version of each kind among those the Fellow was shown.
+      `SELECT id, kind FROM (SELECT id, kind, ROW_NUMBER() OVER (PARTITION BY kind ORDER BY effective_at DESC) AS rn
+         FROM terms_versions WHERE id IN ($1) AND effective_at <= now()) t WHERE rn = 1`,
       [termIds],
     )).rows;
     if (current.length !== 2) throw new FellowError(422, "Please accept both the Fellow terms and the code of conduct");
-    for (const t of current) await c.query("INSERT INTO terms_acceptances (fellow_id, terms_id) VALUES ($1,$2) ON CONFLICT DO NOTHING", [a.id, t.id]);
+    for (const t of current) await insertOnce(c, "INSERT INTO terms_acceptances (fellow_id, terms_id) VALUES ($1,$2)", [a.id, t.id]);
     await setStep(c, a.id, "terms", "passed", { accepted: current.map((t) => t.id) });
   });
 }
@@ -155,7 +157,7 @@ export async function goLive(staff: Account, fellowId: string) {
     const steps = (await c.query("SELECT step, status FROM vetting_steps WHERE fellow_id = $1", [fellowId])).rows;
     const missing = STEPS.filter((s) => steps.find((x) => x.step === s)?.status !== "passed");
     if (missing.length) throw new FellowError(409, `Not ready: ${missing.map((m) => STEP_LABEL[m]).join(", ")}`);
-    const live = (await c.query("SELECT count(*)::int AS n FROM fellows WHERE status = 'live'")).rows[0].n;
+    const live = (await c.query("SELECT count(*) AS n FROM fellows WHERE status = 'live'")).rows[0].n;
     if (live >= PILOT.maxLive) throw new FellowError(409, `The pilot is full (${PILOT.maxLive} live Fellows)`);
     await c.query("UPDATE fellows SET status = 'live', went_live_at = now() WHERE account_id = $1", [fellowId]);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id) VALUES ($1,'fellow_live','fellow',$2)", [staff.id, fellowId]);

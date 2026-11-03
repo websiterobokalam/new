@@ -16,7 +16,7 @@ export default async function FellowHome() {
   const e = await earnings(account);
   const today = await asAccount(account, async (c) => (await c.query(
     `SELECT g.id, g.title, g.starts_at, g.mode, g.location FROM gig_assignments ga JOIN gigs g ON g.id = ga.gig_id
-     WHERE ga.fellow_id = $1 AND ga.status = 'accepted' AND g.starts_at > now() - interval '3 hours' ORDER BY g.starts_at LIMIT 5`, [account.id])).rows);
+     WHERE ga.fellow_id = $1 AND ga.status = 'accepted' AND g.starts_at > now() - INTERVAL 3 HOUR ORDER BY g.starts_at LIMIT 5`, [account.id])).rows);
   const exam = fellow.exam_mode_until && new Date(fellow.exam_mode_until) >= new Date(new Date().toDateString());
   const done = STEPS.filter((s) => steps[s].status === "passed").length;
 

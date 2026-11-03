@@ -9,7 +9,7 @@ export type NoticeItem = { purpose: Purpose; required: boolean; what: string; wh
 export type Notice = { id: string; language: string; title: string; sha256: string; approved: boolean; body: { items: NoticeItem[]; rights: string; grievance: string } };
 
 export async function getNotice(c: Tx, lang: string): Promise<Notice> {
-  const { rows } = await c.query("SELECT id, language, title, sha256, approved, body FROM consent_notices WHERE language = ANY($1) ORDER BY (language = $2) DESC, published_at DESC LIMIT 1", [[lang, "en"], lang]);
+  const { rows } = await c.query("SELECT id, language, title, sha256, approved, body FROM consent_notices WHERE language IN ($1) ORDER BY (language = $2) DESC, published_at DESC LIMIT 1", [[lang, "en"], lang]);
   if (!rows[0]) throw new Error("No consent notice published");
   return rows[0];
 }
@@ -34,13 +34,17 @@ export async function recordConsents(
     if (decisions[p] === undefined) continue;
     await c.query(
       "INSERT INTO consent_events (learner_id, guardian_account_id, purpose, granted, notice_id, method, evidence) VALUES ($1,$2,$3,$4,$5,$6,$7)",
-      [learnerId, guardianId, p, decisions[p], notice.id, CONSENT_METHOD, { notice_sha256: notice.sha256, ip_hash: evidence.ipHash, user_agent: evidence.userAgent.slice(0, 200), adult_guardian_declared_at: evidence.declaredAt }],
+      [learnerId, guardianId, p, decisions[p], notice.id, CONSENT_METHOD, JSON.stringify({ notice_sha256: notice.sha256, ip_hash: evidence.ipHash, user_agent: evidence.userAgent.slice(0, 200), adult_guardian_declared_at: evidence.declaredAt })],
     );
   }
 }
 
 export async function currentConsents(c: Tx, learnerId: string): Promise<Record<Purpose, boolean>> {
-  const { rows } = await c.query("SELECT purpose, granted FROM consent_current WHERE learner_id = $1", [learnerId]);
+  // Latest event per purpose is the current state.
+  const { rows } = await c.query(
+    "SELECT e.purpose, e.granted FROM consent_events e JOIN (SELECT purpose, MAX(id) AS id FROM consent_events WHERE learner_id = $1 GROUP BY purpose) m ON m.id = e.id",
+    [learnerId],
+  );
   const out = Object.fromEntries(PURPOSES.map((p) => [p, false])) as Record<Purpose, boolean>;
   for (const r of rows) out[r.purpose as Purpose] = r.granted;
   return out;

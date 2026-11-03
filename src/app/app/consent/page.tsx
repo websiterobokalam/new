@@ -10,10 +10,10 @@ export default async function ConsentCentre({ searchParams }: { searchParams: Pr
   const deleted = (await searchParams).deleted === "1";
   const d = await asAccount(account, async (c) => {
     const notice = await getNotice(c, account.language);
-    const learners = (await c.query("SELECT id, first_name, age_band FROM learners WHERE erased_at IS NULL ORDER BY created_at")).rows;
+    const learners = (await c.query("SELECT id, first_name, age_band FROM learners WHERE guardian_account_id = $1 AND erased_at IS NULL ORDER BY created_at", [account.id])).rows;
     const states = await Promise.all(learners.map(async (l) => ({ ...l, consents: await currentConsents(c, l.id) })));
-    const history = (await c.query("SELECT e.purpose, e.granted, e.created_at, l.first_name FROM consent_events e JOIN learners l ON l.id = e.learner_id ORDER BY e.id DESC LIMIT 30")).rows;
-    const requests = (await c.query("SELECT kind, status, created_at FROM data_requests ORDER BY created_at DESC LIMIT 10")).rows;
+    const history = (await c.query("SELECT e.purpose, e.granted, e.created_at, l.first_name FROM consent_events e JOIN learners l ON l.id = e.learner_id WHERE e.guardian_account_id = $1 ORDER BY e.id DESC LIMIT 30", [account.id])).rows;
+    const requests = (await c.query("SELECT kind, status, created_at FROM data_requests WHERE account_id = $1 ORDER BY created_at DESC LIMIT 10", [account.id])).rows;
     return { notice, learners: states, history, requests };
   });
   return (

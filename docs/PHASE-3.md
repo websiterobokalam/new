@@ -23,6 +23,8 @@ Status: built and tested. Stopped for review. Not merged.
 
 ## Rules enforced in the database, not just the app
 
+> Since moving to Hostinger MySQL: the CHECK-constraint rules below still live in the database; function- and RLS-based rules are now app-level (same tests); triggers are installed where the host allows. See `docs/DATABASE.md`.
+
 - **Before any contact with a child**, a Fellow must pass every check except shadow and co-teach (app rule, tested).
 - **Fellows can't touch the learners table.** They get first name, age band and built-project count, only for their own accepted classes, through one checked function (`fellow_roster`).
 - **A Fellow can't change their own status, tier, cap or identity fields.** A trigger rejects it; only Exam Mode and availability are theirs to edit.

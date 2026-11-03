@@ -1,4 +1,4 @@
-import { system, type Tx } from "../db";
+import { system, uuid, type Tx } from "../db";
 import { asAccount, type Account } from "../auth/session";
 import { FellowError, requireFellow, STEPS, type Fellow, type Step } from "./core";
 import { addEarning, deductionsFor, rateFor, weekStartIST, type DeductionLine } from "./pay";
@@ -40,8 +40,8 @@ export function eligible(g: Pick<Gig, "min_tier" | "language" | "mode" | "city">
 async function weekMinutes(c: Tx, fellowId: string, at: Date) {
   const start = weekStartIST(at);
   const { rows } = await c.query(
-    `SELECT coalesce(sum(g.duration_min),0)::int AS m FROM gig_assignments ga JOIN gigs g ON g.id = ga.gig_id
-     WHERE ga.fellow_id = $1 AND ga.status IN ('accepted','delivered') AND g.starts_at >= $2 AND g.starts_at < $2::timestamptz + interval '7 days'`,
+    `SELECT coalesce(sum(g.duration_min),0) AS m FROM gig_assignments ga JOIN gigs g ON g.id = ga.gig_id
+     WHERE ga.fellow_id = $1 AND ga.status IN ('accepted','delivered') AND g.starts_at >= $2 AND g.starts_at < $2 + INTERVAL 7 DAY`,
     [fellowId, start],
   );
   return rows[0].m as number;
@@ -62,8 +62,8 @@ async function acceptability(c: Tx, f: Fellow, steps: Record<Step, { status: str
   if (used + g.duration_min > f.weekly_cap_hours * 60) return `Over your ${f.weekly_cap_hours}-hour weekly cap`;
   const clash = await c.query(
     `SELECT 1 FROM gig_assignments ga JOIN gigs x ON x.id = ga.gig_id WHERE ga.fellow_id = $1 AND ga.status = 'accepted'
-     AND tstzrange(x.starts_at, x.starts_at + x.duration_min * interval '1 minute') && tstzrange($2::timestamptz, $2::timestamptz + $3 * interval '1 minute')`,
-    [f.account_id, g.starts_at, g.duration_min],
+     AND x.starts_at < $3 AND x.starts_at + INTERVAL x.duration_min MINUTE > $2`,
+    [f.account_id, new Date(g.starts_at), new Date(new Date(g.starts_at).getTime() + g.duration_min * 60_000)],
   );
   if (clash.rows[0]) return "Clashes with a gig you accepted";
   return null;
@@ -95,7 +95,6 @@ export async function board(a: Account): Promise<{ items: BoardItem[]; fellow: F
 export async function respond(a: Account, gigId: string, action: "accept" | "decline" | "withdraw") {
   const { fellow, steps } = await requireFellow(a);
   return system(async (c) => {
-    await c.query("SELECT pg_advisory_xact_lock(hashtext($1))", [gigId]);
     const g = (await c.query("SELECT * FROM gigs WHERE id = $1 FOR UPDATE", [gigId])).rows[0] as Gig | undefined;
     if (!g || !eligible(g, fellow)) throw new FellowError(404, "Gig not found");
     const mine = (await c.query("SELECT id, status FROM gig_assignments WHERE gig_id = $1 AND fellow_id = $2", [gigId, a.id])).rows[0];
@@ -103,7 +102,7 @@ export async function respond(a: Account, gigId: string, action: "accept" | "dec
     if (action === "decline") {
       // Recorded only so the gig stops showing as new. Never used in tiers or matching.
       if (mine) throw new FellowError(409, "You already responded to this gig");
-      await c.query("INSERT INTO gig_assignments (gig_id, fellow_id, status) VALUES ($1,$2,'declined')", [gigId, a.id]);
+      await c.query("INSERT INTO gig_assignments (id, gig_id, fellow_id, status) VALUES ($1,$2,$3,'declined')", [uuid(), gigId, a.id]);
       return { status: "declined" };
     }
     if (action === "withdraw") {
@@ -119,8 +118,8 @@ export async function respond(a: Account, gigId: string, action: "accept" | "dec
     if (new Date(g.starts_at) <= new Date()) throw new FellowError(409, "This gig has started");
     const reason = await acceptability(c, fellow, steps, g);
     if (reason) throw new FellowError(409, reason);
-    await c.query("INSERT INTO gig_assignments (gig_id, fellow_id, status) VALUES ($1,$2,'accepted')", [gigId, a.id]);
-    const taken = (await c.query("SELECT count(*)::int AS n FROM gig_assignments WHERE gig_id = $1 AND status IN ('accepted','delivered')", [gigId])).rows[0].n;
+    await c.query("INSERT INTO gig_assignments (id, gig_id, fellow_id, status) VALUES ($1,$2,$3,'accepted')", [uuid(), gigId, a.id]);
+    const taken = (await c.query("SELECT count(*) AS n FROM gig_assignments WHERE gig_id = $1 AND status IN ('accepted','delivered')", [gigId])).rows[0].n;
     if (taken >= g.seats) await c.query("UPDATE gigs SET status = 'filled' WHERE id = $1", [gigId]);
     if (g.batch_id && ["live_batch", "build_session", "campus_session"].includes(g.kind)) await c.query("UPDATE batches SET educator_fellow_id = $2 WHERE id = $1", [g.batch_id, a.id]);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id) VALUES ($1,'gig_accepted','gig',$2)", [a.id, gigId]);
@@ -137,15 +136,36 @@ export async function createGig(staff: Account, input: {
     const rate = await rateFor(c, input.kind);
     if (!rate) throw new FellowError(409, "No approved rate for this gig type. Approve the rate card first.");
     const pay = Math.round((rate.per_session_paise * input.durationMin) / rate.minutes);
-    const { rows } = await c.query(
-      `INSERT INTO gigs (kind, batch_id, title, world, language, starts_at, duration_min, mode, location, responsible_adult, city, pay_paise, rate_sample, seats, min_tier, lesson_plan, kit_list, created_by)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) RETURNING id`,
-      [input.kind, input.batchId ?? null, input.title, input.world, input.language, input.startsAt, input.durationMin, input.mode, input.location ?? null, input.responsibleAdult ?? null,
-        input.city, pay, rate.sample, input.seats ?? 1, input.minTier ?? "apprentice", input.lessonPlan ?? null, input.kitList ?? null, staff.id],
+    const rows = [{ id: uuid() }];
+    await c.query(
+      `INSERT INTO gigs (kind, batch_id, title, world, language, starts_at, duration_min, mode, location, responsible_adult, city, pay_paise, rate_sample, seats, min_tier, lesson_plan, kit_list, created_by, id)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)`,
+      [input.kind, input.batchId ?? null, input.title, input.world, input.language, new Date(input.startsAt), input.durationMin, input.mode, input.location ?? null, input.responsibleAdult ?? null,
+        input.city, pay, rate.sample, input.seats ?? 1, input.minTier ?? "apprentice", input.lessonPlan ?? null, input.kitList ?? null, staff.id, rows[0].id],
     ).catch((e) => { if (e.code === "23514") throw new FellowError(422, "In-person gigs need a partner location and a named responsible adult"); throw e; });
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id) VALUES ($1,'gig_created','gig',$2)", [staff.id, rows[0].id]);
     return rows[0].id as string;
   });
+}
+
+export type RosterRow = { booking_id: string; first_name: string; age_band: string; built: number; status: string };
+
+/**
+ * The ONLY way a Fellow reads learner data: first name, age band, number of
+ * finished builds and booking status, and only for a class this Fellow has
+ * accepted or delivered. No ids of learners, no parents, no contact details.
+ */
+export async function rosterFor(c: Tx, gigId: string, fellowId: string): Promise<RosterRow[]> {
+  return (await c.query(
+    `SELECT bk.id AS booking_id, l.first_name, l.age_band,
+            (SELECT COUNT(*) FROM learner_progress lp WHERE lp.learner_id = l.id AND lp.status = 'built') AS built, bk.status
+     FROM gigs g
+     JOIN gig_assignments ga ON ga.gig_id = g.id AND ga.fellow_id = $2 AND ga.status IN ('accepted','delivered')
+     JOIN bookings bk ON bk.batch_id = g.batch_id AND bk.status IN ('confirmed','attended','no_show')
+     JOIN learners l ON l.id = bk.learner_id AND l.erased_at IS NULL
+     WHERE g.id = $1 ORDER BY l.first_name`,
+    [gigId, fellowId],
+  )).rows;
 }
 
 /** Teach mode data: gig, plan, kit, and a roster with first name, age band and progress only. */
@@ -157,7 +177,7 @@ export async function teach(a: Account, gigId: string) {
       [gigId, a.id],
     )).rows[0];
     if (!g) return null;
-    const roster = (await c.query("SELECT * FROM fellow_roster($1)", [gigId])).rows as { booking_id: string; first_name: string; age_band: string; built: number; status: string }[];
+    const roster = await rosterFor(c, gigId, a.id);
     const projects = (await c.query("SELECT id, title FROM projects WHERE world = $1 OR world = 'coding' ORDER BY level", [g.world])).rows;
     return { gig: g, roster, projects };
   });
@@ -178,10 +198,11 @@ export async function deliver(a: Account, gigId: string, records: { bookingId: s
   if (records.some((r) => !allowed.has(r.bookingId))) throw new FellowError(403, "That learner is not in this class");
   return system(async (c) => {
     for (const r of records) {
-      const bk = (await c.query("UPDATE bookings SET status = $2, feedback = coalesce($3, feedback) WHERE id = $1 AND status IN ('confirmed','attended','no_show') RETURNING learner_id", [r.bookingId, r.attended ? "attended" : "no_show", r.feedback ?? null])).rows[0];
+      const bk = (await c.query("SELECT learner_id FROM bookings WHERE id = $1 AND status IN ('confirmed','attended','no_show') FOR UPDATE", [r.bookingId])).rows[0];
+      if (bk) await c.query("UPDATE bookings SET status = $2, feedback = COALESCE($3, feedback) WHERE id = $1", [r.bookingId, r.attended ? "attended" : "no_show", r.feedback ?? null]);
       if (bk && r.attended && r.builtProject) {
         await c.query(
-          "INSERT INTO learner_progress (learner_id, project_id, status, reviewed_by, completed_at) VALUES ($1,$2,'built',$3, now()) ON CONFLICT (learner_id, project_id) DO UPDATE SET status = 'built', reviewed_by = EXCLUDED.reviewed_by, completed_at = now()",
+          "INSERT INTO learner_progress (learner_id, project_id, status, reviewed_by, completed_at) VALUES ($1,$2,'built',$3, now()) ON DUPLICATE KEY UPDATE status = 'built', reviewed_by = VALUES(reviewed_by), completed_at = now()",
           [bk.learner_id, r.builtProject, `fellow:${a.id}`],
         );
       }
@@ -201,9 +222,10 @@ export async function deliver(a: Account, gigId: string, records: { bookingId: s
     }
     await addEarning(c, a.id, { kind: t.gig.kind === "shadow" ? "shadow" : t.gig.kind === "co_teach" ? "co_teach" : "session", description: `${t.gig.title} · ${new Date(t.gig.starts_at).toISOString().slice(0, 16)}`, gross: t.gig.pay_paise, assignmentId: t.gig.assignment_id });
     if (t.gig.kind === "shadow" || t.gig.kind === "co_teach") {
-      await c.query("UPDATE vetting_steps SET status = 'passed', detail = detail || $3, updated_at = now() WHERE fellow_id = $1 AND step = $2", [a.id, t.gig.kind, { gig: gigId }]);
+      await c.query("UPDATE vetting_steps SET status = 'passed', detail = JSON_MERGE_PATCH(detail, $3), updated_at = now() WHERE fellow_id = $1 AND step = $2", [a.id, t.gig.kind, { gig: gigId }]);
     }
-    await c.query("UPDATE gigs SET status = 'completed' WHERE id = $1 AND NOT EXISTS (SELECT 1 FROM gig_assignments WHERE gig_id = $1 AND status = 'accepted')", [gigId]);
+    const still = (await c.query("SELECT COUNT(*) AS n FROM gig_assignments WHERE gig_id = $1 AND status = 'accepted'", [gigId])).rows[0].n;
+    if (!still) await c.query("UPDATE gigs SET status = 'completed' WHERE id = $1", [gigId]);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,'session_delivered','gig',$2,$3)", [a.id, gigId, { learners: records.length }]);
   });
 }
@@ -212,9 +234,10 @@ export async function askHelp(a: Account, gigId: string | null, kind: "tech" | "
   await requireFellow(a);
   return system(async (c) => {
     const asg = gigId ? (await c.query("SELECT id FROM gig_assignments WHERE gig_id = $1 AND fellow_id = $2", [gigId, a.id])).rows[0] : null;
-    const { rows } = await c.query("INSERT INTO help_requests (fellow_id, assignment_id, kind) VALUES ($1,$2,$3) RETURNING id", [a.id, asg?.id ?? null, kind]);
+    const rows = [{ id: uuid() }];
+    await c.query("INSERT INTO help_requests (id, fellow_id, assignment_id, kind) VALUES ($1,$2,$3,$4)", [rows[0].id, a.id, asg?.id ?? null, kind]);
     if (kind === "safety") {
-      await c.query("INSERT INTO safety_reports (reporter_account_id, page, category, details, respond_by) VALUES ($1,$2,'safety','Fellow pressed the safety help button in Teach mode', now() + interval '1 hour')", [a.id, `/app/fellow/gigs/${gigId ?? ""}`]);
+      await c.query("INSERT INTO safety_reports (id, reporter_account_id, page, category, details, respond_by) VALUES ($3,$1,$2,'safety','Fellow pressed the safety help button in Teach mode', now() + INTERVAL 1 HOUR)", [a.id, `/app/fellow/gigs/${gigId ?? ""}`, uuid()]);
     }
     return rows[0].id as string;
   });

@@ -1,4 +1,4 @@
-import { system } from "../db";
+import { insertOnce, system, uuid } from "../db";
 import { asAccount, type Account } from "../auth/session";
 import { post } from "../ledger";
 import { weekStartIST } from "./pay";
@@ -37,18 +37,19 @@ export function statementCsv(lines: { earned_at: string; kind: string; descripti
 export async function runPayouts(staff: Account, periodEnd: string) {
   return system(async (c) => {
     const due = (await c.query(
-      `SELECT fellow_id, sum(gross_paise)::int AS gross, sum(gross_paise - net_paise)::int AS ded, sum(net_paise)::int AS net
-       FROM earnings_lines WHERE payout_id IS NULL AND earned_at < ($1::date + 1) GROUP BY fellow_id`,
+      `SELECT fellow_id, sum(gross_paise) AS gross, sum(gross_paise - net_paise) AS ded, sum(net_paise) AS net
+       FROM earnings_lines WHERE payout_id IS NULL AND earned_at < DATE_ADD($1, INTERVAL 1 DAY) GROUP BY fellow_id`,
       [periodEnd],
     )).rows;
     const made: string[] = [];
     for (const d of due) {
-      const p = (await c.query(
-        "INSERT INTO payouts (fellow_id, period_end, gross_paise, deductions_paise, net_paise) VALUES ($1,$2,$3,$4,$5) ON CONFLICT (fellow_id, period_end) DO NOTHING RETURNING id",
-        [d.fellow_id, periodEnd, d.gross, d.ded, d.net],
-      )).rows[0];
-      if (!p) continue;
-      await c.query("UPDATE earnings_lines SET payout_id = $1 WHERE fellow_id = $2 AND payout_id IS NULL AND earned_at < ($3::date + 1)", [p.id, d.fellow_id, periodEnd]);
+      const p = { id: uuid() };
+      const wrote = await insertOnce(c,
+        "INSERT INTO payouts (id, fellow_id, period_end, gross_paise, deductions_paise, net_paise) VALUES ($1,$2,$3,$4,$5,$6)",
+        [p.id, d.fellow_id, periodEnd, d.gross, d.ded, d.net],
+      );
+      if (!wrote) continue; // already created for this week
+      await c.query("UPDATE earnings_lines SET payout_id = $1 WHERE fellow_id = $2 AND payout_id IS NULL AND earned_at < DATE_ADD($3, INTERVAL 1 DAY)", [p.id, d.fellow_id, periodEnd]);
       made.push(p.id);
     }
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, meta) VALUES ($1,'payout_run','payouts',$2)", [staff.id, { periodEnd, count: made.length }]);
@@ -58,8 +59,9 @@ export async function runPayouts(staff: Account, periodEnd: string) {
 
 export async function markPayoutPaid(staff: Account, payoutId: string, bankRef: string) {
   return system(async (c) => {
-    const p = (await c.query("UPDATE payouts SET status = 'paid', provider_ref = $2, paid_at = now() WHERE id = $1 AND status = 'pending' RETURNING gross_paise, deductions_paise, net_paise", [payoutId, bankRef])).rows[0];
+    const p = (await c.query("SELECT gross_paise, deductions_paise, net_paise FROM payouts WHERE id = $1 AND status = 'pending' FOR UPDATE", [payoutId])).rows[0];
     if (!p) throw new Error("Payout is not pending");
+    await c.query("UPDATE payouts SET status = 'paid', provider_ref = $2, paid_at = now() WHERE id = $1", [payoutId, bankRef]);
     await post(c, "payout_paid", payoutId, [["educator_payable", p.gross_paise], ["deductions_payable", -p.deductions_paise], ["payouts_bank", -p.net_paise]]);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,'payout_paid','payout',$2,$3)", [staff.id, payoutId, { bankRef }]);
   });

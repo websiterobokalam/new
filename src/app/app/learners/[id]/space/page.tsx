@@ -16,12 +16,12 @@ export default async function LearnerSpace({ params }: { params: Promise<{ id: s
   if (!/^[0-9a-f-]{36}$/.test(id)) notFound();
   const { account, locale, t } = await appContext(`/app/learners/${id}/space`);
   const d = await asAccount(account, async (c) => {
-    const l = (await c.query("SELECT id, first_name, age_band, interests FROM learners WHERE id = $1 AND erased_at IS NULL", [id])).rows[0];
+    const l = (await c.query("SELECT id, first_name, age_band, interests FROM learners WHERE id = $1 AND guardian_account_id = $2 AND erased_at IS NULL", [id, account.id])).rows[0];
     if (!l) return null;
     const nodes = await loadJourney(c, l);
     const next = (await c.query(
-      "SELECT co.title, b.starts_at, b.mode FROM bookings bk JOIN batches b ON b.id = bk.batch_id JOIN courses co ON co.id = b.course_id WHERE bk.learner_id = $1 AND bk.status = 'confirmed' AND b.starts_at > now() - interval '2 hours' ORDER BY b.starts_at LIMIT 1",
-      [id],
+      "SELECT co.title, b.starts_at, b.mode FROM bookings bk JOIN batches b ON b.id = bk.batch_id JOIN courses co ON co.id = b.course_id WHERE bk.learner_id = $1 AND bk.guardian_account_id = $2 AND bk.status = 'confirmed' AND b.starts_at > now() - INTERVAL 2 HOUR ORDER BY b.starts_at LIMIT 1",
+      [id, account.id],
     )).rows[0];
     return { l, nodes, next };
   });

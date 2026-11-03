@@ -9,7 +9,7 @@ export default async function TermsPage({ searchParams }: { searchParams: Promis
   const { account, steps } = await fellowContext("/app/fellow/terms");
   const lang = ["en", "te", "hi"].includes((await searchParams).lang ?? "") ? (await searchParams).lang! : "en";
   const docs = await asAccount(account, async (c) => (await c.query(
-    "SELECT DISTINCT ON (kind) id, kind, title, body, effective_at FROM terms_versions WHERE language = $1 AND effective_at <= now() ORDER BY kind, effective_at DESC", [lang])).rows);
+    `SELECT id, kind, title, body, effective_at FROM (SELECT id, kind, title, body, effective_at, ROW_NUMBER() OVER (PARTITION BY kind ORDER BY effective_at DESC) AS rn FROM terms_versions WHERE language = $1 AND effective_at <= now()) t WHERE rn = 1 ORDER BY kind`, [lang])).rows);
   return (
     <section className="py-10"><div className="wrap max-w-3xl grid gap-6">
       <header><p className="eyebrow">Step 5 · Terms and code of conduct</p><h1 className="display-lg mt-2">Plain terms. No small print.</h1>

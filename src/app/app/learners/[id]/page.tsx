@@ -12,12 +12,12 @@ export default async function LearnerPage({ params }: { params: Promise<{ id: st
   if (!/^[0-9a-f-]{36}$/.test(id)) notFound();
   const { account, locale, t } = await appContext(`/app/learners/${id}`);
   const d = await asAccount(account, async (c) => {
-    const l = (await c.query("SELECT id, first_name, age_band, interests, portfolio_public FROM learners WHERE id = $1 AND erased_at IS NULL", [id])).rows[0];
+    const l = (await c.query("SELECT id, first_name, age_band, interests, portfolio_public FROM learners WHERE id = $1 AND guardian_account_id = $2 AND erased_at IS NULL", [id, account.id])).rows[0];
     if (!l) return null;
     const nodes = await loadJourney(c, l);
     const bookings = (await c.query(
-      "SELECT bk.status, co.title, b.starts_at FROM bookings bk JOIN batches b ON b.id = bk.batch_id JOIN courses co ON co.id = b.course_id WHERE bk.learner_id = $1 ORDER BY b.starts_at DESC",
-      [id],
+      "SELECT bk.status, co.title, b.starts_at FROM bookings bk JOIN batches b ON b.id = bk.batch_id JOIN courses co ON co.id = b.course_id WHERE bk.learner_id = $1 AND bk.guardian_account_id = $2 ORDER BY b.starts_at DESC",
+      [id, account.id],
     )).rows;
     return { l, nodes, bookings };
   });

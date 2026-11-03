@@ -10,7 +10,7 @@ export default async function OpsCases() {
   if (!["ops", "safeguarding"].includes(account.role)) notFound();
   const d = await system(async (c) => ({
     disputes: (await c.query("SELECT d.*, coalesce(f.full_name, 'Parent') AS who FROM disputes d LEFT JOIN fellows f ON f.account_id = d.raised_by WHERE d.status <> 'resolved' ORDER BY d.created_at")).rows,
-    cases: (await c.query("SELECT k.*, f.full_name, now() >= k.notice_until AS notice_over, (SELECT json_agg(r.body ORDER BY r.created_at) FROM removal_responses r WHERE r.case_id = k.id) AS responses FROM removal_cases k JOIN fellows f ON f.account_id = k.fellow_id WHERE k.status = 'notice' ORDER BY k.opened_at")).rows,
+    cases: (await c.query("SELECT k.*, f.full_name, now() >= k.notice_until AS notice_over, (SELECT GROUP_CONCAT(r.body ORDER BY r.created_at SEPARATOR ' / ') FROM removal_responses r WHERE r.case_id = k.id) AS responses_text FROM removal_cases k JOIN fellows f ON f.account_id = k.fellow_id WHERE k.status = 'notice' ORDER BY k.opened_at")).rows,
   }));
   return (
     <section className="py-10"><div className="wrap grid gap-8 [&>*]:min-w-0">
@@ -20,7 +20,7 @@ export default async function OpsCases() {
           <li key={k.id} className="card grid gap-2 p-5">
             <p className="font-semibold">{k.full_name} · {k.child_safety ? "Child safety (suspended)" : `notice until ${new Date(k.notice_until).toLocaleDateString("en-IN")}`}</p>
             <p className="text-sm">Reasons: {k.reasons}</p>
-            <p className="text-sm text-muted">Fellow&apos;s response: {k.responses ? k.responses.join(" / ") : "none yet"}</p>
+            <p className="text-sm text-muted">Fellow&apos;s response: {k.responses_text ?? "none yet"}</p>
             <div className="max-w-lg"><JsonForm compact url={`/api/ops/cases/${k.id}/decide`} submit="Record decision" fields={[
               { name: "decision", label: "Decision", type: "select", options: [["reinstated", "Reinstate / no action"], ["removed", k.notice_over || k.child_safety ? "Remove" : "Remove (available after notice)"]] },
               { name: "enquiryNotes", label: "Enquiry notes", type: "textarea" },

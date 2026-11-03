@@ -10,7 +10,7 @@ export default async function OpsPayouts() {
   const { account } = await appContext("/app/ops/payouts");
   if (account.role !== "ops") notFound();
   const d = await system(async (c) => ({
-    unpaid: (await c.query("SELECT coalesce(sum(net_paise),0)::int AS net, count(DISTINCT fellow_id)::int AS fellows FROM earnings_lines WHERE payout_id IS NULL")).rows[0],
+    unpaid: (await c.query("SELECT coalesce(sum(net_paise),0) AS net, count(DISTINCT fellow_id) AS fellows FROM earnings_lines WHERE payout_id IS NULL")).rows[0],
     payouts: (await c.query("SELECT p.*, f.full_name FROM payouts p JOIN fellows f ON f.account_id = p.fellow_id ORDER BY p.status = 'paid', p.created_at DESC LIMIT 100")).rows,
   }));
   const lastSunday = new Date(); lastSunday.setDate(lastSunday.getDate() - ((lastSunday.getDay() + 7) % 7 || 7));

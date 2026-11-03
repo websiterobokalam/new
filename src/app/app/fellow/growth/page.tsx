@@ -9,7 +9,7 @@ export default async function Growth() {
   const { account, fellow } = await fellowContext("/app/fellow/growth");
   const { m, hours } = await asAccount(account, async (c) => ({
     m: await metrics(c, account.id),
-    hours: (await c.query("SELECT coalesce(sum(g.duration_min),0)::int AS m FROM gig_assignments ga JOIN gigs g ON g.id = ga.gig_id WHERE ga.fellow_id = $1 AND ga.status = 'delivered'", [account.id])).rows[0].m / 60,
+    hours: (await c.query("SELECT coalesce(sum(g.duration_min),0) AS m FROM gig_assignments ga JOIN gigs g ON g.id = ga.gig_id WHERE ga.fellow_id = $1 AND ga.status = 'delivered'", [account.id])).rows[0].m / 60,
   }));
   const pct = (v: number | null) => (v === null ? "—" : `${Math.round(v * 100)}%`);
   return (

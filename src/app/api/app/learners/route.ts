@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { body, handler, HttpError, ok, requireAccount } from "@/lib/api";
 import { asAccount } from "@/lib/auth/session";
+import { uuid } from "@/lib/db";
 import { getNotice, recordConsents, REQUIRED, PURPOSES } from "@/lib/learn/consent";
 import { hashIp } from "@/lib/providers";
 import { clientIp } from "@/lib/rateLimit";
@@ -22,7 +23,8 @@ export const POST = handler(async (req) => {
   const id = await asAccount(a, async (c) => {
     const notice = await getNotice(c, a.language);
     if (notice.id !== b.noticeId) throw new HttpError(409, "The notice was updated. Please read it again.");
-    const { rows } = await c.query("INSERT INTO learners (guardian_account_id, first_name, age_band, interests) VALUES ($1,$2,$3,$4) RETURNING id", [a.id, b.firstName, b.ageBand, b.interests]);
+    const rows = [{ id: uuid() }];
+    await c.query("INSERT INTO learners (id, guardian_account_id, first_name, age_band, interests) VALUES ($1,$2,$3,$4,$5)", [rows[0].id, a.id, b.firstName, b.ageBand, b.interests]);
     await recordConsents(c, a.id, rows[0].id, notice, b.consents, { ipHash: hashIp(clientIp(req)), userAgent: req.headers.get("user-agent") ?? "", declaredAt: new Date().toISOString() });
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id) VALUES ($1,'learner_created','learner',$2)", [a.id, rows[0].id]);
     return rows[0].id as string;

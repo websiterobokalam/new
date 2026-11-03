@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { body, handler, limit, ok } from "@/lib/api";
 import { currentAccount } from "@/lib/auth/session";
-import { tx } from "@/lib/db";
+import { tx, uuid } from "@/lib/db";
 
 /** Target response time for the Safeguarding Lead. Placeholder until the named Lead confirms it. */
 const RESPOND_HOURS = Number(process.env.SAFEGUARDING_RESPONSE_HOURS ?? 24);
@@ -16,9 +16,12 @@ export const POST = handler(async (req) => {
     learnerId: z.string().uuid().optional(),
   }));
   const r = await tx({ accountId: a?.id, role: a?.role }, async (c) => {
-    const { rows } = await c.query(
-      "INSERT INTO safety_reports (reporter_account_id, learner_id, page, category, details, respond_by) VALUES ($1,$2,$3,$4,$5, now() + $6 * interval '1 hour') RETURNING id, respond_by",
-      [a?.id ?? null, b.learnerId ?? null, b.page, b.category, b.details, RESPOND_HOURS],
+    // A learner id is only recorded if it belongs to the reporter.
+    const learnerId = b.learnerId && a ? ((await c.query("SELECT id FROM learners WHERE id = $1 AND guardian_account_id = $2", [b.learnerId, a.id])).rows[0]?.id ?? null) : null;
+    const rows = [{ id: uuid(), respond_by: new Date(Date.now() + RESPOND_HOURS * 3600_000) }];
+    await c.query(
+      "INSERT INTO safety_reports (id, reporter_account_id, learner_id, page, category, details, respond_by) VALUES ($1,$2,$3,$4,$5,$6,$7)",
+      [rows[0].id, a?.id ?? null, learnerId, b.page, b.category, b.details, rows[0].respond_by],
     );
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,'safety_report','safety_report',$2,$3)", [a?.id ?? null, rows[0].id, { category: b.category }]);
     return rows[0];

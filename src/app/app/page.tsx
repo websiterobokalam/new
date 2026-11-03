@@ -4,27 +4,30 @@ import { asAccount } from "@/lib/auth/session";
 import { loadJourney, plainProgress } from "@/lib/learn/journey";
 import { currentConsents, hasRequired } from "@/lib/learn/consent";
 import { MessageEducator, ReviewForm } from "@/components/app/Messaging";
+import { FELLOW_PROFILES } from "@/lib/fellows/profiles";
 
 export const metadata = { title: "Family home" };
 
 export default async function FamilyHome() {
   const { account, locale, t } = await appContext("/app");
   const data = await asAccount(account, async (c) => {
-    const learners = (await c.query("SELECT id, first_name, age_band, interests FROM learners WHERE erased_at IS NULL ORDER BY created_at")).rows;
+    const learners = (await c.query("SELECT id, first_name, age_band, interests FROM learners WHERE guardian_account_id = $1 AND erased_at IS NULL ORDER BY created_at", [account.id])).rows;
     const withProgress = await Promise.all(learners.map(async (l) => {
       const nodes = await loadJourney(c, l);
       return { ...l, summary: plainProgress(l.first_name, nodes), built: nodes.filter((n) => n.state === "built").length, total: nodes.length, ready: hasRequired(await currentConsents(c, l.id)) };
     }));
     const upcoming = (await c.query(
       `SELECT bk.id, bk.status, l.first_name, co.title, co.kind, b.starts_at, b.mode, b.location, coalesce(fp.display_name, b.educator_label) AS educator_label, fp.id AS fellow_id
-       FROM bookings bk JOIN learners l ON l.id = bk.learner_id JOIN batches b ON b.id = bk.batch_id JOIN courses co ON co.id = b.course_id LEFT JOIN fellow_profiles fp ON fp.id = b.educator_fellow_id
-       WHERE b.starts_at > now() - interval '2 hours' AND bk.status IN ('confirmed','pending_payment') ORDER BY b.starts_at`,
+       FROM bookings bk JOIN learners l ON l.id = bk.learner_id JOIN batches b ON b.id = bk.batch_id JOIN courses co ON co.id = b.course_id LEFT JOIN (${FELLOW_PROFILES}) fp ON fp.id = b.educator_fellow_id
+       WHERE bk.guardian_account_id = $1 AND b.starts_at > now() - INTERVAL 2 HOUR AND bk.status IN ('confirmed','pending_payment') ORDER BY b.starts_at`,
+      [account.id],
     )).rows;
     const past = (await c.query(
       `SELECT bk.id, bk.status, bk.feedback, bk.next_step, l.first_name, co.title, b.starts_at, b.educator_fellow_id IS NOT NULL AS has_fellow,
               EXISTS (SELECT 1 FROM reviews r WHERE r.booking_id = bk.id) AS reviewed
        FROM bookings bk JOIN learners l ON l.id = bk.learner_id JOIN batches b ON b.id = bk.batch_id JOIN courses co ON co.id = b.course_id
-       WHERE b.starts_at <= now() - interval '2 hours' ORDER BY b.starts_at DESC LIMIT 10`,
+       WHERE bk.guardian_account_id = $1 AND b.starts_at <= now() - INTERVAL 2 HOUR ORDER BY b.starts_at DESC LIMIT 10`,
+      [account.id],
     )).rows;
     return { learners: withProgress, upcoming, past };
   });

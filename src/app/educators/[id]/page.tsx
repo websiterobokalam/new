@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { anon } from "@/lib/db";
 import { KalamBot } from "@/components/art/Small";
 import { DbDown } from "@/components/app/DbDown";
+import { FELLOW_PROFILES } from "@/lib/fellows/profiles";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false } };
@@ -17,7 +18,7 @@ export default async function EducatorProfile({ params }: { params: Promise<{ id
   let d;
   try {
     d = await anon(async (c) => {
-      const p = (await c.query("SELECT * FROM fellow_profiles WHERE id = $1", [id])).rows[0];
+      const p = (await c.query(`SELECT * FROM (${FELLOW_PROFILES}) fp WHERE fp.id = $1`, [id])).rows[0];
       if (!p) return null;
       const reviews = (await c.query("SELECT rating, body, created_at FROM reviews WHERE fellow_id = $1 AND NOT hidden ORDER BY created_at DESC LIMIT 10", [id])).rows;
       return { p, reviews };
