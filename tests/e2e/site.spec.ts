@@ -78,11 +78,10 @@ test("fellow application: phone first, then profile with an 18+ gate", async ({ 
   await expect(page.getByText("No fees, ever.")).toBeVisible();
 });
 
-test("login: school OTP is honest that accounts are not live yet", async ({ page }) => {
+test("login: the school door explains that staff are added by their school", async ({ page }) => {
   await page.goto("/login/school");
-  await page.getByLabel(/mobile number/).fill("9876543210");
-  await page.getByRole("button", { name: "Send OTP" }).click();
-  await expect(page.getByRole("status").filter({ hasText: "open in a later phase" })).toBeVisible();
+  await expect(page.getByText("Your school admin adds you first.")).toBeVisible();
+  await expect(page.getByLabel("Staff mobile number")).toBeVisible();
 });
 
 test("legacy URL 301s to the new page", async ({ request }) => {

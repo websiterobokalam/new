@@ -5,7 +5,7 @@
 import mysql from "mysql2/promise";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { seedBase, seedSample } from "../db/seed/seed.mjs";
+import { seedBase, seedSample, seedSampleSchool } from "../db/seed/seed.mjs";
 import { hardening } from "../db/hardening.mjs";
 
 // --on-start: run automatically before `next start` (Hostinger). Never blocks the
@@ -61,7 +61,7 @@ try {
     try { await c.query(sql); } catch (e) { skipped++; if (skipped === 1) console.warn(`hardening triggers not installed (${e.code ?? e.message}); app-level rules still apply`); }
   }
   await seedBase(c, root);
-  if (sample) { await seedSample(c); console.log("sample fixtures loaded"); }
+  if (sample) { await seedSample(c); await seedSampleSchool(c); console.log("sample fixtures loaded"); }
   console.log("ok");
 } catch (e) {
   console.error(`[migrate] ${e.message}`);

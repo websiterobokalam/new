@@ -107,3 +107,22 @@ export async function seedSample(c) {
       [randomUUID(), k, t, w, istAt(d, 15), m, loc, adult, rate[k]]);
   }
 }
+
+/** SAMPLE partner school for review logins: admin 9000000101, trainer 9000000102 (test OTP only). */
+export async function seedSampleSchool(c) {
+  const [[have]] = await c.query("SELECT id FROM schools WHERE name = 'Sample Partner School (sample)'");
+  if (have) return;
+  const school = randomUUID(), lab = randomUUID(), admin = randomUUID(), trainer = randomUUID();
+  await c.query("INSERT INTO schools (id, name, city, board, sla_hours, aadhya_tenant, erp_school_ref) VALUES (?,?,?,?,72,?,?)", [school, "Sample Partner School (sample)", "Hyderabad", "CBSE", "sample-tenant", "sample-erp"]);
+  for (const [id, phone, role, name] of [[admin, "+919000000101", "school_admin", "Lakshmi (sample admin)"], [trainer, "+919000000102", "trainer", "Imran (sample trainer)"]]) {
+    await c.query("INSERT IGNORE INTO accounts (id, phone_e164, role, display_name, adult_declared_at) VALUES (?,?,?,?, UTC_TIMESTAMP(3))", [id, phone, role, name]);
+    await c.query("INSERT IGNORE INTO school_staff (account_id, school_id, role, display_name) VALUES (?,?,?,?)", [id, school, role, name]);
+  }
+  await c.query("INSERT INTO labs (id, school_id, name, room, installed_on) VALUES (?,?,?,?, UTC_DATE())", [lab, school, "21C STEM & AI Lab", "Block B, first floor"]);
+  for (let i = 1; i <= 12; i++) await c.query("INSERT INTO lab_assets (id, lab_id, kind, label) VALUES (?,?,?,?)", [randomUUID(), lab, "kit", `ASHAER pack #${i}`]);
+  for (let i = 1; i <= 6; i++) await c.query("INSERT INTO lab_assets (id, lab_id, kind, label) VALUES (?,?,?,?)", [randomUUID(), lab, "device", `Laptop #${i}`]);
+  for (const [label, grade, world, weekday, time, ref] of [["Grade 6 B", 6, "robotics", 1, "10:00", "6B"], ["Grade 8 A", 8, "coding", 3, "11:30", "8A"], ["Grade 7 A", 7, "iot", 5, "09:15", null]]) {
+    await c.query("INSERT INTO school_classes (id, school_id, lab_id, label, grade, world, weekday, start_time, duration_min, students, trainer_account_id, erp_class_ref) VALUES (?,?,?,?,?,?,?,?,45,30,?,?)",
+      [randomUUID(), school, lab, label, grade, world, weekday, time, trainer, ref]);
+  }
+}

@@ -83,3 +83,37 @@ export async function staffPage(browser: import("@playwright/test").Browser, rol
   await ownerQuery("UPDATE accounts SET role = $2 WHERE phone_e164 = $1", ["+91" + phone, role]);
   return p;
 }
+
+/** Sign in at the school door (staff only). */
+export async function loginSchool(page: Page, phone: string, landing = /\/app\/(school|trainer)$/) {
+  await page.goto("/login/school");
+  await page.getByLabel("Staff mobile number").fill(phone);
+  await page.getByRole("button", { name: "Send OTP" }).click();
+  await page.getByLabel("6-digit code").fill("123456");
+  await page.getByRole("button", { name: "Verify and continue" }).click();
+  await expect(page).toHaveURL(landing);
+}
+
+/** Test setup: a school with an admin, a trainer, a lab, equipment and one ERP-linked class. */
+export async function makeSchool(opts: { slaHours?: number; erp?: boolean } = {}) {
+  const tag = randomUUID().slice(0, 6);
+  const s = { schoolId: newId(), labId: newId(), adminId: newId(), trainerId: newId(), classId: newId(), assetId: newId(), adminPhone: randomPhone(), trainerPhone: randomPhone(), name: `Test School ${tag}` };
+  await ownerQuery("INSERT INTO schools (id, name, city, sla_hours, aadhya_tenant, erp_school_ref) VALUES ($1,$2,'Hyderabad',$3,$4,$5)",
+    [s.schoolId, s.name, opts.slaHours ?? 72, opts.erp === false ? null : `t-${tag}`, opts.erp === false ? null : `erp-${tag}`]);
+  for (const [id, phone, role, name] of [[s.adminId, s.adminPhone, "school_admin", `Asha ${tag}`], [s.trainerId, s.trainerPhone, "trainer", `Tarun ${tag}`]]) {
+    await ownerQuery("INSERT INTO accounts (id, phone_e164, role, display_name) VALUES ($1,$2,$3,$4)", [id, "+91" + phone, role, name]);
+    await ownerQuery("INSERT INTO school_staff (account_id, school_id, role, display_name) VALUES ($1,$2,$3,$4)", [id, s.schoolId, role, name]);
+  }
+  await ownerQuery("INSERT INTO labs (id, school_id, name) VALUES ($1,$2,$3)", [s.labId, s.schoolId, `Lab ${tag}`]);
+  await ownerQuery("INSERT INTO lab_assets (id, lab_id, kind, label) VALUES ($1,$2,'robot',$3)", [s.assetId, s.labId, `Rover ${tag}`]);
+  await ownerQuery("INSERT INTO school_classes (id, school_id, lab_id, label, grade, world, weekday, start_time, duration_min, students, trainer_account_id, erp_class_ref) VALUES ($1,$2,$3,$4,6,'robotics',1,'10:00',45,30,$5,$6)",
+    [s.classId, s.schoolId, s.labId, `Grade 6 ${tag}`, s.trainerId, opts.erp === false ? null : `c-${tag}`]);
+  return s;
+}
+
+/** A class session that started a few minutes ago, so it can be recorded. */
+export async function startedSession(classId: string) {
+  const id = newId();
+  await ownerQuery("INSERT INTO class_sessions (id, class_id, starts_at) VALUES ($1,$2, UTC_TIMESTAMP(3) - INTERVAL 10 MINUTE)", [id, classId]);
+  return id;
+}

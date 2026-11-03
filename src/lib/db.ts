@@ -100,7 +100,26 @@ function wrap(conn: mysql.PoolConnection): Tx {
   };
 }
 
+const isDeadlock = (e: unknown) => { const x = e as { errno?: number; code?: string; cause?: { errno?: number } }; return x?.errno === 1213 || x?.code === "ER_LOCK_DEADLOCK" || x?.code === "40001" || x?.cause?.errno === 1213; };
+
+/**
+ * Run fn in one transaction. InnoDB can pick a transaction as a deadlock
+ * victim under concurrent writes (for example two OTP sends at once); the
+ * right response is to retry the whole transaction, so we do, up to 3 times.
+ * Keep non-database side effects out of fn.
+ */
 export async function tx<T>(ctx: Ctx, fn: (c: Tx) => Promise<T>): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await txOnce(ctx, fn);
+    } catch (e) {
+      if (attempt >= 3 || !isDeadlock(e)) throw e;
+      await new Promise((r) => setTimeout(r, 20 * attempt + Math.random() * 30));
+    }
+  }
+}
+
+async function txOnce<T>(ctx: Ctx, fn: (c: Tx) => Promise<T>): Promise<T> {
   let conn: mysql.PoolConnection;
   try {
     conn = await pool().getConnection();

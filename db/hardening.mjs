@@ -4,7 +4,7 @@
  * binary logging is on; the migration then warns and carries on, and the
  * app-level rules (and their tests) still apply.
  */
-const appendOnly = ["consent_events", "audit_log", "ledger_journals", "ledger_postings", "terms_acceptances"];
+const appendOnly = ["consent_events", "audit_log", "ledger_journals", "ledger_postings", "terms_acceptances", "hardware_ticket_events"];
 
 export const hardening = [
   ...appendOnly.flatMap((t) => [

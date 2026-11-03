@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import { post } from "./client";
 
@@ -13,6 +13,10 @@ export function JsonForm({ url, fields, submit, fixed = {}, redirect, done, tone
   url: string; fields: FieldDef[]; submit: string; fixed?: Record<string, unknown>; redirect?: string; done?: string; tone?: "primary" | "danger"; compact?: boolean;
 }) {
   const router = useRouter();
+  const uid = useId();
+  // Until hydration the browser would submit natively (a GET with every field in the URL). Never allow that.
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string }>();
   const [errs, setErrs] = useState<Record<string, string>>({});
@@ -37,9 +41,9 @@ export function JsonForm({ url, fields, submit, fixed = {}, redirect, done, tone
   }
 
   return (
-    <form onSubmit={onSubmit} className={`grid ${compact ? "gap-2" : "gap-4"}`} noValidate>
+    <form onSubmit={onSubmit} method="post" action="#" className={`grid ${compact ? "gap-2" : "gap-4"}`} noValidate>
       {fields.map((f) => {
-        const id = `${url}-${f.name}`.replace(/[^\w-]/g, "_");
+        const id = `${uid}-${f.name}`.replace(/[^\w-]/g, "_");
         const err = errs[f.name];
         if (f.type === "checkbox") return (
           <label key={f.name} className="flex items-start gap-3 text-sm"><input id={id} name={f.name} type="checkbox" defaultChecked={!!f.defaultValue} className="mt-0.5 h-5 w-5 accent-[var(--color-navy)]" /><span>{f.label}</span></label>
@@ -56,7 +60,7 @@ export function JsonForm({ url, fields, submit, fixed = {}, redirect, done, tone
         );
       })}
       {msg && <p role={msg.ok ? "status" : "alert"} className={`text-sm font-semibold ${msg.ok ? "text-heading" : "text-[#b42318] dark:text-[#ff8a80]"}`}>{msg.text}</p>}
-      <button className={`btn justify-self-start ${tone === "danger" ? "bg-[#b42318] text-white" : "btn-primary"} ${compact ? "!min-h-10 text-sm" : ""}`} disabled={busy}>{busy ? "…" : submit}</button>
+      <button className={`btn justify-self-start ${tone === "danger" ? "bg-[#b42318] text-white" : "btn-primary"} ${compact ? "!min-h-10 text-sm" : ""}`} disabled={busy || !ready}>{busy ? "…" : submit}</button>
     </form>
   );
 }
