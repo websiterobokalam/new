@@ -39,7 +39,7 @@
   --font-sans: var(--font-instrument), var(--font-anek-te), var(--font-anek-hi), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
-  --radius-card: 1.5rem;
+  --radius-card: 0.9rem;
   --shadow-soft: 0 1px 2px rgb(11 65 104 / 0.06), 0 12px 32px -12px rgb(11 65 104 / 0.18);
   --shadow-lift: 0 2px 4px rgb(11 65 104 / 0.08), 0 28px 60px -20px rgb(11 65 104 / 0.3);
 
@@ -131,7 +131,7 @@
   /* On phones the Kalam Line runs down the left edge: give content room. */
   @media (max-width: 767px) { .has-line .wrap { padding-left: 2.25rem; } }
 
-  .eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--link); }
+  .eyebrow { font-family: var(--font-sans); font-size: 0.95rem; font-weight: 600; letter-spacing: 0; color: var(--link); }
   .display-xl { font-size: clamp(2.6rem, 7vw, 5.6rem); line-height: 0.98; font-weight: 700; }
   .display-lg { font-size: clamp(2rem, 4.6vw, 3.6rem); line-height: 1.04; font-weight: 700; }
   .display-md { font-size: clamp(1.5rem, 3vw, 2.25rem); line-height: 1.1; font-weight: 650; }
@@ -181,6 +181,26 @@
   }
   .chip[aria-pressed="true"], .chip[aria-current="true"], .chip:has(input:checked) { border-color: var(--btn); background: var(--btn); color: var(--btn-fg); }
   .chip:has(input:focus-visible) { outline: 3px solid var(--color-navy); outline-offset: 2px; }
+
+  /* ---- Home hero: the lab notebook ---- */
+  .hero-title { font-size: clamp(2.35rem, 5.4vw, 4.4rem); line-height: 1.04; font-weight: 700; letter-spacing: -0.03em; max-width: 14ch; }
+  .btn-square { border-radius: 0.6rem; box-shadow: none; }
+  .btn-square:hover { box-shadow: none; transform: translateY(-1px); }
+  .notebook {
+    --ink-pen: #1d3a8a; --ink-note: #1d3a8a;
+    background-color: #fffdf6;
+    background-image: linear-gradient(#d9e8f2 1px, transparent 1px), linear-gradient(90deg, #d9e8f2 1px, transparent 1px);
+    background-size: 22px 22px; background-position: -1px -1px;
+    box-shadow: 0 1px 0 #e9e4d6, 0 18px 40px -24px rgb(11 43 61 / 0.45);
+    color: var(--ink-note);
+  }
+  .hand, .hand-svg { font-family: var(--font-hand), "Comic Sans MS", cursive; font-weight: 500; }
+  .hand { color: var(--ink-note); line-height: 1.2; }
+  .code-card { background: #fff; color: #0b2b3d; border: 1px solid #e5e1d4; box-shadow: 0 10px 24px -18px rgb(11 43 61 / 0.6); }
+  .code-cm { color: #56697a; }
+  .code-kw { color: #0B4168; font-weight: 700; }
+  .code-num { color: #a3560a; }
+  .tape { position: absolute; width: 64px; height: 22px; background: rgb(247 162 28 / 0.32); border-left: 1px dashed rgb(0 0 0 / 0.06); border-right: 1px dashed rgb(0 0 0 / 0.06); }
 }
 
 /* ---------- Motion system ---------- */
@@ -263,3 +283,12 @@
 
 /* Telugu and Hindi: no letter-spacing or forced uppercase mono on labels (breaks conjuncts) */
 :lang(te) .eyebrow, :lang(hi) .eyebrow { font-family: var(--font-sans); letter-spacing: 0; text-transform: none; font-size: 0.85rem; }
+
+/* Dark theme: the notebook page becomes a blueprint sheet. */
+[data-theme="dark"] .notebook {
+  --ink-pen: #e3eff5; --ink-note: #f3c46b;
+  background-color: #0c2a44;
+  background-image: linear-gradient(rgb(255 255 255 / 0.07) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.07) 1px, transparent 1px);
+  box-shadow: 0 18px 40px -20px rgb(0 0 0 / 0.8);
+}
+[data-theme="dark"] .code-card { background: #f6f3ea; }
