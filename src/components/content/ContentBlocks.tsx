@@ -146,6 +146,11 @@ function BlockView({ b }: { b: Block }) {
   }
 }
 
+/** Just the blocks of a page, for pages that build their own top. */
+export function Blocks({ blocks }: { blocks: Block[] }) {
+  return <div className="grid gap-12">{blocks.map((b, i) => <BlockView key={i} b={b} />)}</div>;
+}
+
 export function ContentPageView({ page }: { page: ContentPage }) {
   const toc = page.legal ? page.blocks.filter((b): b is Extract<Block, { kind: "prose" }> => b.kind === "prose" && !!b.id && !!b.heading) : [];
   return (

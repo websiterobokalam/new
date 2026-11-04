@@ -19,6 +19,14 @@ const FOOTER: Record<Category, string> = {
 const rows = (r: [string, string | null | undefined][]) => ({ rows: r.filter(([, v]) => v != null && v !== "") as [string, string][] });
 
 export const TEMPLATES = {
+  event_registered: { category: "transactional", render: (p) => ({
+    subject: `Registered: ${p.title}`, heading: "You're registered",
+    blocks: [rows([["Event", p.title], ["Who", p.names], ["When", p.when], ["Where", p.where]]), { cta: { label: "Event details", href: p.link } }, { note: `Add it to your calendar: ${p.calendar}. Can't make it? Cancel from the event page so someone else can have the place.` }],
+  }) },
+  event_cancelled: { category: "transactional", render: (p) => ({
+    subject: `Cancelled: ${p.title}`, heading: "This event is cancelled",
+    blocks: [{ p: `We're sorry: ${p.title} on ${p.when} is cancelled.` }, { p: `Why: ${p.reason}` }, { cta: { label: "See other events", href: "/events" } }],
+  }) },
   enquiry_ack: { category: "transactional", render: (p) => ({
     subject: `We got your message (${p.ref})`, heading: "Thanks, we've got your message",
     blocks: [{ p: `Hi ${p.name}, thanks for writing to Robokalam about ${String(p.topic).toLowerCase()}. Your reference is ${p.ref}.` }, { p: "Someone from the right team will reply by email, usually within one working day (Monday to Saturday)." }, { note: "Reply to this email if you want to add anything." }],
