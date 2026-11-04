@@ -16,7 +16,7 @@ The site uses **MySQL 8.0.16+ or MariaDB 10.6+**, which is what Hostinger's hPan
    Notes on `DATABASE_URL`:
    - Use the host hPanel shows for the database. On the same Hostinger account that's usually `localhost`.
    - If the password contains `@ : / # ? %`, URL-encode it (for example, `@` becomes `%40`), or choose one without those characters.
-3. **Deploy.** The start command (`npm start`) runs `scripts/migrate.mjs --on-start` before the site starts. It creates the tables on the first start and adds new ones after later updates. You don't need to run anything by hand. Check the runtime logs for `applied 001_core.sql`, `applied 002_fellows.sql`, `ok`.
+3. **Deploy.** Set the Node.js app's **entry file** to `server.mjs` (see [HOSTINGER.md](HOSTINGER.md)). It runs `scripts/migrate.mjs --on-start` before the site starts. It creates the tables on the first start and adds new ones after later updates. You don't need to run anything by hand. Check the runtime logs for `applied 001_core.sql`, `applied 002_fellows.sql`, `ok`.
 4. **Check it worked.**
    - `/courses` loads (instead of "We can't load this right now").
    - In hPanel → **phpMyAdmin** you can see tables such as `courses`, `consent_notices` and `fellows`.
