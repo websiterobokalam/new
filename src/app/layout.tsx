@@ -12,24 +12,25 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: { default: "Robokalam: AI, software and labs for future-ready schools", template: "%s | Robokalam" },
   description:
-    "Robokalam, Literature of Technologies, is an EdTech technology company. The AADHYA AI learning platform, 21cschool ERP, turnkey 21C STEM & AI labs and curriculum for premium schools, plus live classes for learners from age 6 and Kalamites for college students who teach.",
+    "Robokalam is an EdTech technology company in Hyderabad: the AADHYA AI platform, 21cschool ERP, turnkey STEM & AI labs and curriculum for schools, and live robotics, coding and AI classes for kids from age 6 in Hyderabad, Warangal and across India.",
+  keywords: ["Robokalam", "robotics classes for kids Hyderabad", "coding classes Hyderabad", "AI classes for kids", "STEM lab for schools Hyderabad", "robotics lab Warangal", "STEM education Telangana", "EdTech company Hyderabad", "21C STEM & AI lab", "AADHYA AI platform"],
+  category: "education",
+  other: { "geo.region": "IN-TG", "geo.placename": "Hyderabad", "geo.position": "17.4474;78.3762", ICBM: "17.4474, 78.3762" },
+  twitter: { card: "summary_large_image", images: ["/og.png"] },
   applicationName: "Robokalam",
   manifest: "/manifest.webmanifest",
-  openGraph: { siteName: "Robokalam", type: "website", locale: "en_IN" },
+  openGraph: { siteName: "Robokalam", type: "website", locale: "en_IN", images: [{ url: "/og.png", width: 1200, height: 630, alt: "Robokalam: AI, software and labs for future-ready schools" }] },
   icons: { icon: [{ url: "/favicon-32.png", sizes: "32x32", type: "image/png" }, { url: "/icon-192.png", sizes: "192x192", type: "image/png" }], apple: "/icon-192.png" },
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F2F6FF" },
-    { media: "(prefers-color-scheme: dark)", color: "#070B14" },
-  ],
+  themeColor: "#F2F6FF",
   width: "device-width",
   initialScale: 1,
 };
 
-/** Runs before paint: sets theme and marks JS so motion-hidden states apply. */
-const bootScript = `(function(){try{var d=document.documentElement;d.classList.remove('no-js');d.classList.add('js');var t=localStorage.getItem('rk-theme');if(t==='light'||t==='dark'){d.setAttribute('data-theme',t)}else if(matchMedia('(prefers-color-scheme: dark)').matches){d.setAttribute('data-theme','dark')}}catch(e){}})();`;
+/** Runs before paint: light theme unless the visitor chose dark in the footer; marks JS so motion-hidden states apply. */
+const bootScript = `(function(){try{var d=document.documentElement;d.classList.remove('no-js');d.classList.add('js');d.setAttribute('data-theme','light');if(localStorage.getItem('rk-theme')==='dark'){d.setAttribute('data-theme','dark')}}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

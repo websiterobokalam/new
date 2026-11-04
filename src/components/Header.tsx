@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { Wordmark } from "./Logo";
-import { ThemeToggle } from "./ThemeToggle";
 import { RegionPicker } from "./RegionPicker";
 import { AccountLink } from "./AccountLink";
+import { SmartLink } from "./SmartLink";
+import { EXTERNAL } from "@/content/company";
 
 // Schools first: Robokalam leads as a technology partner for schools.
 const nav = [
@@ -14,6 +15,8 @@ const nav = [
 const small = [
   { href: "/partners", label: "Partners" },
   { href: "/studio", label: "Studio" },
+  { href: EXTERNAL.shop.href, label: "Shop" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export function Header() {
@@ -29,26 +32,30 @@ export function Header() {
               {n.label}
             </Link>
           ))}
-          <span className="mx-2 h-5 w-px bg-line" aria-hidden />
+          <span className="mx-2 hidden h-5 w-px bg-line lg:block" aria-hidden />
           {small.map((n) => (
-            <Link key={n.href} href={n.href} className="rounded-full px-3 py-2 text-sm text-muted hover:text-heading">
+            <SmartLink key={n.href} href={n.href} className="hidden rounded-full px-3 py-2 text-sm text-muted hover:text-heading lg:inline-flex">
               {n.label}
-            </Link>
+            </SmartLink>
           ))}
         </nav>
         <div className="flex items-center gap-1.5">
           <RegionPicker />
-          <ThemeToggle />
           <AccountLink />
-          <details className="relative md:hidden">
+          <details className="relative lg:hidden">
             <summary className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-line bg-surface" aria-label="Menu">
               <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
             </summary>
             <nav aria-label="Mobile menu" className="card absolute right-0 top-12 grid w-56 gap-1 p-2">
-              {[...nav, ...small].map((n) => (
-                <Link key={n.href} href={n.href} className="rounded-xl px-4 py-3 font-semibold text-heading hover:bg-panel">
+              {nav.map((n) => (
+                <Link key={n.href} href={n.href} className="rounded-xl px-4 py-3 font-semibold text-heading hover:bg-panel md:hidden">
                   {n.label}
                 </Link>
+              ))}
+              {small.map((n) => (
+                <SmartLink key={n.href} href={n.href} className="rounded-xl px-4 py-3 font-semibold text-heading hover:bg-panel">
+                  {n.label}
+                </SmartLink>
               ))}
             </nav>
           </details>

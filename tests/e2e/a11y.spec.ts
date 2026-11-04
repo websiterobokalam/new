@@ -6,6 +6,7 @@ for (const theme of ["light", "dark"] as const) {
   for (const path of ["/", "/learn", "/21c-lab", "/21c-lab/planner", "/kalamites", "/kalamites/apply", "/login/learner", "/campus-ambassadors", "/one-to-one"]) {
     test(`a11y ${theme} ${path}`, async ({ page }) => {
       await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+      if (theme === "dark") await page.addInitScript(() => { try { localStorage.setItem("rk-theme", "dark"); } catch {} });
       await page.goto(path);
       await page.waitForTimeout(400);
       const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
@@ -19,6 +20,7 @@ for (const theme of ["light", "dark"] as const) {
 for (const theme of ["light", "dark"] as const) {
   test(`a11y ${theme} public Phase 2 pages`, async ({ page }) => {
     await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+    if (theme === "dark") await page.addInitScript(() => { try { localStorage.setItem("rk-theme", "dark"); } catch {} });
     for (const path of ["/courses", "/courses/robo-ashaers-junior-l1", "/learn/build-session"]) {
       await page.goto(path);
       const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
@@ -29,6 +31,7 @@ for (const theme of ["light", "dark"] as const) {
 
   test(`a11y ${theme} logged-in app`, async ({ page }) => {
     await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+    if (theme === "dark") await page.addInitScript(() => { try { localStorage.setItem("rk-theme", "dark"); } catch {} });
     await login(page);
     const id = await addLearner(page, "Nila");
     for (const path of ["/app", `/app/learners/${id}`, `/app/learners/${id}/space`, "/app/consent", "/app/orders", "/app/email"]) {
@@ -44,6 +47,7 @@ for (const theme of ["light", "dark"] as const) {
   test(`a11y ${theme} Kalamite app and ops`, async ({ page, browser }) => {
     test.setTimeout(90_000);
     await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+    if (theme === "dark") await page.addInitScript(() => { try { localStorage.setItem("rk-theme", "dark"); } catch {} });
     const phone = await applyAsFellow(page);
     const check = async (p: import("@playwright/test").Page, path: string) => {
       await p.goto(path);
@@ -56,6 +60,7 @@ for (const theme of ["light", "dark"] as const) {
     for (const path of ["/app/fellow", "/app/fellow/gigs", "/app/fellow/earnings", "/app/fellow/growth", "/app/fellow/support", "/app/messages", "/kalamite-terms", "/kalamites/apply"]) await check(page, path);
     const ops = await staffPage(browser, "ops");
     await ops.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+    if (theme === "dark") await ops.addInitScript(() => { try { localStorage.setItem("rk-theme", "dark"); } catch {} });
     for (const path of ["/app/ops/fellows", "/app/ops/gigs", "/app/ops/payouts", "/app/ops/cases"]) await check(ops, path);
   });
 }
@@ -73,6 +78,7 @@ for (const theme of ["light", "dark"] as const) {
     );
     const check = async (p: import("@playwright/test").Page, paths: string[]) => {
       await p.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+      if (theme === "dark") await p.addInitScript(() => { try { localStorage.setItem("rk-theme", "dark"); } catch {} });
       for (const path of paths) {
         await p.goto(path);
         const r = await new AxeBuilder({ page: p }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
@@ -97,6 +103,7 @@ for (const theme of ["light", "dark"] as const) {
     test.setTimeout(60_000);
     const check = async (p: import("@playwright/test").Page, paths: string[]) => {
       await p.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+      if (theme === "dark") await p.addInitScript(() => { try { localStorage.setItem("rk-theme", "dark"); } catch {} });
       for (const path of paths) {
         await p.goto(path);
         const r = await new AxeBuilder({ page: p }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();

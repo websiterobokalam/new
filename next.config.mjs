@@ -21,6 +21,10 @@ const config = {
       ...legacyRedirects.map((r) => ({ source: r.from, destination: r.to, statusCode: 301 })),
       // Kalam Fellows are now Kalamites. Old links keep working.
       { source: "/fellows", destination: "/kalamites", statusCode: 301 },
+      { source: "/stories", destination: "/blog", statusCode: 301 },
+      { source: "/blogs.html", destination: "/blog", statusCode: 301 },
+      { source: "/hyderabad", destination: "/locations/hyderabad", statusCode: 301 },
+      { source: "/warangal", destination: "/locations/warangal", statusCode: 301 },
       { source: "/fellows/:path*", destination: "/kalamites/:path*", statusCode: 301 },
       { source: "/fellow-terms", destination: "/kalamite-terms", statusCode: 301 },
     ];

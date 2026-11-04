@@ -63,7 +63,7 @@ test("paid course: fee with GST shown before payment, mock payment, invoice, bal
   await addLearner(page, "Diya", "9-11");
   await page.goto("/courses?world=robotics");
   await page.getByRole("link", { name: "See times" }).first().click();
-  await page.getByRole("link", { name: "Book" }).first().click();
+  await page.getByRole("main").getByRole("link", { name: "Book" }).first().click();
   await expect(page.getByText("GST", { exact: true })).toBeVisible();
   await expect(page.getByText("Sample fee (review build)")).toBeVisible();
   await page.locator("label.chip", { hasText: "Diya" }).click();

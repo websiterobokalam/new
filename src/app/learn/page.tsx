@@ -10,7 +10,8 @@ import { LearnerArt } from "@/components/art/Small";
 
 export const metadata: Metadata = {
   title: "Learn: build real tech, from age 6",
-  description: "Robotics, IoT, AI, coding, financial literacy and space education for learners from age 6. Book a Free Build Session.",
+  description: "Live robotics, IoT, AI and coding classes for kids from age 6, online for families in Hyderabad, Warangal and across India. Book a Free Build Session.",
+  alternates: { canonical: "/learn" },
 };
 
 const how = [
