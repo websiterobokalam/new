@@ -10,7 +10,7 @@ type Channel = "email" | "phone";
  * works too where SMS is switched on. Calls onDone after the session cookie is set.
  */
 export function OtpFlow({
-  onDone, askAdult = true, cta = "Send OTP", phoneLabel = "Parent's mobile number", emailLabel = "Parent's email", door, smsEnabled = true,
+  onDone, askAdult = true, cta = "Send code", phoneLabel = "Parent's mobile number", emailLabel = "Parent's email", door, smsEnabled = true,
 }: { onDone: (role: string) => void; askAdult?: boolean; cta?: string; phoneLabel?: string; emailLabel?: string; door?: "learner" | "school" | "educator"; smsEnabled?: boolean }) {
   const [channel, setChannel] = useState<Channel>("email");
   const [phone, setPhone] = useState("");
