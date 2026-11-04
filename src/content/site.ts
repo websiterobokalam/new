@@ -69,14 +69,93 @@ export const worlds: {
 ];
 
 /** Names and ages reused exactly from the brief. Outcome lines are draft. */
-export const programmes = [
-  { slug: "electro-ashaers", name: "Electro Ashaers", age: 6, outcome: "First circuits: make light, sound and motion happen.", draft: true },
-  { slug: "robo-ashaers", name: "Robo Ashaers", age: 7, outcome: "Build and program a robot that follows your rules.", draft: true },
-  { slug: "codo-ashaers", name: "CODO Ashaers", age: 8, outcome: "From blocks to real code, one working project at a time.", draft: true },
-  { slug: "advance-ashaers", name: "Advance Ashaers", age: 9, outcome: "Sensors, IoT and AI projects that solve a real problem.", draft: true },
-  { slug: "robotics-summer-camp", name: "Robotics Summer Camp", age: 7, outcome: "A focused holiday build sprint that ends in a demo day.", draft: true },
-  { slug: "aiml-bootcamp", name: "AIML Bootcamp", age: null, outcome: "Hands-on machine learning for older students and college learners.", draft: true },
-] as const;
+type Programme = {
+  slug: string; name: string; age: number | null; outcome: string; draft: boolean;
+  /** Carried over from old.robokalam.com. */
+  image?: string; intro: string; outcomes: { title: string; body: string }[]; courses: { name: string; body: string }[];
+};
+
+export const programmes: readonly Programme[] = [
+  {
+    slug: "electro-ashaers", name: "Electro Ashaers", age: 6, outcome: "First circuits: make light, sound and motion happen.", draft: true, image: "/images/programs/electro-ashaers.webp",
+    intro: "As robotics, IoT and AI turn up in homes, schools and offices, knowing how the circuits behind them work helps everyone understand them. Electro Ashaers starts with the parts every robot is made of.",
+    outcomes: [
+      { title: "Breadboards and sensors", body: "Build circuits that sense light, sound and touch, and see them respond." },
+      { title: "Basics of circuits", body: "Driverless cars and spacecraft start with the same rules. Learners master them early, ready for whatever comes next." },
+    ],
+    courses: [
+      { name: "Basic electronics", body: "Circuits made of LEDs, switches, batteries and resistors." },
+      { name: "Electronics", body: "Circuits with transistors, photoresistors and simple integrated circuits." },
+      { name: "Internet of Things", body: "Connect things to the internet: projects on NodeMCU hardware and the Blynk cloud." },
+    ],
+  },
+  {
+    slug: "robo-ashaers", name: "Robo Ashaers", age: 7, outcome: "Build and program a robot that follows your rules.", draft: true, image: "/images/programs/robo-ashaers.webp",
+    intro: "Robotics is growing fast, and research, design and new applications will take Indian industry to new heights. Robo Ashaers gives learners the theory and the practice of robotics, ready for advanced work later.",
+    outcomes: [
+      { title: "Introduction to robotics", body: "Robotics uses many kinds of skill, so every learner finds their place, and teams learn to work together." },
+      { title: "Dynamics of robotics", body: "How robots move, sense and decide, and how a little programming makes them do it." },
+    ],
+    courses: [
+      { name: "Robotics", body: "The components that drive manual robots and their end effectors, with switches and speed control using a potentiometer." },
+      { name: "Robotics with integrated circuits", body: "Autonomous robots such as line followers and obstacle avoiders, and wireless RC control using higher-order ICs." },
+      { name: "Robotics with Arduino and Scratch", body: "Autonomous robots and automation projects with sensors and actuators, programmed in Arduino and Scratch." },
+    ],
+  },
+  {
+    slug: "codo-ashaers", name: "CODO Ashaers", age: 8, outcome: "From blocks to real code, one working project at a time.", draft: true, image: "/images/programs/codo-ashaers.webp",
+    intro: "Programming a bot is hard, and working through the frustration builds a never-give-up attitude: the determination every technical or scientific project needs.",
+    outcomes: [
+      { title: "Programming skills", body: "A little programming knowledge helps learners understand every smart device around them." },
+      { title: "Algorithmic thinking", body: "Solve problems step by step, and write the logic down so a computer can follow it." },
+    ],
+    courses: [
+      { name: "Game making with Scratch", body: "Drag-and-drop programming that leads naturally to syntax-based code." },
+      { name: "Introduction to Python", body: "Real code in the language professionals use most." },
+      { name: "App building", body: "Create apps with MIT App Inventor that solve a real need, and publish them." },
+    ],
+  },
+  {
+    slug: "advance-ashaers", name: "Advance Ashaers", age: 9, outcome: "Sensors, IoT and AI projects that solve a real problem.", draft: true, image: "/images/programs/advance-ashaers.webp",
+    intro: "Few subjects combine creativity and fun the way robotics does. Learners love being in full control, and once they can do something cool, they want to add more.",
+    outcomes: [
+      { title: "Propulsion systems", body: "Hydraulics, propulsion and a first look at fluid mechanics." },
+      { title: "Renewable energy", body: "Miniature solar and wind power projects, presented with what they mean for the environment." },
+    ],
+    courses: [
+      { name: "Engineering: beginners", body: "Hydraulics and propulsion, and the fluid mechanics behind them." },
+      { name: "Renewable energy sources", body: "Build miniature power stations that run on sun and wind." },
+      { name: "Engineering: advanced", body: "Gear drives and power trains, with working models of each." },
+    ],
+  },
+  {
+    slug: "robotics-summer-camp", name: "Robotics Summer Camp", age: 7, outcome: "A focused holiday build sprint that ends in a demo day.", draft: true, image: "/images/programs/robotics-summer-camp.webp",
+    intro: "Hands-on electronics, advanced robotics, IoT and virtual reality over the holidays. Built to grow creativity and curiosity, and to spark a passion for technology.",
+    outcomes: [
+      { title: "Basic electronics", body: "Critical thinking, problem-solving and creativity, through circuits that work." },
+      { title: "Robotics and advanced robotics", body: "Programming robots, mechanical design, and designing and programming walking robots." },
+      { title: "IoT and virtual reality", body: "Python, connected systems, and the immersive world of VR." },
+    ],
+    courses: [
+      { name: "Electronics", body: "Transistors, photoresistors and simple integrated circuits." },
+      { name: "Internet of Things", body: "Connected projects on NodeMCU hardware and the Blynk cloud." },
+      { name: "Robotics", body: "Manual robots, end effectors, switches and speed control." },
+    ],
+  },
+  {
+    slug: "aiml-bootcamp", name: "AIML Bootcamp", age: null, outcome: "Hands-on machine learning for older students and college learners.", draft: true,
+    intro: "Learn today, lead tomorrow. A digital bootcamp in artificial intelligence and machine learning, run with Kalwings, with live classes, recordings, quizzes and assignments.",
+    outcomes: [
+      { title: "AI and ML foundations", body: "How machines learn from data, and where that goes wrong." },
+      { title: "Projects", body: "Assignments reviewed by trainers, and work shared with a community of past batches." },
+    ],
+    courses: [
+      { name: "Live classes and recordings", body: "Join live, or catch up from the recording." },
+      { name: "Quizzes and assignments", body: "Short checks after each class, and assignments you submit for review." },
+      { name: "Graduation", body: "Each cohort ends with a graduation ceremony, online and in person." },
+    ],
+  },
+];
 
 export const ladder = [
   { stage: "Age 6+", title: "Electro Ashaers", detail: "Circuits you can touch." },
