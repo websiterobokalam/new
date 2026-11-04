@@ -4,6 +4,7 @@ import { sortedPosts, readingMinutes, fmtDate } from "@/content/blog";
 import { cities } from "@/content/cities";
 import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
 import { SITE } from "@/lib/site";
+import { NewsletterForm } from "@/components/forms/Engage";
 
 export const metadata: Metadata = {
   title: "Blog: robotics, AI and STEM education",
@@ -66,6 +67,8 @@ export default function BlogIndex() {
           );
         })}
       </section>
+
+      <section className="wrap pb-12"><NewsletterForm source="blog" /></section>
 
       <section className="wrap pb-20" aria-labelledby="near-you">
         <h2 id="near-you" className="text-2xl font-bold text-heading">Robokalam near you</h2>

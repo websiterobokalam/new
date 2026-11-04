@@ -1,3 +1,4 @@
+import { issueForBatch } from "../certificates";
 import { system, uuid, type Tx } from "../db";
 import { oneToOneConsented, oneToOneTeacherCheck } from "../learn/oneToOne";
 import { earningAdded, gigAccepted, safetyReported, sessionDelivered } from "../email/notify";
@@ -231,6 +232,8 @@ export async function deliver(a: Account, gigId: string, records: { bookingId: s
       }
     }
     await c.query("UPDATE gig_assignments SET status = 'delivered', delivered_at = now() WHERE id = $1", [t.gig.assignment_id]);
+    // The last session of a course: certificates for everyone who attended.
+    if (t.gig.batch_id) await issueForBatch(c, t.gig.batch_id, `fellow:${a.id}`);
     // Escrow: release one session's share of each paid order in this batch.
     let released = 0;
     if (t.gig.batch_id) {

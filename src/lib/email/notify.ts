@@ -1,5 +1,6 @@
 import { system, type Tx } from "../db";
 import { inr } from "../money";
+import { SITE } from "../site";
 import { MISSIONS } from "@/content/missions";
 import { enqueue, enqueueStaff } from "./outbox";
 import { ticketClock } from "../schools/clock";
@@ -57,6 +58,7 @@ export async function bookingConfirmed(c: Tx, bookingId: string) {
   await enqueue(c, { accountId: b.guardian_account_id, template: "booking_confirmed", dedupe: `booked:${bookingId}`, payload: {
     child: b.child, course: b.course, when: ist(b.starts_at), where: b.mode === "online" ? "Online, on Robokalam" : b.location, educator: b.educator ?? "Assigned soon",
     fee: b.fee_paise ? `${inr(b.fee_paise)} incl. GST` : "Free", mission: b.kind === "build_session" ? MISSIONS[b.interest] ?? MISSIONS.robotics : null,
+    calendar: `${SITE.url}/api/app/bookings/${bookingId}/calendar`,
   } });
 }
 

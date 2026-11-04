@@ -3,6 +3,7 @@ import { body, handler, HttpError, ok } from "@/lib/api";
 import { requireRole } from "@/lib/staff";
 import { system } from "@/lib/db";
 import { sessionDelivered } from "@/lib/email/notify";
+import { issueForBooking } from "@/lib/certificates";
 
 /**
  * Record what happened in a session: attendance, plain feedback, next step,
@@ -23,6 +24,11 @@ export const POST = handler(async (req, ctx) => {
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,'session_recorded','booking',$2,$3)", [a.id, id, { status: b.status, built: b.builtProject ?? null }]);
     const built = b.builtProject ? (await c.query("SELECT title FROM projects WHERE id = $1", [b.builtProject])).rows[0]?.title ?? null : null;
     await sessionDelivered(c, `ops-${id}`, [{ bookingId: id, attended: b.status === "attended", built, feedback: b.feedback ?? null }]);
+    // Single-session courses recorded here are complete; longer ones get theirs when the last session is delivered.
+    if (b.status === "attended") {
+      const one = (await c.query("SELECT co.sessions FROM bookings bk JOIN batches bt ON bt.id = bk.batch_id JOIN courses co ON co.id = bt.course_id WHERE bk.id = $1", [id])).rows[0];
+      if (one && Number(one.sessions) <= 1) await issueForBooking(c, id, `ops:${a.id}`);
+    }
   });
   return ok();
 });

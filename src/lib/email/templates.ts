@@ -19,6 +19,22 @@ const FOOTER: Record<Category, string> = {
 const rows = (r: [string, string | null | undefined][]) => ({ rows: r.filter(([, v]) => v != null && v !== "") as [string, string][] });
 
 export const TEMPLATES = {
+  enquiry_ack: { category: "transactional", render: (p) => ({
+    subject: `We got your message (${p.ref})`, heading: "Thanks, we've got your message",
+    blocks: [{ p: `Hi ${p.name}, thanks for writing to Robokalam about ${String(p.topic).toLowerCase()}. Your reference is ${p.ref}.` }, { p: "Someone from the right team will reply by email, usually within one working day (Monday to Saturday)." }, { note: "Reply to this email if you want to add anything." }],
+  }) },
+  staff_enquiry: { category: "staff", render: (p) => ({
+    subject: `New enquiry ${p.ref}: ${p.topic}`, heading: "New contact-page enquiry",
+    blocks: [rows([["Reference", p.ref], ["Topic", p.topic], ["Name", p.name], ["Email", p.email], ["Phone", p.phone], ["Organisation", p.organisation]]), { p: p.message }, { cta: { label: "Open enquiries", href: "/app/ops/enquiries" } }],
+  }) },
+  newsletter_confirm: { category: "transactional", render: (p) => ({
+    subject: "Confirm your Robokalam newsletter subscription", heading: "One click to confirm",
+    blocks: [{ p: "Please confirm you'd like the Robokalam newsletter: new projects, guides for parents and schools, and events. About twice a month." }, { cta: { label: "Yes, subscribe me", href: p.link } }, { note: `Didn't ask for this? Ignore this email and you won't hear from us. Changed your mind later? Unsubscribe any time: ${p.unsubscribe}` }],
+  }) },
+  certificate_issued: { category: "transactional", render: (p) => ({
+    subject: `Certificate: ${p.title}`, heading: "Your certificate is ready",
+    blocks: [{ p: `Congratulations, ${p.name}! Your Robokalam certificate for ${p.title} is ready.` }, { rows: [["Certificate ID", p.code]] }, { cta: { label: "View and print", href: p.link } }, { note: "Anyone can check it's genuine at robokalam.com/validate with this ID. Share the ID only with people you choose." }],
+  }) },
   login_code: { category: "transactional", render: (p) => ({
     subject: `${p.code} is your Robokalam sign-in code`, heading: "Your sign-in code", preheader: `Use ${p.code} to sign in. It expires in 10 minutes.`,
     blocks: [{ p: "Use this code to sign in to Robokalam:" }, { p: p.code }, { note: "It works once and expires in 10 minutes. Robokalam will never ask you for this code by phone or chat. If you didn't try to sign in, ignore this email; nobody can sign in without the code." }],
@@ -62,7 +78,8 @@ export const TEMPLATES = {
   booking_confirmed: { category: "transactional", render: (p) => ({
     subject: `Booked: ${p.course} for ${p.child}`, heading: `${p.child} is booked in`,
     blocks: [rows([["Class", p.course], ["When", p.when], ["Where", p.where], ["Educator", p.educator], ["Fee", p.fee]]), ...(p.mission ? [{ p: `Before the class: ${p.mission}` } as Block] : []),
-      { p: "Online classes are recorded on the platform for safety. All contact stays on Robokalam." }, { cta: { label: "See it in your family home", href: "/app" } }],
+      { p: "Online classes are recorded on the platform for safety. All contact stays on Robokalam." }, { cta: { label: "See it in your family home", href: "/app" } },
+      ...(p.calendar ? [{ note: `Add it to your calendar: ${p.calendar}` } as Block] : [])],
   }) },
   payment_receipt: { category: "transactional", render: (p) => ({
     subject: `Payment received: ${p.amount}`, heading: "Payment received",

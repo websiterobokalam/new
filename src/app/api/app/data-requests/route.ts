@@ -21,6 +21,8 @@ export const POST = handler(async (req) => {
     await dataRequested(c, a.id, "deletion", rid);
     await c.query("UPDATE learners SET erased_at = now(), first_name = 'Deleted', interests = '[]', portfolio_public = false WHERE id = $1 AND guardian_account_id = $2", [b.learnerId, a.id]);
     await c.query("UPDATE bookings SET status = 'cancelled' WHERE learner_id = $1 AND guardian_account_id = $2 AND status IN ('confirmed','pending_payment')", [b.learnerId, a.id]);
+    // Certificates stop being valid and no longer carry the child's name.
+    await c.query("UPDATE certificates SET holder_name = 'Deleted', revoked_at = COALESCE(revoked_at, UTC_TIMESTAMP(3)), revoke_reason = COALESCE(revoke_reason, 'Deleted at the family''s request') WHERE learner_id = $1 AND account_id = $2", [b.learnerId, a.id]);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id) VALUES ($1,'erasure_requested','learner',$2)", [a.id, b.learnerId]);
   });
   return ok();

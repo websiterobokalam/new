@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { fellowContext } from "@/lib/fellows/context";
+import { CalendarSubscribe } from "@/components/app/CalendarSubscribe";
 import { STEPS, STEP_LABEL, PILOT } from "@/lib/fellows/core";
 import { earnings } from "@/lib/fellows/earnings";
 import { asAccount } from "@/lib/auth/session";
@@ -87,6 +88,7 @@ export default async function FellowHome() {
             <Link href="/app/fellow/support" className="mt-3 inline-block font-semibold text-link underline">Help, disputes and your rights</Link>
           </div>
         </section>
+        {fellow.status === "live" && <CalendarSubscribe accountId={account.id} what="gigs" />}
       </div>
     </section>
   );

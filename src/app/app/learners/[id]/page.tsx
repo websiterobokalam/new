@@ -4,6 +4,7 @@ import { appContext, fmtDate } from "@/lib/app";
 import { asAccount } from "@/lib/auth/session";
 import { loadJourney, plainProgress } from "@/lib/learn/journey";
 import { JourneyMap } from "@/components/app/JourneyMap";
+import { CertificateList } from "@/components/app/CertificateList";
 
 export const metadata = { title: "Journey" };
 
@@ -19,7 +20,8 @@ export default async function LearnerPage({ params }: { params: Promise<{ id: st
       "SELECT bk.status, co.title, b.starts_at FROM bookings bk JOIN batches b ON b.id = bk.batch_id JOIN courses co ON co.id = b.course_id WHERE bk.learner_id = $1 AND bk.guardian_account_id = $2 ORDER BY b.starts_at DESC",
       [id, account.id],
     )).rows;
-    return { l, nodes, bookings };
+    const certificates = (await c.query("SELECT code, title, holder_name, issued_at, revoked_at FROM certificates WHERE learner_id = $1 AND account_id = $2 ORDER BY issued_at DESC", [id, account.id])).rows;
+    return { l, nodes, bookings, certificates };
   });
   if (!d) notFound();
   const badges = d.nodes.filter((n) => n.state === "built");
@@ -47,6 +49,10 @@ export default async function LearnerPage({ params }: { params: Promise<{ id: st
               <ul className="mt-3 grid gap-2 text-sm">{d.bookings.map((b, i) => <li key={i} className="flex justify-between gap-3"><span>{b.title} · {fmtDate(b.starts_at, locale)}</span><span className="font-semibold">{t[b.status as "confirmed"] ?? b.status}</span></li>)}</ul>
             )}
           </div>
+        </section>
+        <section className="card p-6" aria-labelledby="certs-h">
+          <h2 id="certs-h" className="text-xl font-bold">Certificates</h2>
+          <CertificateList rows={d.certificates} empty={`${d.l.first_name} gets a certificate after finishing every session of a course.`} />
         </section>
         <Link href={`/app/learners/${id}/space`} className="btn btn-primary justify-self-start">{t.learner_mode}</Link>
       </div>

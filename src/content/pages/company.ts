@@ -63,11 +63,12 @@ export const about: ContentPage = {
 export const contact: ContentPage = {
   eyebrow: "Contact",
   title: "Talk to Robokalam.",
-  lede: "Call or write to us, or jump straight to what you need below. We answer Monday to Saturday.",
+  lede: "Call, email, or write to us below. We answer Monday to Saturday, usually within one working day.",
   description: "Contact Robokalam: offices in Hyderabad, Coimbatore and Essen, phone, email and hours.",
   index: true,
   blocks: [
     { kind: "contact" },
+    { kind: "form", form: "contact" },
     {
       kind: "cards", heading: "The quickest way to what you need", cols: 3,
       items: [
@@ -131,26 +132,6 @@ export const careers: ContentPage = {
       ],
     },
     { kind: "cta", title: "Don't see your role?", body: `Write to ${CONTACT.email} with what you would build here.`, actions: [{ href: EXTERNAL.careers.href, label: "Open roles on PyjamaHR", primary: true }] },
-  ],
-};
-
-export const validate: ContentPage = {
-  eyebrow: "Certificates",
-  title: "Validate a Robokalam certificate.",
-  lede: "Every Robokalam certificate carries a unique ID. Enter it on our validation site to confirm the certificate is genuine and see who it was issued to and for what.",
-  description: "Check that a Robokalam certificate is genuine on validate.robokalam.com.",
-  actions: [{ href: EXTERNAL.validate.href, label: "Go to validate.robokalam.com", primary: true }],
-  index: true,
-  blocks: [
-    {
-      kind: "prose", heading: "How it works",
-      bullets: [
-        "Find the certificate ID printed on the certificate.",
-        "Open validate.robokalam.com and enter the ID.",
-        "Check that the name, programme and date match the certificate you were given.",
-      ],
-      after: [`If the details don't match, or the ID isn't found, write to ${CONTACT.email} and we will check it for you.`],
-    },
   ],
 };
 

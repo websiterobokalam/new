@@ -5,12 +5,14 @@ import { SITE } from "@/lib/site";
 import { system } from "@/lib/db";
 import { AutomatedNotices } from "@/components/fellow/AutomatedNotices";
 import { tierLabel } from "@/lib/fellows/gigs";
+import { CertificateList } from "@/components/app/CertificateList";
 
 export const metadata = { title: "Growth" };
 
 export default async function Growth() {
   const { account, fellow } = await fellowContext("/app/fellow/growth");
-  const { m, hours } = await asAccount(account, async (c) => ({
+  const { m, hours, certificates } = await asAccount(account, async (c) => ({
+    certificates: (await c.query("SELECT code, title, holder_name, issued_at, revoked_at FROM certificates WHERE fellow_id = $1 ORDER BY issued_at DESC", [account.id])).rows,
     m: await metrics(c, account.id),
     hours: (await c.query("SELECT coalesce(sum(g.duration_min),0) AS m FROM gig_assignments ga JOIN gigs g ON g.id = ga.gig_id WHERE ga.fellow_id = $1 AND ga.status = 'delivered'", [account.id])).rows[0].m / 60,
   }));
@@ -22,6 +24,10 @@ export default async function Growth() {
       <div className="grid gap-4 sm:grid-cols-4">
         {[["Sessions delivered", String(m.delivered)], ["Reliability", pct(m.reliability)], ["Builds per session", m.progress === null ? "—" : m.progress.toFixed(1)], ["Verified rating", m.rating === null ? "—" : `${m.rating} (${m.reviews})`]].map(([k, v]) => <div key={k} className="card p-5"><p className="text-sm text-muted">{k}</p><p className="mt-1 text-2xl font-bold text-heading">{v}</p></div>)}
       </div>
+      <section className="card p-6" aria-labelledby="cert-h">
+        <h2 id="cert-h" className="text-xl font-bold">Your Kalamite certificate</h2>
+        <CertificateList rows={certificates} empty="Issued when you go live, after every check and Kalam Academy." />
+      </section>
       <section id="formula" className="card p-6">
         <h2 className="text-xl font-bold">How tiers work (the formula)</h2>
         <p className="mt-1 text-sm text-muted">Reliability = sessions delivered ÷ sessions you committed to that went ahead. Declines and Exam Mode never count. A person confirms every tier change, and tiers are never lowered automatically. Draft thresholds.</p>

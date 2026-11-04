@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { posts, postBySlug, sortedPosts, readingMinutes, fmtDate } from "@/content/blog";
 import { cities } from "@/content/cities";
 import { JsonLd, blogPostingLd, breadcrumbLd } from "@/lib/jsonld";
+import { NewsletterForm } from "@/components/forms/Engage";
 
 export const dynamicParams = false;
 export function generateStaticParams() {
@@ -76,6 +77,8 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           <p className="text-xl font-bold !text-white">Ready to build?</p>
           <Link href={p.cta.href} className="btn btn-primary">{p.cta.label}</Link>
         </aside>
+
+        <div className="mt-10"><NewsletterForm source={`blog:${p.slug}`.slice(0, 40)} /></div>
 
         {p.cities?.length ? (
           <p className="mt-8 text-sm text-muted">
