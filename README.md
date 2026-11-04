@@ -4,7 +4,8 @@ Literature of Technologies. The rebuild of robokalam.com: one product with three
 
 - **Phase 1 review, plan, tokens, storyboard, claims and open questions:** [docs/PHASE-1.md](docs/PHASE-1.md)
 - Stack: Next.js 16, React 19, TypeScript, Tailwind 4, Zod, MySQL/MariaDB (Hostinger), Playwright with axe-core.
-- **Database setup:** [docs/DATABASE.md](docs/DATABASE.md)
+- **Deploying on Hostinger:** [docs/HOSTINGER.md](docs/HOSTINGER.md), with every setting in [hostinger.env.example](hostinger.env.example)
+- **Database setup:** [docs/DATABASE.md](docs/DATABASE.md) · **Go-live checklist:** [docs/PHASE-6.md](docs/PHASE-6.md) · **Email sign-in:** [docs/EMAIL-LOGIN.md](docs/EMAIL-LOGIN.md)
 
 ```bash
 npm install

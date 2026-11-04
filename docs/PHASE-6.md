@@ -7,7 +7,7 @@ The product is built. Phase 6 makes sure robokalam.com cannot go live half-confi
 | Piece | What it does | Where |
 | --- | --- | --- |
 | Launch checks | About 30 checks covering security, sign-in, payments, invoices, legal, child safety, email, database and backups. Each check is either a blocker or recommended, and comes with its fix. | `scripts/launch-checks.mjs` |
-| Start-up guard | `npm start` runs the checks first. On the **live address** a blocker stops the server from starting. The live address means `NEXT_PUBLIC_SITE_URL=https://robokalam.com`, production, review mode off. On a review or staging address the checks only warn. | `scripts/preflight.mjs` |
+| Start-up guard | `server.mjs` (the Hostinger entry file, also `npm start`) runs the checks first. On the **live address** a blocker stops the server from starting. The live address means `NEXT_PUBLIC_SITE_URL=https://robokalam.com`, production, review mode off. On a review or staging address the checks only warn. | `scripts/preflight.mjs` |
 | Launch readiness page | Ops see every check, with its status and fix, checked live. | `/app/ops/launch` |
 | Health check | `GET /api/health` returns 200 when the database answers and 503 when it doesn't. With `?key=CRON_SECRET` it also returns the email queue and launch blockers. | `/api/health` |
 | Housekeeping | Runs hourly on the server, and is also available for a daily cron. It:<br>• cancels unpaid seat holds after 24 hours and marks their orders failed<br>• deletes sign-in codes older than a day<br>• deletes sessions that ended over 30 days ago | `src/lib/housekeeping.ts`, `/api/cron/housekeeping` |
