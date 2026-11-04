@@ -8,7 +8,7 @@ const sample: Record<string, unknown> = {
   attended: true, built: "First light", feedback: "Great work", nextStep: "Level 2", profile: "/educators/x", classLink: "/app", status: "approved", note: "n", from: "Kiran M.",
   respondBy: "Tue", category: "safety", page: "/app", kind: "deletion", step: "Subject test", outcome: "passed", title: "Gig", pay: "₹500.00", gross: "₹500.00",
   deductions: "None", net: "₹500.00", effective: "17 Nov", noticeUntil: "10 Nov", childSafety: false, decision: "approved", message: "m", school: "S", role: "a trainer",
-  due: "d", clock: "2d left", fellow: "Kiran M.", flags: "0", college: "C", city: "Hyderabad", code: "123456", by: "Robokalam", topic: "Something else", email: "a@example.test", organisation: "Org", unsubscribe: "/u", names: "Asha", reason: "Venue unavailable", calendar: "/c",
+  due: "d", clock: "2d left", fellow: "Kiran M.", flags: "0", college: "C", city: "Hyderabad", code: "123456", by: "Robokalam", topic: "Something else", email: "a@example.test", organisation: "Org", unsubscribe: "/u", names: "Asha", reason: "Venue unavailable", calendar: "/c", month: "October 2026", lines: ["Asha: 4 classes attended"],
 };
 
 test("every email renders a subject, accessible HTML and a plain-text twin", () => {
