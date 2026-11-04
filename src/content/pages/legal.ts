@@ -1,5 +1,5 @@
 import type { ContentPage } from "./types";
-import { CONTACT, EXTERNAL } from "../company";
+import { CONTACT, EXTERNAL, PEOPLE, LEGAL_APPROVED } from "../company";
 import { refundPolicy } from "@/lib/learn/refunds";
 
 /**
@@ -10,7 +10,7 @@ import { refundPolicy } from "@/lib/learn/refunds";
  * parent) it has been replaced, not copied. Counsel must review before launch.
  */
 
-const status = "Draft carried over from our previous policy and updated for India's DPDP Act. Pending legal review.";
+const status = LEGAL_APPROVED ? "" : "Draft carried over from our previous policy and updated for India's DPDP Act. Pending legal review.";
 const UPDATED = "4 November 2026";
 
 export const privacy: ContentPage = {
@@ -133,7 +133,9 @@ export const privacy: ContentPage = {
     {
       kind: "prose", id: "grievance", heading: "Questions and grievances",
       paras: [
-        `For any question, complaint or grievance about how we use personal data, write to ${CONTACT.email}. Our Grievance Officer's name and direct contact will be published here before launch.`,
+        PEOPLE.grievanceOfficer
+          ? `For any question, complaint or grievance about how we use personal data, contact our Grievance Officer, ${PEOPLE.grievanceOfficer.name}, at ${PEOPLE.grievanceOfficer.email}.`
+          : `For any question, complaint or grievance about how we use personal data, write to ${CONTACT.email}. Our Grievance Officer's name and direct contact will be published here before launch.`,
       ],
     },
   ],
@@ -245,7 +247,7 @@ export const refunds: ContentPage = {
   title: "Refund and cancellation policy",
   lede: "Fees are shown in full before you pay, and you can ask for a refund from your account in a few taps.",
   description: "Robokalam's refund and cancellation policy for courses, classes and kits.",
-  legal: { updated: UPDATED, status: "Draft rules. Until this policy is approved, every refund request is reviewed by a person and nothing is decided against you automatically." },
+  legal: { updated: UPDATED, status: refundPolicy.approved() ? "" : "Draft rules. Until this policy is approved, every refund request is reviewed by a person and nothing is decided against you automatically." },
   blocks: [
     {
       kind: "prose", id: "courses", heading: "Courses and classes",
@@ -284,7 +286,7 @@ export const childSafety: ContentPage = {
   title: "Child safety",
   lede: "Every rule here applies to every class, every educator and every message. Where a child's safety is concerned, we act first and explain after.",
   description: "Robokalam's safeguarding policy: vetted educators, recorded classes, no private contact, parent oversight of one-to-one classes, and how to report a concern.",
-  legal: { updated: UPDATED, status: "Safeguarding policy draft. The named Safeguarding Lead and response times are published before launch." },
+  legal: { updated: UPDATED, status: LEGAL_APPROVED && PEOPLE.safeguardingLead ? "" : "Safeguarding policy draft. The named Safeguarding Lead and response times are published before launch." },
   blocks: [
     {
       kind: "prose", id: "educators", heading: "Who teaches",
@@ -322,9 +324,11 @@ export const childSafety: ContentPage = {
     {
       kind: "prose", id: "report", heading: "Report a concern",
       paras: [
-        "Every learner and parent screen has a Report button. Reports go straight to our Safeguarding Lead.",
+        PEOPLE.safeguardingLead
+          ? `Every learner and parent screen has a Report button. Reports go straight to our Safeguarding Lead, ${PEOPLE.safeguardingLead.name}${process.env.SAFEGUARDING_RESPONSE_HOURS ? `, who responds within ${process.env.SAFEGUARDING_RESPONSE_HOURS} hours` : ""}.`
+          : "Every learner and parent screen has a Report button. Reports go straight to our Safeguarding Lead.",
         "Any credible concern means the educator's access is suspended at once while we look into it, and we report to the authorities as the law requires.",
-        `You can also write to ${CONTACT.email} with the subject \"Safeguarding\". If a child is in immediate danger, call 112, or the Childline number 1098.`,
+        `You can also write to ${PEOPLE.safeguardingLead?.email ?? CONTACT.email} with the subject \"Safeguarding\". If a child is in immediate danger, call 112, or the Childline number 1098.`,
       ],
     },
     { kind: "cta", title: "Read the rules Kalamites sign", actions: [{ href: "/kalamites/safety", label: "Rules for teaching children", primary: true }, { href: "/one-to-one", label: "How one-to-one works" }] },

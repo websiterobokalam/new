@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
-    "start": "node scripts/migrate.mjs --on-start && next start",
+    "start": "node scripts/preflight.mjs --on-start && node scripts/migrate.mjs --on-start && next start",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
-    "migrate": "node scripts/migrate.mjs"
+    "migrate": "node scripts/migrate.mjs",
+    "preflight": "node scripts/preflight.mjs --db",
+    "backup:verify": "node scripts/backup-verify.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.4.0",

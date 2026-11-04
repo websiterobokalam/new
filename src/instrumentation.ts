@@ -14,4 +14,7 @@ export async function register() {
   setInterval(() => { drain().catch(quiet); }, Number(process.env.EMAIL_DRAIN_MS ?? 30_000)).unref?.();
   setInterval(() => { scheduleReminders().catch(quiet); }, 5 * 60_000).unref?.();
   setTimeout(() => { scheduleReminders().catch(quiet); drain().catch(quiet); }, 5_000).unref?.();
+  // Hourly tidy-up: stale seat holds, old sign-in codes and sessions (Phase 6).
+  const { housekeeping } = await import("./lib/housekeeping");
+  setInterval(() => { housekeeping().catch(quiet); }, 60 * 60_000).unref?.();
 }

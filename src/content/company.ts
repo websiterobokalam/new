@@ -37,4 +37,17 @@ export const SOCIAL = [
   { name: "Pinterest", href: "https://www.pinterest.com/robokalam" },
 ] as const;
 
+/**
+ * Named people the law and our safeguarding policy require us to publish.
+ * Set in the server settings; until then pages say they are to be published.
+ */
+const person = (name?: string, email?: string) => (name?.trim() ? { name: name.trim(), email: email?.trim() || CONTACT.email } : null);
+export const PEOPLE = {
+  safeguardingLead: person(process.env.SAFEGUARDING_LEAD_NAME, process.env.SAFEGUARDING_EMAIL),
+  grievanceOfficer: person(process.env.GRIEVANCE_OFFICER_NAME, process.env.GRIEVANCE_OFFICER_EMAIL),
+};
+
+/** Counsel has approved the privacy, terms and child-safety pages (LEGAL_PAGES_APPROVED=1). */
+export const LEGAL_APPROVED = process.env.LEGAL_PAGES_APPROVED === "1";
+
 export const isExternal = (href: string) => /^https?:\/\//.test(href);
