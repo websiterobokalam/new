@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Literature of Technologies. Build real tech, from age 6.",
     start_url: "/app",
     display: "standalone",
-    background_color: "#F6FBFD",
-    theme_color: "#0B4168",
+    background_color: "#F2F6FF",
+    theme_color: "#00445F",
     icons: [
       { src: "/icon.svg", sizes: "any", type: "image/svg+xml" },
       { src: "/icon-192.png", sizes: "192x192", type: "image/png" },

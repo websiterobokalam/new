@@ -100,7 +100,7 @@ export function TryTheBot() {
             <div className="relative h-full w-full p-1">
               <KalamBot className="h-full w-full" mood={status === "win" ? "wave" : "idle"} />
               <svg viewBox="0 0 20 20" className="absolute -right-1 -top-1 h-1/3 w-1/3 transition-transform duration-300" style={{ transform: `rotate(${-bot.dir * 90}deg)` }}>
-                <circle cx="10" cy="10" r="10" fill="#F7A21C" /><path d="M6 10h8m-3-3 3 3-3 3" stroke="#0B4168" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="10" cy="10" r="10" fill="#FFD31D" /><path d="M6 10h8m-3-3 3 3-3 3" stroke="#00445F" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
           </div>

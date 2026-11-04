@@ -78,7 +78,7 @@ export function MotionRuntime() {
       const glow = document.createElement("div");
       glow.setAttribute("aria-hidden", "true");
       glow.style.cssText =
-        "position:fixed;left:0;top:0;width:420px;height:420px;margin:-210px 0 0 -210px;border-radius:50%;pointer-events:none;z-index:1;background:radial-gradient(circle,rgba(92,198,236,.10),transparent 65%);transition:opacity .3s;opacity:0;will-change:transform";
+        "position:fixed;left:0;top:0;width:420px;height:420px;margin:-210px 0 0 -210px;border-radius:50%;pointer-events:none;z-index:1;background:radial-gradient(circle,rgba(0,203,214,.10),transparent 65%);transition:opacity .3s;opacity:0;will-change:transform";
       document.body.appendChild(glow);
       let raf = 0;
       const onMove = (e: PointerEvent) => {

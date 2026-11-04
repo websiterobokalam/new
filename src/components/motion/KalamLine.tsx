@@ -116,9 +116,9 @@ export function KalamLineScope({ children }: { children: React.ReactNode }) {
         <svg className="kalam-line pointer-events-none absolute left-0 top-0 z-20 overflow-visible" width={geo.w} height={geo.h} aria-hidden>
           <defs>
             <linearGradient id="kl-g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2={geo.h}>
-              <stop offset="0" stopColor="#1AB0E2" />
-              <stop offset=".5" stopColor="#5CC6EC" />
-              <stop offset="1" stopColor="#97BC3D" />
+              <stop offset="0" stopColor="#0098D6" />
+              <stop offset=".5" stopColor="#00CBD6" />
+              <stop offset="1" stopColor="#00B16A" />
             </linearGradient>
             <filter id="kl-glow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="3" />

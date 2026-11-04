@@ -19,7 +19,7 @@ export function Footer() {
           <svg viewBox="0 0 900 140" className="h-auto w-full max-w-3xl draw-on-power">
             <defs>
               <linearGradient id="sig-g" x1="0" x2="1">
-                <stop offset="0" stopColor="#1AB0E2" /><stop offset=".5" stopColor="#5CC6EC" /><stop offset="1" stopColor="#97BC3D" />
+                <stop offset="0" stopColor="#0098D6" /><stop offset=".5" stopColor="#00CBD6" /><stop offset="1" stopColor="#00B16A" />
               </linearGradient>
             </defs>
             <path data-draw pathLength={1} d="M6 70 C 40 70, 60 20, 90 60" fill="none" stroke="url(#sig-g)" strokeWidth="3" strokeLinecap="round" />

@@ -24,16 +24,16 @@ export function RotatingBadge({ className = "" }: { className?: string }) {
 export function KalamBot({ className = "", mood = "idle" }: { className?: string; mood?: "idle" | "wave" }) {
   return (
     <svg viewBox="0 0 64 72" className={`bot ${className}`} data-mood={mood} aria-hidden>
-      <line x1="32" y1="4" x2="32" y2="14" stroke="#0B4168" strokeWidth="3" strokeLinecap="round" />
-      <circle cx="32" cy="5" r="4.5" fill="#F7A21C" />
-      <rect x="10" y="13" width="44" height="32" rx="12" fill="#0B4168" />
+      <line x1="32" y1="4" x2="32" y2="14" stroke="#00445F" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="32" cy="5" r="4.5" fill="#FFD31D" />
+      <rect x="10" y="13" width="44" height="32" rx="12" fill="#00445F" />
       <rect x="15" y="19" width="34" height="19" rx="8" fill="#E6F4FA" />
-      <rect className="bot-eye" x="22" y="24" width="6" height="9" rx="3" fill="#1AB0E2" />
-      <rect className="bot-eye" x="36" y="24" width="6" height="9" rx="3" fill="#1AB0E2" />
-      <rect x="18" y="46" width="28" height="18" rx="7" fill="#1AB0E2" />
-      <circle cx="32" cy="55" r="4" fill="#97BC3D" />
-      <rect className="bot-arm" x="48" y="44" width="7" height="16" rx="3.5" fill="#5CC6EC" />
-      <rect x="9" y="46" width="7" height="14" rx="3.5" fill="#5CC6EC" />
+      <rect className="bot-eye" x="22" y="24" width="6" height="9" rx="3" fill="#0098D6" />
+      <rect className="bot-eye" x="36" y="24" width="6" height="9" rx="3" fill="#0098D6" />
+      <rect x="18" y="46" width="28" height="18" rx="7" fill="#0098D6" />
+      <circle cx="32" cy="55" r="4" fill="#00B16A" />
+      <rect className="bot-arm" x="48" y="44" width="7" height="16" rx="3.5" fill="#00CBD6" />
+      <rect x="9" y="46" width="7" height="14" rx="3.5" fill="#00CBD6" />
       <rect x="20" y="64" width="9" height="6" rx="3" fill="#0B2B3D" />
       <rect x="35" y="64" width="9" height="6" rx="3" fill="#0B2B3D" />
     </svg>
@@ -65,11 +65,11 @@ export function RobotPreview() {
       {Array.from({ length: 6 }).map((_, i) => (
         <line key={i} x1={i * 32} y1="0" x2={i * 32} y2="80" stroke="var(--line)" />
       ))}
-      <path d="M8 64 H56 V24 H120" fill="none" stroke="#5CC6EC" strokeWidth="3" strokeDasharray="5 6" strokeLinecap="round" />
+      <path d="M8 64 H56 V24 H120" fill="none" stroke="#00CBD6" strokeWidth="3" strokeDasharray="5 6" strokeLinecap="round" />
       <g className="transition-transform duration-700 ease-out group-hover:translate-x-[64px] group-focus-within:translate-x-[64px]">
         <g transform="translate(40 8) scale(.42)"><KalamBotInner /></g>
       </g>
-      <rect x="122" y="14" width="22" height="22" rx="5" fill="#97BC3D" />
+      <rect x="122" y="14" width="22" height="22" rx="5" fill="#00B16A" />
     </svg>
   );
 }
@@ -77,11 +77,11 @@ export function RobotPreview() {
 function KalamBotInner() {
   return (
     <>
-      <rect x="10" y="13" width="44" height="32" rx="12" fill="#0B4168" />
+      <rect x="10" y="13" width="44" height="32" rx="12" fill="#00445F" />
       <rect x="15" y="19" width="34" height="19" rx="8" fill="#E6F4FA" />
-      <rect x="22" y="24" width="6" height="9" rx="3" fill="#1AB0E2" />
-      <rect x="36" y="24" width="6" height="9" rx="3" fill="#1AB0E2" />
-      <rect x="18" y="46" width="28" height="18" rx="7" fill="#1AB0E2" />
+      <rect x="22" y="24" width="6" height="9" rx="3" fill="#0098D6" />
+      <rect x="36" y="24" width="6" height="9" rx="3" fill="#0098D6" />
+      <rect x="18" y="46" width="28" height="18" rx="7" fill="#0098D6" />
     </>
   );
 }
@@ -93,9 +93,9 @@ export function LabPreview() {
       <rect x="4" y="60" width="152" height="6" rx="3" fill="var(--line)" />
       {[0, 1, 2, 3].map((i) => (
         <g key={i} transform={`translate(${10 + i * 37} 22)`}>
-          <rect width="28" height="20" rx="3" fill="#0B4168" />
-          <rect x="3" y="3" width="22" height="14" rx="2" className="fill-[#1B3A4F] transition-colors duration-300 group-hover:fill-[#5CC6EC] group-focus-within:fill-[#5CC6EC]" style={{ transitionDelay: `${i * 120}ms` }} />
-          <rect x="11" y="20" width="6" height="18" fill="#0B4168" />
+          <rect width="28" height="20" rx="3" fill="#00445F" />
+          <rect x="3" y="3" width="22" height="14" rx="2" className="fill-[#1B3A4F] transition-colors duration-300 group-hover:fill-[#00CBD6] group-focus-within:fill-[#00CBD6]" style={{ transitionDelay: `${i * 120}ms` }} />
+          <rect x="11" y="20" width="6" height="18" fill="#00445F" />
         </g>
       ))}
     </svg>
@@ -137,22 +137,22 @@ export function GigPhone() {
 export function LearnerArt() {
   return (
     <svg viewBox="0 0 360 300" className="h-auto w-full">
-      <defs><linearGradient id="la-g" x1="0" x2="1"><stop offset="0" stopColor="#1AB0E2" /><stop offset=".5" stopColor="#5CC6EC" /><stop offset="1" stopColor="#97BC3D" /></linearGradient></defs>
+      <defs><linearGradient id="la-g" x1="0" x2="1"><stop offset="0" stopColor="#0098D6" /><stop offset=".5" stopColor="#00CBD6" /><stop offset="1" stopColor="#00B16A" /></linearGradient></defs>
       <rect x="20" y="40" width="320" height="230" rx="28" fill="var(--panel)" />
       {Array.from({ length: 7 }).map((_, i) => <line key={i} x1={20 + i * 53} y1="40" x2={20 + i * 53} y2="270" stroke="var(--line)" />)}
       {Array.from({ length: 5 }).map((_, i) => <line key={`h${i}`} x1="20" y1={40 + i * 57} x2="340" y2={40 + i * 57} stroke="var(--line)" />)}
       <path d="M60 240 H150 V130 H290 V70" fill="none" stroke="url(#la-g)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="290" cy="70" r="14" fill="#97BC3D" />
-      <circle cx="60" cy="240" r="9" fill="#5CC6EC" />
+      <circle cx="290" cy="70" r="14" fill="#00B16A" />
+      <circle cx="60" cy="240" r="9" fill="#00CBD6" />
       <g transform="translate(118 150) scale(1.15)">
-        <line x1="32" y1="4" x2="32" y2="14" stroke="#0B4168" strokeWidth="3" strokeLinecap="round" />
-        <circle cx="32" cy="5" r="4.5" fill="#F7A21C" />
-        <rect x="10" y="13" width="44" height="32" rx="12" fill="#0B4168" />
+        <line x1="32" y1="4" x2="32" y2="14" stroke="#00445F" strokeWidth="3" strokeLinecap="round" />
+        <circle cx="32" cy="5" r="4.5" fill="#FFD31D" />
+        <rect x="10" y="13" width="44" height="32" rx="12" fill="#00445F" />
         <rect x="15" y="19" width="34" height="19" rx="8" fill="#E6F4FA" />
-        <rect x="22" y="24" width="6" height="9" rx="3" fill="#1AB0E2" />
-        <rect x="36" y="24" width="6" height="9" rx="3" fill="#1AB0E2" />
-        <rect x="18" y="46" width="28" height="18" rx="7" fill="#1AB0E2" />
-        <circle cx="32" cy="55" r="4" fill="#97BC3D" />
+        <rect x="22" y="24" width="6" height="9" rx="3" fill="#0098D6" />
+        <rect x="36" y="24" width="6" height="9" rx="3" fill="#0098D6" />
+        <rect x="18" y="46" width="28" height="18" rx="7" fill="#0098D6" />
+        <circle cx="32" cy="55" r="4" fill="#00B16A" />
       </g>
       <rect x="250" y="190" width="70" height="44" rx="10" fill="#0B2B3D" />
       <text x="262" y="217" fontFamily="var(--font-mono)" fontSize="13" fill="#7FD0F2">.py</text>

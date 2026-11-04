@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { bricolage, instrument, jetbrains, anekTe, anekHi, brand, hand } from "./fonts";
+import { poppins, jetbrains, anekTe, anekHi, brand } from "./fonts";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MotionRuntime } from "@/components/motion/MotionRuntime";
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F6FBFD" },
+    { media: "(prefers-color-scheme: light)", color: "#F2F6FF" },
     { media: "(prefers-color-scheme: dark)", color: "#070B14" },
   ],
   width: "device-width",
@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en-IN"
-      className={`no-js ${brand.variable} ${bricolage.variable} ${instrument.variable} ${jetbrains.variable} ${anekTe.variable} ${anekHi.variable} ${hand.variable}`}
+      className={`no-js ${brand.variable} ${poppins.variable} ${jetbrains.variable} ${anekTe.variable} ${anekHi.variable}`}
       suppressHydrationWarning
     >
       <head>
