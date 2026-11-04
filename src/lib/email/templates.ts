@@ -19,6 +19,10 @@ const FOOTER: Record<Category, string> = {
 const rows = (r: [string, string | null | undefined][]) => ({ rows: r.filter(([, v]) => v != null && v !== "") as [string, string][] });
 
 export const TEMPLATES = {
+  certificate_issued: { category: "transactional", render: (p) => ({
+    subject: `Certificate: ${p.title}`, heading: "Your certificate is ready",
+    blocks: [{ p: `Congratulations, ${p.name}! Your Robokalam certificate for ${p.title} is ready.` }, { rows: [["Certificate ID", p.code]] }, { cta: { label: "View and print", href: p.link } }, { note: "Anyone can check it's genuine at robokalam.com/validate with this ID. Share the ID only with people you choose." }],
+  }) },
   login_code: { category: "transactional", render: (p) => ({
     subject: `${p.code} is your Robokalam sign-in code`, heading: "Your sign-in code", preheader: `Use ${p.code} to sign in. It expires in 10 minutes.`,
     blocks: [{ p: "Use this code to sign in to Robokalam:" }, { p: p.code }, { note: "It works once and expires in 10 minutes. Robokalam will never ask you for this code by phone or chat. If you didn't try to sign in, ignore this email; nobody can sign in without the code." }],

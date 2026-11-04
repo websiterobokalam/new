@@ -134,26 +134,6 @@ export const careers: ContentPage = {
   ],
 };
 
-export const validate: ContentPage = {
-  eyebrow: "Certificates",
-  title: "Validate a Robokalam certificate.",
-  lede: "Every Robokalam certificate carries a unique ID. Enter it on our validation site to confirm the certificate is genuine and see who it was issued to and for what.",
-  description: "Check that a Robokalam certificate is genuine on validate.robokalam.com.",
-  actions: [{ href: EXTERNAL.validate.href, label: "Go to validate.robokalam.com", primary: true }],
-  index: true,
-  blocks: [
-    {
-      kind: "prose", heading: "How it works",
-      bullets: [
-        "Find the certificate ID printed on the certificate.",
-        "Open validate.robokalam.com and enter the ID.",
-        "Check that the name, programme and date match the certificate you were given.",
-      ],
-      after: [`If the details don't match, or the ID isn't found, write to ${CONTACT.email} and we will check it for you.`],
-    },
-  ],
-};
-
 export const events: ContentPage = {
   eyebrow: "Events",
   title: "Where learners show what they built.",

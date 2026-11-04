@@ -1,3 +1,4 @@
+import { issueForFellow } from "../certificates";
 import { insertOnce, system, type Tx } from "../db";
 import { asAccount, type Account } from "../auth/session";
 import { academy, gradeModule, mandatoryModules } from "@/content/fellows/academy";
@@ -173,6 +174,7 @@ export async function goLive(staff: Account, fellowId: string) {
     await c.query("UPDATE fellows SET status = 'live', went_live_at = now() WHERE account_id = $1", [fellowId]);
     await rewardReferral(c, fellowId);
     await fellowLive(c, fellowId);
+    await issueForFellow(c, fellowId, `ops:${staff.id}`);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id) VALUES ($1,'fellow_live','fellow',$2)", [staff.id, fellowId]);
   });
 }

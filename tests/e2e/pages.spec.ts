@@ -58,7 +58,7 @@ for (const theme of ["light", "dark"] as const) {
     test.setTimeout(90_000);
     await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
     if (theme === "dark") await page.addInitScript(() => { try { localStorage.setItem("rk-theme", "dark"); } catch {} });
-    for (const path of ["/about", "/contact", "/faq", "/privacy", "/kits", "/programs", "/programs/electro-ashaers", "/careers", "/blog", "/blog/build-a-line-following-robot", "/locations", "/locations/hyderabad", "/locations/warangal"]) {
+    for (const path of ["/about", "/contact", "/faq", "/privacy", "/kits", "/programs", "/programs/electro-ashaers", "/careers", "/blog", "/blog/build-a-line-following-robot", "/locations", "/locations/hyderabad", "/locations/warangal", "/validate", "/validate?code=RK-AAAAA-BBBBB"]) {
       await page.goto(path);
       const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
       const issues = r.violations.map((v) => `${path} ${v.id}: ${v.nodes.slice(0, 3).map((n) => n.target.join(" ")).join(", ")}`);
