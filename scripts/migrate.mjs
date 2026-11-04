@@ -54,6 +54,21 @@ try {
   // Re-runnable extra: foreign key from batches to fellows (added once).
   const [[{ fk }]] = await c.query("SELECT COUNT(*) AS fk FROM information_schema.table_constraints WHERE constraint_schema = DATABASE() AND table_name = 'batches' AND constraint_name = 'batches_fellow'");
   if (!fk) await c.query("ALTER TABLE batches ADD CONSTRAINT batches_fellow FOREIGN KEY (educator_fellow_id) REFERENCES fellows(account_id)");
+  // Phase 5 changes to existing tables (guarded so a re-run is safe).
+  const hasColumn = async (t, col) => (await c.query("SELECT COUNT(*) AS n FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?", [t, col]))[0][0].n > 0;
+  const checkClause = async (name) => (await c.query("SELECT check_clause AS cc FROM information_schema.check_constraints WHERE constraint_schema = DATABASE() AND constraint_name = ?", [name]))[0][0]?.cc ?? "";
+  if (!(await hasColumn("courses", "author_fellow_id"))) {
+    await c.query("ALTER TABLE courses ADD COLUMN author_fellow_id CHAR(36) NULL, ADD COLUMN fellow_share_pct DECIMAL(5,2) NULL, ADD CONSTRAINT courses_author FOREIGN KEY (author_fellow_id) REFERENCES fellows(account_id)");
+  }
+  if (!(await hasColumn("fellows", "referred_by"))) await c.query("ALTER TABLE fellows ADD COLUMN referred_by VARCHAR(12) NULL");
+  if (!(await checkClause("gigs_kind")).includes("own_course")) {
+    await c.query("ALTER TABLE gigs DROP CONSTRAINT gigs_kind");
+    await c.query("ALTER TABLE gigs ADD CONSTRAINT gigs_kind CHECK (kind IN ('live_batch','campus_session','weekend_workshop','doubt_desk','project_mentor','build_session','shadow','co_teach','own_course'))");
+  }
+  if (!(await checkClause("earn_kind")).includes("referral")) {
+    await c.query("ALTER TABLE earnings_lines DROP CONSTRAINT earn_kind");
+    await c.query("ALTER TABLE earnings_lines ADD CONSTRAINT earn_kind CHECK (kind IN ('session','training','demo','shadow','co_teach','adjustment','own_course','referral'))");
+  }
   let skipped = 0;
   for (const [name, sql] of hardening) {
     const [[{ n }]] = await c.query("SELECT COUNT(*) AS n FROM information_schema.triggers WHERE trigger_schema = DATABASE() AND trigger_name = ?", [name]);

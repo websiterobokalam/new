@@ -31,6 +31,13 @@ const PROJECTS = [
   ["space-2-sat", "space", 2, "Paper satellite", "A satellite model with a sensor payload", ["space-1-orbit", "iot-1-weather"], 10],
 ];
 
+/** Plain-language notices for each automated check. Shown to Fellows before they take effect. */
+export const AUTOMATED_SYSTEMS = [
+  ["course-draft-rules", "Course draft checks", "Rules read your course draft for things we never allow: investment or trading advice, live rocket propellants, contact details, private one-to-one sessions, and promises such as guaranteed results.", "A flag only puts a note in front of the reviewer. A person reads your draft and decides. It never changes your tier, pay or gigs."],
+  ["course-draft-ai", "AI review of course drafts", "An AI model (Claude, by Anthropic) reads the text of your course draft (title, outcome, syllabus and kit only, never anything about children) and suggests issues for the reviewer: age fit, safety, clarity and honest claims.", "Suggestions only. A person reviews every draft and makes every decision. It never changes your tier, pay or gigs."],
+  ["session-signals", "Teaching quality signals", "Rules look at your delivered sessions: observation scores, no-shows, low verified parent ratings and blocked attempts to share contact details.", "A flag starts a conversation with your point of contact. A person decides any action, with written reasons. Flags never change your tier or pay on their own."],
+];
+
 export async function seedBase(c, root) {
   // Consent notices: the hash pins the exact text a guardian agreed to.
   const notices = JSON.parse(readFileSync(`${root}/db/seed/notice-learner.json`, "utf8"));
@@ -52,6 +59,13 @@ export async function seedBase(c, root) {
     "INSERT IGNORE INTO courses (id, slug, title, world, age_min, outcome, batch_size_max, sessions, fee_paise, fee_approved, published, kind) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
     [randomUUID(), "free-build-session", "Free Build Session", "robotics", 6, "Finish one real build in a small live session.", 6, 1, 0, true, true, "build_session"],
   );
+  // Cities: the pilot city starts as the only one taking Fellows.
+  const pilot = (process.env.PILOT_CITY ?? "Hyderabad").trim();
+  await c.query("INSERT IGNORE INTO cities (slug, name, status, max_live) VALUES (?,?, 'pilot', ?)", [pilot.toLowerCase(), pilot, Number(process.env.PILOT_MAX_LIVE ?? 25)]);
+  // Automated systems that affect Fellows: published now, effective 14 days later (fair-work notice).
+  for (const [id, name, description, affects] of AUTOMATED_SYSTEMS) {
+    await c.query("INSERT IGNORE INTO automated_systems (id, name, description, affects, notice_at, effective_at) VALUES (?,?,?,?, UTC_TIMESTAMP(3), UTC_TIMESTAMP(3) + INTERVAL 14 DAY)", [id, name, description, affects]);
+  }
   for (const [id, world, level, title, builds, pre, age] of PROJECTS) {
     await c.query("INSERT IGNORE INTO projects (id, world, level, title, builds, prerequisites, age_min) VALUES (?,?,?,?,?,?,?)", [id, world, level, title, builds, JSON.stringify(pre), age]);
   }

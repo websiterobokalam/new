@@ -11,6 +11,7 @@
     "migrate": "node scripts/migrate.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "1.4.0",
     "mysql2": "^3.24.6",
     "next": "^16.4.4",
     "react": "^19.3.1",

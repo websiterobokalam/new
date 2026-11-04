@@ -37,7 +37,7 @@ export function eligible(g: Pick<Gig, "min_tier" | "language" | "mode" | "city">
   return true;
 }
 
-async function weekMinutes(c: Tx, fellowId: string, at: Date) {
+export async function weekMinutes(c: Tx, fellowId: string, at: Date) {
   const start = weekStartIST(at);
   const { rows } = await c.query(
     `SELECT coalesce(sum(g.duration_min),0) AS m FROM gig_assignments ga JOIN gigs g ON g.id = ga.gig_id
@@ -74,7 +74,7 @@ export async function board(a: Account): Promise<{ items: BoardItem[]; fellow: F
   return asAccount(a, async (c) => {
     const gigs = (await c.query(
       `SELECT g.*, (SELECT ga.status FROM gig_assignments ga WHERE ga.gig_id = g.id AND ga.fellow_id = $1) AS my_status
-       FROM gigs g WHERE g.starts_at > now() AND (g.status = 'open' OR EXISTS (SELECT 1 FROM gig_assignments ga WHERE ga.gig_id = g.id AND ga.fellow_id = $1 AND ga.status = 'accepted')) ORDER BY g.starts_at LIMIT 100`,
+       FROM gigs g WHERE g.starts_at > now() AND g.kind <> 'own_course' AND (g.status = 'open' OR EXISTS (SELECT 1 FROM gig_assignments ga WHERE ga.gig_id = g.id AND ga.fellow_id = $1 AND ga.status = 'accepted')) ORDER BY g.starts_at LIMIT 100`,
       [a.id],
     )).rows as (Gig & { my_status: string | null })[];
     const visible = orderBoard(gigs.filter((g) => eligible(g, fellow) && (onboardingKind(g.kind) ? fellow.status !== "live" : true)), fellow.worlds);
@@ -209,6 +209,7 @@ export async function deliver(a: Account, gigId: string, records: { bookingId: s
     }
     await c.query("UPDATE gig_assignments SET status = 'delivered', delivered_at = now() WHERE id = $1", [t.gig.assignment_id]);
     // Escrow: release one session's share of each paid order in this batch.
+    let released = 0;
     if (t.gig.batch_id) {
       const orders = (await c.query(
         `SELECT o.id, o.amount_paise - o.gst_paise AS net, co.sessions FROM orders o JOIN bookings b ON b.id = o.booking_id JOIN batches bt ON bt.id = b.batch_id JOIN courses co ON co.id = bt.course_id
@@ -217,10 +218,17 @@ export async function deliver(a: Account, gigId: string, records: { bookingId: s
       )).rows;
       for (const o of orders) {
         const share = Math.round(o.net / Math.max(1, o.sessions));
-        if (share > 0) await post(c, "escrow_release", `${t.gig.assignment_id}:${o.id}`, [["learner_escrow", share], ["platform_revenue", -share]]);
+        if (share > 0) { await post(c, "escrow_release", `${t.gig.assignment_id}:${o.id}`, [["learner_escrow", share], ["platform_revenue", -share]]); released += share; }
       }
     }
-    await addEarning(c, a.id, { kind: t.gig.kind === "shadow" ? "shadow" : t.gig.kind === "co_teach" ? "co_teach" : "session", description: `${t.gig.title} · ${new Date(t.gig.starts_at).toISOString().slice(0, 16)}`, gross: t.gig.pay_paise, assignmentId: t.gig.assignment_id });
+    if (t.gig.kind === "own_course") {
+      // Fellow's Own Course: the Fellow's published share of the fees this session released.
+      const pct = Number((await c.query("SELECT co.fellow_share_pct AS p FROM batches b JOIN courses co ON co.id = b.course_id WHERE b.id = $1", [t.gig.batch_id])).rows[0]?.p ?? 0);
+      const gross = Math.round((released * pct) / 100);
+      if (gross > 0) await addEarning(c, a.id, { kind: "own_course", description: `${t.gig.title} · ${pct}% of fees · ${new Date(t.gig.starts_at).toISOString().slice(0, 16)}`, gross, assignmentId: t.gig.assignment_id });
+    } else {
+      await addEarning(c, a.id, { kind: t.gig.kind === "shadow" ? "shadow" : t.gig.kind === "co_teach" ? "co_teach" : "session", description: `${t.gig.title} · ${new Date(t.gig.starts_at).toISOString().slice(0, 16)}`, gross: t.gig.pay_paise, assignmentId: t.gig.assignment_id });
+    }
     if (t.gig.kind === "shadow" || t.gig.kind === "co_teach") {
       await c.query("UPDATE vetting_steps SET status = 'passed', detail = JSON_MERGE_PATCH(detail, $3), updated_at = now() WHERE fellow_id = $1 AND step = $2", [a.id, t.gig.kind, { gig: gigId }]);
     }
