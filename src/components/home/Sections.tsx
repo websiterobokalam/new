@@ -131,7 +131,7 @@ export function LabAtNight() {
   return (
     <section id="lab-at-night" aria-label="Lab at Night" className="relative overflow-hidden bg-night py-24 text-[#e3eff5] sm:py-32" data-anim-scope>
       <div data-power className="wrap">
-        <p className="eyebrow !text-[#7FD0F2]" data-stagger>Turnkey 21C STEM &amp; AI Lab</p>
+        <p className="eyebrow !text-[#7FD0F2]" data-stagger>Our flagship · the 21C STEM &amp; AI Lab</p>
         <h2 className="display-lg mt-3 max-w-3xl !text-white" data-stagger>
           Watch a school lab light up.{" "}
           <Claim id="lab.rollout" fallback={null} className="text-leaf" />

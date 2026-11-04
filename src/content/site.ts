@@ -144,6 +144,14 @@ export const parentTrust = [
 
 export const faqs = [
   {
+    q: "What does Robokalam do for schools?",
+    a: "We're an EdTech technology company. For schools we provide the AADHYA AI learning platform, 21cschool ERP, turnkey 21C STEM & AI labs (design, furniture, kits and devices), curriculum development, and teacher training and support, built to work together.",
+  },
+  {
+    q: "Can you work with the software our school already uses?",
+    a: "Yes. Our platforms connect through APIs, and our studio builds integrations and custom tools for schools and EdTech companies. We'll look at what you have before proposing anything new.",
+  },
+  {
     q: "What happens in a Free Build Session?",
     a: "Your child gets a mini mission, joins a small live session with a vetted Fellow or trainer, and finishes one build. You get the build, plain feedback and a suggested next step with the full fee shown. We follow up once, only if you agree.",
   },
