@@ -8,7 +8,7 @@ import { schoolRequestChanged, staffAdded, ticketChanged } from "../email/notify
 import { sendVerification } from "../email/verify";
 
 /**
- * Schools, staff, timetable, hardware tickets and Fellow requests.
+ * Schools, staff, timetable, hardware tickets and Kalamite requests.
  * Every query is scoped to the caller's school. Student names never enter
  * this database: rosters are read live from 21cschool, attendance is a count.
  */
@@ -16,7 +16,7 @@ import { sendVerification } from "../email/verify";
 export type Staff = { accountId: string; schoolId: string; role: "school_admin" | "trainer"; displayName: string; schoolName: string; city: string; slaHours: number; aadhyaTenant: string | null; erpRef: string | null };
 
 export const DEFAULT_SLA_HOURS = Number(process.env.HARDWARE_SLA_HOURS ?? 72);
-/** Lead time so ops can schedule and a Fellow can plan (decision, see PHASE-4.md). */
+/** Lead time so ops can schedule and a Kalamite can plan (decision, see PHASE-4.md). */
 export const REQUEST_LEAD_HOURS = 48;
 
 export async function staffFor(a: Account): Promise<Staff | null> {
@@ -86,7 +86,7 @@ async function addStaffIn(c: Tx, actorId: string, schoolId: string, i: { phone: 
     if (!reusable) {
       throw new HttpError(409, staffRow && !staffRow.removed_at
         ? "This number is already on a school's staff list."
-        : "This number already has a different Robokalam account (for example a parent or Fellow). Use another number for school work.");
+        : "This number already has a different Robokalam account (for example a parent or Kalamite). Use another number for school work.");
     }
     accountId = existing.id;
     await c.query("UPDATE accounts SET role = $2, display_name = $3 WHERE id = $1", [accountId, i.role, i.name]);
@@ -290,12 +290,12 @@ export async function confirmTicket(a: Account, id: string, fixed: boolean, note
   });
 }
 
-/* ------------------------------ Fellow requests ------------------------------ */
+/* ------------------------------ Kalamite requests ------------------------------ */
 
 export async function requestFellow(a: Account, i: { labId: string; world: string; language: string; startsAt: string; durationMin: number; gradeBand: string; students: number; responsibleStaffId: string; notes?: string }) {
   const s = await requireStaff(a, "school_admin");
   const at = new Date(i.startsAt);
-  if (at.getTime() < Date.now() + REQUEST_LEAD_HOURS * 3600_000) throw new HttpError(422, `Please ask at least ${REQUEST_LEAD_HOURS} hours ahead so we can schedule a vetted Fellow`, { fields: { startsAt: "Too soon" } });
+  if (at.getTime() < Date.now() + REQUEST_LEAD_HOURS * 3600_000) throw new HttpError(422, `Please ask at least ${REQUEST_LEAD_HOURS} hours ahead so we can schedule a vetted Kalamite`, { fields: { startsAt: "Too soon" } });
   return system(async (c) => {
     await assertLab(c, i.labId, s.schoolId);
     await assertTrainer(c, i.responsibleStaffId, s.schoolId);
@@ -350,7 +350,7 @@ export async function declineRequest(ops: Account, id: string, note: string) {
   });
 }
 
-/** Fellow sessions at this school, with only the Fellow's public name. */
+/** Kalamite sessions at this school, with only the Kalamite's public name. */
 export async function schoolFellowSessions(schoolId: string) {
   return system(async (c) => (await c.query(
     `SELECT fr.id, fr.starts_at, fr.duration_min, fr.world, fr.grade_band, fr.students, fr.status, fr.decision_note, fr.gig_id,
@@ -365,7 +365,7 @@ export async function schoolFellowSessions(schoolId: string) {
   )).rows);
 }
 
-/** May this trainer score this Fellow assignment? Only for sessions at their own school. */
+/** May this trainer score this Kalamite assignment? Only for sessions at their own school. */
 export async function canObserve(a: Account, assignmentId: string) {
   const s = await staffFor(a);
   if (!s) return false;

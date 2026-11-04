@@ -1,7 +1,7 @@
 import type { Tx } from "../db";
 
 /**
- * TIER FORMULA (published to Fellows). DRAFT thresholds for ops to approve.
+ * TIER FORMULA (published to Kalamites). DRAFT thresholds for ops to approve.
  * Inputs: reliability, learner progress and verified parent feedback.
  * Not inputs: popularity, hours volume, declines, Exam Mode, or any personal
  * characteristic. Tiers are suggested by this formula and confirmed by a

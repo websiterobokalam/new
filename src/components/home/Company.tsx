@@ -31,7 +31,7 @@ const solutions = [
   { icon: I.erp, name: "21cschool ERP", tag: "Software", line: "School management software for timetables, attendance, staff and reports, connected to your labs and learning data.", href: "/21c-lab" },
   { icon: I.lab, name: "21C STEM & AI Labs", tag: "Hardware", line: "Turnkey robotics, IoT and AI labs: room design, furniture, kits, RK Brain chips and devices, installed and maintained.", href: "/21c-lab" },
   { icon: I.book, name: "Curriculum development", tag: "Curriculum", line: "Project-based curriculum from the early years to senior school: lesson plans, kits and assessments, shaped with your teachers.", href: "/21c-lab#curriculum" },
-  { icon: I.people, name: "Training and support", tag: "People", line: "Teacher training, an on-site lab instructor option, and Kalam Fellows for clubs, camps and events.", href: "/fellows" },
+  { icon: I.people, name: "Training and support", tag: "People", line: "Teacher training, an on-site lab instructor option, and Kalamites for clubs, camps and events.", href: "/kalamites" },
   { icon: I.code, name: "Custom EdTech software", tag: "Studio", line: "Need something built? We design and build apps, portals and integrations for schools and EdTech companies.", href: "/studio" },
 ];
 

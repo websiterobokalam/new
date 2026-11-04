@@ -10,7 +10,7 @@ test("Campus Ambassadors page: the rules are stated up front", async ({ page }) 
   await expect(page.getByText(/No earnings promises/)).toBeVisible();
 });
 
-test("a Fellow without a teaching record can draft a course but not submit it", async ({ page }) => {
+test("a Kalamite without a teaching record can draft a course but not submit it", async ({ page }) => {
   const phone = await applyAsFellow(page);
   await passSteps(phone, ALL_STEPS, true);
   await page.goto("/app/fellow/courses");
@@ -19,7 +19,7 @@ test("a Fellow without a teaching record can draft a course but not submit it", 
   await fillDraft(page, { title, outcome: "Every learner builds a buzzer that beeps a pattern they composed.", syllabus: "Blink | An LED that blinks a pattern\nBeep | A buzzer that plays the pattern" });
   const card = page.locator(`[data-draft="${title}"]`);
   await card.getByRole("button", { name: "Submit for review" }).click();
-  await expect(card.getByText(/Not yet: Tier fellow or above/)).toBeVisible();
+  await expect(card.getByText(/Not yet: Kalamite level or above/)).toBeVisible();
 });
 
 async function fillDraft(page: Page, d: { title: string; world?: string; outcome: string; sessions?: number; syllabus: string; fee?: number }) {
@@ -51,7 +51,7 @@ test.describe("open marketplace", () => {
     await ops.getByRole("button", { name: "Open the marketplace" }).click();
     await expect(ops.getByText(/Not ready: No agreed target/)).toBeVisible();
 
-    // A Fellow with a real teaching record gives the measures data.
+    // A Kalamite with a real teaching record gives the measures data.
     const p = await (await browser.newContext()).newPage();
     const name = `Meera Author${newId().slice(0, 4)}`;
     const phone = await applyAsFellow(p, { name, worlds: ["Robotics", "Financial Literacy"] });
@@ -75,7 +75,7 @@ test.describe("open marketplace", () => {
     expect((await ownerQuery("SELECT action FROM audit_log WHERE action = 'market_opened'")).length).toBeGreaterThan(0);
   });
 
-  test("Fellow's Own Course: checks raise points, a person decides each one, then the course", async ({ browser }) => {
+  test("Kalamite's Own Course: checks raise points, a person decides each one, then the course", async ({ browser }) => {
     const p = author.page;
     await p.goto("/app/fellow/courses");
     // Fair work: the checks are announced with a start date 14 days out.
@@ -95,23 +95,23 @@ test.describe("open marketplace", () => {
     await ops.goto("/app/ops/courses");
     const rev = ops.locator(`[data-review="${title}"]`);
     const decide = rev.locator("form").last();
-    await decide.getByLabel("Note the Fellow will read").fill("Looks good");
+    await decide.getByLabel("Note the Kalamite will read").fill("Looks good");
     await decide.getByRole("button", { name: "Record review" }).click();
     await expect(rev.getByText(/Decide the 2 open flags/)).toBeVisible();
     await rev.locator('[data-flag="finlit_investment"]').getByLabel(/Decision on/).selectOption("actioned");
-    await rev.locator('[data-flag="finlit_investment"]').getByLabel("Note the Fellow will read").fill("Replace the share-picking session: money basics only.");
+    await rev.locator('[data-flag="finlit_investment"]').getByLabel("Note the Kalamite will read").fill("Replace the share-picking session: money basics only.");
     await rev.locator('[data-flag="finlit_investment"]').getByRole("button", { name: "Record decision" }).click();
     await expect(rev.locator('[data-flag="finlit_investment"]').getByText(/^Issue:/)).toBeVisible();
     await rev.locator('[data-flag="ai_outcome"]').getByLabel(/Decision on/).selectOption("actioned");
-    await rev.locator('[data-flag="ai_outcome"]').getByLabel("Note the Fellow will read").fill("Say what they will have built.");
+    await rev.locator('[data-flag="ai_outcome"]').getByLabel("Note the Kalamite will read").fill("Say what they will have built.");
     await rev.locator('[data-flag="ai_outcome"]').getByRole("button", { name: "Record decision" }).click();
     await expect(rev.locator('[data-flag="ai_outcome"]').getByText(/^Issue:/)).toBeVisible();
     await rev.getByRole("combobox", { name: /^Decision(?! on)/ }).selectOption("changes");
-    await rev.locator("form").last().getByLabel("Note the Fellow will read").fill("Please replace session 2 and sharpen the outcome.");
+    await rev.locator("form").last().getByLabel("Note the Kalamite will read").fill("Please replace session 2 and sharpen the outcome.");
     await rev.getByRole("button", { name: "Record review" }).click();
     await expect.poll(async () => (await ownerQuery("SELECT status FROM course_drafts WHERE title = $1", [title]))[0].status).toBe("changes");
 
-    // The Fellow sees the notes, edits and resubmits.
+    // The Kalamite sees the notes, edits and resubmits.
     await p.reload();
     await expect(card.getByText("Please replace session 2 and sharpen the outcome.")).toBeVisible();
     await expect(card.getByText(/reviewer: Replace the share-picking session/)).toBeVisible();
@@ -125,17 +125,17 @@ test.describe("open marketplace", () => {
 
     await ops.reload();
     await rev.getByRole("combobox", { name: /^Decision(?! on)/ }).selectOption("approve");
-    await rev.locator("form").last().getByLabel("Note the Fellow will read").fill("Clear, safe and age-appropriate. Approved.");
+    await rev.locator("form").last().getByLabel("Note the Kalamite will read").fill("Clear, safe and age-appropriate. Approved.");
     await rev.getByRole("button", { name: "Record review" }).click();
     await expect(rev.getByRole("button", { name: "Publish" })).toBeVisible();
     await rev.getByRole("button", { name: "Publish" }).click();
     await expect.poll(async () => (await ownerQuery("SELECT status FROM course_drafts WHERE title = $1", [title]))[0].status).toBe("published");
 
-    // Public: labelled as a Fellow's Own Course.
+    // Public: labelled as a Kalamite's Own Course.
     const pub = await (await browser.newContext()).newPage();
     await pub.goto("/courses?world=finlit");
     const li = pub.locator("li", { hasText: title });
-    await expect(li.getByText("Fellow's Own Course · reviewed by Robokalam")).toBeVisible();
+    await expect(li.getByText("Kalamite's Own Course · reviewed by Robokalam")).toBeVisible();
 
     // The author schedules a run: weekly sessions on their own calendar, never on the gig board.
     await p.reload();
@@ -146,7 +146,7 @@ test.describe("open marketplace", () => {
     await expect.poll(async () => (await ownerQuery("SELECT COUNT(*) AS n FROM gigs WHERE kind = 'own_course' AND title LIKE $1", [`${title}%`]))[0].n).toBe(2);
     const gigs = await ownerQuery<{ id: string; batch_id: string }>("SELECT id, batch_id FROM gigs WHERE kind = 'own_course' AND title LIKE $1 ORDER BY starts_at", [`${title}%`]);
 
-    // A family pays; the first session is delivered; the Fellow earns 70% of that session's share.
+    // A family pays; the first session is delivered; the Kalamite earns 70% of that session's share.
     const paid = 150000;
     await attendedBooking(gigs[0].batch_id, { paid, status: "confirmed" });
     await ownerQuery("UPDATE gigs SET starts_at = now() - INTERVAL 5 MINUTE WHERE id = $1", [gigs[0].id]);
@@ -171,13 +171,13 @@ test.describe("open marketplace", () => {
     const ops = await staffPage(browser, "ops");
     await ops.goto("/app/ops/marketplace");
     await ops.getByLabel("City to open").fill(city);
-    await ops.getByLabel("Most live Fellows there").fill("10");
+    await ops.getByLabel("Most live Kalamites there").fill("10");
     await ops.getByLabel("Why, and who agreed (recorded)").fill("Partner schools ready there");
     await ops.getByRole("button", { name: "Open this city" }).click();
     await expect(ops.getByText("City opened. Waitlisted applicants there have moved to checks.")).toBeVisible();
     expect((await ownerQuery("SELECT status FROM fellows WHERE account_id = $1", [id]))[0].status).toBe("vetting");
     const pub = await (await browser.newContext()).newPage();
-    await pub.goto("/fellows/apply");
+    await pub.goto("/kalamites/apply");
     await expect(pub.getByText(new RegExp(`open in .*${city}`, "i"))).toBeVisible();
   });
 
@@ -201,7 +201,7 @@ test.describe("open marketplace", () => {
     await ops.goto("/app/ops/ambassadors");
     const row = ops.locator(`[data-ambassador="${author.name}"]`);
     await row.getByLabel(/Decision for/).selectOption("active");
-    await row.getByLabel("Note the Fellow will read").fill("Welcome aboard. Materials are in the app.");
+    await row.getByLabel("Note the Kalamite will read").fill("Welcome aboard. Materials are in the app.");
     await row.getByRole("button", { name: "Record decision" }).click();
     await expect.poll(async () => (await ownerQuery("SELECT status FROM ambassadors WHERE fellow_id = $1", [author.id]))[0].status).toBe("active");
     const code = (await ownerQuery<{ code: string }>("SELECT code FROM ambassadors WHERE fellow_id = $1", [author.id]))[0].code;
@@ -216,13 +216,13 @@ test.describe("open marketplace", () => {
     const lines = await ownerQuery<{ gross_paise: number }>("SELECT gross_paise FROM earnings_lines WHERE fellow_id = $1 AND kind = 'referral'", [author.id]);
     expect(lines).toEqual([{ gross_paise: 50000 }]);
     await p.reload();
-    await expect(p.getByText(`/fellows/apply?ref=${code}`)).toBeVisible();
+    await expect(p.getByText(`/kalamites/apply?ref=${code}`)).toBeVisible();
     await expect(p.getByText("Live", { exact: true })).toBeVisible();
     await expect(p.getByText(/Classmate R/)).toHaveCount(0);
     await ownerQuery("UPDATE rate_card SET approved = FALSE WHERE gig_kind = 'ambassador_referral'");
   });
 
-  test("teaching signals: rules flag, a person decides, the Fellow sees it, tier untouched", async ({ browser }) => {
+  test("teaching signals: rules flag, a person decides, the Kalamite sees it, tier untouched", async ({ browser }) => {
     const p = await (await browser.newContext()).newPage();
     const phone = await applyAsFellow(p, { name: "Signal Tester" });
     const id = await passSteps(phone, ALL_STEPS, true);
@@ -234,7 +234,7 @@ test.describe("open marketplace", () => {
     await ops.reload();
     const flag = ops.locator('[data-flag="safety_score"]', { hasText: "Signal T." });
     await expect(flag).toBeVisible();
-    await flag.getByLabel("Note the Fellow will read").fill("We talked it through; a safety refresher is booked.");
+    await flag.getByLabel("Note the Kalamite will read").fill("We talked it through; a safety refresher is booked.");
     await flag.getByRole("button", { name: "Record decision" }).click();
     await expect.poll(async () => (await ownerQuery("SELECT status FROM quality_flags WHERE fellow_id = $1 AND code = 'safety_score'", [id]))[0].status).toBe("actioned");
     await p.goto("/app/fellow/growth");

@@ -4,9 +4,9 @@ import { schoolFellowSessions, REQUEST_LEAD_HOURS } from "@/lib/schools/core";
 import { system } from "@/lib/db";
 import { JsonForm } from "@/components/app/JsonForm";
 
-export const metadata = { title: "Kalam Fellows" };
+export const metadata = { title: "Kalamites" };
 
-const STATUS: Record<string, string> = { requested: "Waiting for Robokalam", scheduled: "Scheduled, finding a Fellow", declined: "Not possible", cancelled: "Cancelled" };
+const STATUS: Record<string, string> = { requested: "Waiting for Robokalam", scheduled: "Scheduled, finding a Kalamite", declined: "Not possible", cancelled: "Cancelled" };
 const score = (n: string) => ({ name: n, label: n[0].toUpperCase() + n.slice(1), type: "select" as const, defaultValue: "3", options: [["1", "1"], ["2", "2"], ["3", "3"], ["4", "4"]] as [string, string][] });
 
 export default async function SchoolFellows() {
@@ -25,15 +25,15 @@ export default async function SchoolFellows() {
     <section className="py-10">
       <div className="wrap grid gap-8 [&>*]:min-w-0">
         <header>
-          <h1 className="display-lg">Kalam Fellows at your school</h1>
-          <p className="mt-2 max-w-2xl text-muted">Book a vetted college student to run a Campus Session in your lab. A member of your staff stays in the room for the whole session. Fellows never get students&apos; names or contact details, and all contact goes through Robokalam.</p>
+          <h1 className="display-lg">Kalamites at your school</h1>
+          <p className="mt-2 max-w-2xl text-muted">Book a vetted college student to run a Campus Session in your lab. A member of your staff stays in the room for the whole session. Kalamites never get students&apos; names or contact details, and all contact goes through Robokalam.</p>
         </header>
 
         <div className={`grid gap-6 ${admin ? "lg:grid-cols-[1fr_1.3fr]" : ""}`}>
           {admin && (
             <section className="card p-6" aria-labelledby="book-h">
-              <h2 id="book-h" className="mb-1 text-xl font-bold">Book a Fellow</h2>
-              <p className="mb-4 text-sm text-muted">At least {REQUEST_LEAD_HOURS} hours ahead. Robokalam confirms and finds a Fellow.</p>
+              <h2 id="book-h" className="mb-1 text-xl font-bold">Book a Kalamite</h2>
+              <p className="mb-4 text-sm text-muted">At least {REQUEST_LEAD_HOURS} hours ahead. Robokalam confirms and finds a Kalamite.</p>
               {d.labs.length === 0 ? <p className="text-muted">No lab installed yet.</p> : (
                 <JsonForm url="/api/school/fellow-requests" submit="Send request" done="Request sent" fields={[
                   { name: "startsAt", label: "Date and time", type: "datetime" },
@@ -62,7 +62,7 @@ export default async function SchoolFellows() {
                     <p className="text-sm text-muted">{f.lab} · {f.students} students · in the room: {f.responsible}</p>
                     <p className="text-sm">
                       <strong>{delivered ? "Delivered" : f.fellow ? "Confirmed" : STATUS[f.status]}</strong>
-                      {f.fellow && <> · Fellow: <Link className="font-semibold text-link underline" href={`/educators/${f.fellow_id}`}>{f.fellow}</Link></>}
+                      {f.fellow && <> · Kalamite: <Link className="font-semibold text-link underline" href={`/educators/${f.fellow_id}`}>{f.fellow}</Link></>}
                       {f.decision_note && ` · ${f.decision_note}`}
                     </p>
                     {admin && f.status === "requested" && (

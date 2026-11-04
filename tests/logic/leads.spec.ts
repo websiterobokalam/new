@@ -17,7 +17,7 @@ test("child data is an age band, never a date of birth", () => {
   expect(Lead.safeParse({ ...learner, childAgeBand: "2015-04-01" }).success).toBe(false);
 });
 
-test("Fellows must confirm 18+", () => {
+test("Kalamites must confirm 18+", () => {
   const f = { door: "educator", name: "Ravi", phone: "+919876543210", email: "ravi@college.ac.in", college: "Any College", course: "B.Tech ECE", year: "3", ageConfirmed: false, worlds: ["iot"], hoursPerWeek: 6, city: "Hyderabad", languages: ["English"], contactOptIn: true };
   expect(Lead.safeParse(f).success).toBe(false);
   const ok = Lead.parse({ ...f, ageConfirmed: true });

@@ -2,22 +2,22 @@ import { audit, system, uuid, type Tx } from "../db";
 import { HttpError } from "../api";
 import type { Account } from "../auth/session";
 import { requireFellow } from "../fellows/core";
-import { TIERS, weekMinutes } from "../fellows/gigs";
+import { TIERS, tierLabel, weekMinutes } from "../fellows/gigs";
 import { checkDraft, type Draft } from "../quality/flags";
 import { requireMarketOpen } from "./gate";
 import { courseReviewed, courseSubmitted } from "../email/notify";
 
 /**
- * Fellow's Own Course (brief §11): online, small groups, reviewed and
+ * Kalamite's Own Course (brief §11): online, small groups, reviewed and
  * approved first. Opens only after reliable quality data exists, so authors
  * must meet a published bar, and courses go public only when the
  * marketplace is open.
  */
 
-/** Published to Fellows as-is. Drafts for ops to approve (see PHASE-5.md). */
+/** Published to Kalamites as-is. Drafts for ops to approve (see PHASE-5.md). */
 export const AUTHOR_RULES = { minTier: "fellow", minSessions: 10, minObservation: 3, minRating: 4.3, minReviews: 3 } as const;
 
-/** The Fellow's share of the course fee, from your approved terms. Unset = courses can't go public. */
+/** The Kalamite's share of the course fee, from your approved terms. Unset = courses can't go public. */
 export const fellowSharePct = () => {
   const v = Number(process.env.OWN_COURSE_FELLOW_SHARE_PCT);
   return Number.isFinite(v) && v > 0 && v <= 100 ? v : null;
@@ -35,8 +35,8 @@ export async function authorChecks(c: Tx, fellowId: string): Promise<{ ok: boole
   const highFlags = Number((await c.query("SELECT COUNT(*) AS n FROM quality_flags WHERE fellow_id = $1 AND subject_type = 'fellow' AND severity = 'high' AND status = 'open'", [fellowId])).rows[0].n);
   const tierOk = !!f && TIERS.indexOf(f.tier) >= TIERS.indexOf(AUTHOR_RULES.minTier);
   const checks: Check[] = [
-    { label: "Live Kalam Fellow", ok: f?.status === "live", detail: f ? `You are ${f.status}` : "Not a Fellow" },
-    { label: `Tier ${AUTHOR_RULES.minTier} or above`, ok: tierOk, detail: f ? `You are ${f.tier}` : "" },
+    { label: "Live Kalamite", ok: f?.status === "live", detail: f ? `You are ${f.status}` : "Not a Kalamite" },
+    { label: `${tierLabel(AUTHOR_RULES.minTier)} level or above`, ok: tierOk, detail: f ? `You are ${tierLabel(f.tier)}` : "" },
     { label: `${AUTHOR_RULES.minSessions} sessions delivered`, ok: delivered >= AUTHOR_RULES.minSessions, detail: `${delivered} so far` },
     { label: `Observation scores average ${AUTHOR_RULES.minObservation} of 4 or more`, ok: obsAvg != null && obsAvg >= AUTHOR_RULES.minObservation, detail: obsAvg == null ? "No observations yet" : `${obsAvg.toFixed(1)} from ${obs.length}` },
     { label: `Verified parent rating ${AUTHOR_RULES.minRating} or more, from ${AUTHOR_RULES.minReviews}+ reviews`, ok: Number(rev.n) >= AUTHOR_RULES.minReviews && Number(rev.avg) >= AUTHOR_RULES.minRating, detail: Number(rev.n) ? `${Number(rev.avg).toFixed(1)} from ${rev.n}` : "No reviews yet" },
@@ -110,7 +110,7 @@ const slugify = (s: string) => s.toLowerCase().normalize("NFKD").replace(/[^\w\s
 
 /** A reviewer decides. Approval needs every flag on the draft decided by a person first. */
 export async function reviewDraft(ops: Account, id: string, decision: "approve" | "changes" | "reject", note: string) {
-  if (note.trim().length < 5) throw new HttpError(422, "Write a note the Fellow will read", { fields: { note: "Required" } });
+  if (note.trim().length < 5) throw new HttpError(422, "Write a note the Kalamite will read", { fields: { note: "Required" } });
   return system(async (c) => {
     const d = await loadDraft(c, id);
     if (d.status !== "submitted") throw new HttpError(409, "Only a submitted draft can be reviewed");
@@ -121,7 +121,7 @@ export async function reviewDraft(ops: Account, id: string, decision: "approve" 
       const f = (await c.query("SELECT display_name FROM fellows WHERE account_id = $1", [d.fellow_id])).rows[0];
       await c.query(
         `INSERT INTO courses (id, slug, title, world, programme, age_min, age_max, outcome, batch_size_max, sessions, kit, fee_paise, fee_approved, sample, published, kind, author_fellow_id, fellow_share_pct)
-         VALUES ($1,$2,$3,$4,'Fellow''s Own Course',$5,$6,$7,$8,$9,$10,$11, TRUE, FALSE, FALSE, 'course', $12, NULL)`,
+         VALUES ($1,$2,$3,$4,'Kalamite''s Own Course',$5,$6,$7,$8,$9,$10,$11, TRUE, FALSE, FALSE, 'course', $12, NULL)`,
         [courseId, `${slugify(d.title)}-${courseId.slice(0, 6)}`, d.title, d.world, d.age_min, d.age_max, d.outcome, d.batch_size_max, d.sessions, d.kit, d.fee_paise, d.fellow_id],
       );
       await c.query("UPDATE course_drafts SET status = 'approved', course_id = $2, reviewed_by = $3, reviewed_at = UTC_TIMESTAMP(3), review_note = $4 WHERE id = $1", [id, courseId, ops.id, note]);
@@ -136,11 +136,11 @@ export async function reviewDraft(ops: Account, id: string, decision: "approve" 
   });
 }
 
-/** Goes public only when the marketplace is open and the Fellow's share is approved. */
+/** Goes public only when the marketplace is open and the Kalamite's share is approved. */
 export async function publishCourse(ops: Account, id: string) {
   await requireMarketOpen();
   const share = fellowSharePct();
-  if (!share) throw new HttpError(409, "Set OWN_COURSE_FELLOW_SHARE_PCT from the approved Fellow terms first");
+  if (!share) throw new HttpError(409, "Set OWN_COURSE_FELLOW_SHARE_PCT from the approved Kalamite terms first");
   return system(async (c) => {
     const d = await loadDraft(c, id);
     if (d.status !== "approved" || !d.course_id) throw new HttpError(409, "Only an approved course can be published");
@@ -173,7 +173,7 @@ export async function scheduleRun(a: Account, draftId: string, i: { startsAt: st
       [batchId, co.id, first, minutes, co.batch_size_max, i.language, fellow.display_name, a.id]);
     for (const [k, at] of dates.entries()) {
       const gigId = uuid();
-      // Pay is the Fellow's share of fees released on delivery, so the per-session figure is a placeholder (1 paisa) never shown or paid.
+      // Pay is the Kalamite's share of fees released on delivery, so the per-session figure is a placeholder (1 paisa) never shown or paid.
       await c.query(
         `INSERT INTO gigs (id, kind, batch_id, title, world, language, starts_at, duration_min, mode, city, pay_paise, seats, status, created_by)
          VALUES ($1,'own_course',$2,$3,$4,$5,$6,$7,'online',$8,1,1,'filled',$9)`,

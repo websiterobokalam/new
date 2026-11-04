@@ -60,9 +60,9 @@ test("subject test and Academy: safety modules need every answer right; passing 
 test("terms: plain terms in three languages; accepting passes the step", async ({ page }) => {
   await applyAsFellow(page);
   await page.goto("/app/fellow/terms?lang=te");
-  await expect(page.getByRole("heading", { name: "కలాం ఫెలో నిబంధనలు (సరళ రూపం)" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "కలాం ఫెలో నిబంధనలు (సరళ రూపం)" }) /* the signed version stays in force until the Kalamite version takes effect, 14 days after publication */).toBeVisible();
   await page.goto("/app/fellow/terms");
-  await expect(page.getByText("We give you 14 days' notice")).toBeVisible();
+  await expect(page.getByText("We give you 14 days' notice").first()).toBeVisible();
   await page.getByRole("button", { name: "I accept the terms and the code of conduct" }).click();
   await expect(page).toHaveURL(/\/app\/fellow$/);
   await expect(page.locator("li", { hasText: "Terms and code of conduct" }).getByText("passed")).toBeVisible();
@@ -120,7 +120,7 @@ test("teach mode: minimal roster, attendance and builds, pay line, escrow releas
   await parent.getByRole("button", { name: "Pay (test)" }).click();
   await expect(parent).toHaveURL(/orders/);
 
-  // A live Fellow accepts the batch gig.
+  // A live Kalamite accepts the batch gig.
   const phone = await applyAsFellow(page, { name: "Sana Iqbal" });
   const fid = await passSteps(phone, ALL_STEPS, true);
   const gig = await makeGig("live_batch", { batchId: batch.id, startsInHours: 70 });
@@ -137,12 +137,12 @@ test("teach mode: minimal roster, attendance and builds, pay line, escrow releas
   await page.goto(`/app/fellow/gigs/${gig.id}`);
   const fs = page.locator("fieldset", { hasText: "Kavya · 9-11" });
   await expect(fs).toBeVisible();
-  // Fellows never get child data beyond first name, age band and progress.
+  // Kalamites never get child data beyond first name, age band and progress.
   // Run the app's own roster query: exactly these fields, nothing else about the child or parent.
   const roster = await rosterFor({ query: async (sql: string, params?: unknown[]) => ({ rows: await ownerQuery(sql, params), affectedRows: 0, insertId: 0 }) }, gig.id, fid);
   expect(roster.length).toBe(1);
   expect(Object.keys(roster[0]).sort()).toEqual(["age_band", "booking_id", "built", "first_name", "status"]);
-  // ...and nothing for a Fellow who has not accepted this class.
+  // ...and nothing for a Kalamite who has not accepted this class.
   expect(await rosterFor({ query: async (sql: string, params?: unknown[]) => ({ rows: await ownerQuery(sql, params), affectedRows: 0, insertId: 0 }) }, gig.id, newId())).toEqual([]);
   await fs.getByLabel("Built today").selectOption({ label: "First light" });
   await fs.getByLabel("One line for the parent").fill("Kavya wired her first circuit and fixed a reversed LED herself.");
@@ -200,7 +200,7 @@ test("messages: contact details are blocked and flagged; normal messages flow bo
   expect(flagged.length).toBeGreaterThan(0);
 });
 
-test("payouts: weekly run, bank reference, balanced ledger, visible to the Fellow", async ({ page, browser }) => {
+test("payouts: weekly run, bank reference, balanced ledger, visible to the Kalamite", async ({ page, browser }) => {
   const name = `Payout Tester ${Math.random().toString(36).slice(2, 7)}`;
   const phone = await applyAsFellow(page, { name });
   const fid = await passSteps(phone, ALL_STEPS, true);
@@ -262,7 +262,7 @@ test("fair removal: 7 days' notice with a response; child safety suspends at onc
 test("fellow cannot change their own status, and sees no family data", async ({ page, browser }) => {
   const phone = await applyAsFellow(page);
   const fid = await accountId(phone);
-  // Database guard (installed where the host allows triggers): a Fellow's
+  // Database guard (installed where the host allows triggers): a Kalamite's
   // transaction cannot change staff-only fields.
   const mysql = (await import("mysql2/promise")).default;
   const { readFileSync } = await import("node:fs");
@@ -273,7 +273,7 @@ test("fellow cannot change their own status, and sees no family data", async ({ 
     await expect(c.query("UPDATE fellows SET status = 'live' WHERE account_id = ?", [fid])).rejects.toThrow(/only Robokalam staff/);
     await c.query("UPDATE fellows SET exam_mode_until = CURDATE() WHERE account_id = ?", [fid]); // availability is theirs
   } finally { await c.end(); }
-  // App level: a parent's child exists, but the Fellow's account sees none of it.
+  // App level: a parent's child exists, but the Kalamite's account sees none of it.
   const parent = await (await browser.newContext()).newPage();
   await login(parent);
   const lid = await addLearner(parent, "Nikhil", "9-11");

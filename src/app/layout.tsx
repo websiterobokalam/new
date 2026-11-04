@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: { default: "Robokalam: AI, software and labs for future-ready schools", template: "%s | Robokalam" },
   description:
-    "Robokalam, Literature of Technologies, is an EdTech technology company. The AADHYA AI learning platform, 21cschool ERP, turnkey 21C STEM & AI labs and curriculum for premium schools, plus live classes for learners from age 6 and Kalam Fellows for college students who teach.",
+    "Robokalam, Literature of Technologies, is an EdTech technology company. The AADHYA AI learning platform, 21cschool ERP, turnkey 21C STEM & AI labs and curriculum for premium schools, plus live classes for learners from age 6 and Kalamites for college students who teach.",
   applicationName: "Robokalam",
   manifest: "/manifest.webmanifest",
   openGraph: { siteName: "Robokalam", type: "website", locale: "en_IN" },

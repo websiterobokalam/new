@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 const how = [
   { t: "Pick age and interest", d: "Tell us your child's age band and what they want to build." },
   { t: "Confirm and consent", d: "Verify your number by OTP, read a plain notice and give consent." },
-  { t: "One live build", d: "A small live session with a vetted Fellow or trainer. Your child finishes one build." },
+  { t: "One live build", d: "A small live session with a vetted Kalamite or trainer. Your child finishes one build." },
   { t: "Plain next step", d: "You get the build, plain feedback and a next step with the full fee shown." },
 ];
 const learnFaqs = faqs.filter((f) => /Build Session|teaches|one to one|loans|Financial/.test(f.q));

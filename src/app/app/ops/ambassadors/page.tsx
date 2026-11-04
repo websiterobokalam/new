@@ -19,7 +19,7 @@ export default async function OpsAmbassadors() {
 
   return (
     <section className="py-10"><div className="wrap grid gap-8 [&>*]:min-w-0">
-      <header><h1 className="display-lg">Campus Ambassadors</h1><p className="mt-2 max-w-3xl text-muted">Approving an ambassador needs the marketplace open. Pausing or ending is always possible. Ambassadors recruit Fellows only.</p></header>
+      <header><h1 className="display-lg">Campus Ambassadors</h1><p className="mt-2 max-w-3xl text-muted">Approving an ambassador needs the marketplace open. Pausing or ending is always possible. Ambassadors recruit Kalamites only.</p></header>
       <ul className="grid gap-3">
         {d.list.map((a) => (
           <li key={a.fellow_id} className="card grid gap-2 p-5" data-ambassador={a.display_name}>
@@ -27,7 +27,7 @@ export default async function OpsAmbassadors() {
             <p className="text-sm text-muted">{a.pitch}</p>
             <div className="max-w-md"><JsonForm compact url={`/api/ops/ambassadors/${a.fellow_id}`} submit="Record decision" done="Recorded" fields={[
               { name: "to", label: `Decision for ${a.display_name}`, type: "select", options: a.status === "active" ? [["paused", "Pause"], ["ended", "End"]] : [["active", "Approve"], ["declined", "Decline"]] },
-              { name: "note", label: "Note the Fellow will read" },
+              { name: "note", label: "Note the Kalamite will read" },
             ]} /></div>
           </li>
         ))}

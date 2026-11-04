@@ -96,13 +96,13 @@ export default async function SchoolHome() {
 
         <section className="card p-6" aria-labelledby="fellows-h">
           <div className="flex flex-wrap items-baseline justify-between gap-3">
-            <h2 id="fellows-h" className="text-xl font-bold">Kalam Fellow sessions</h2>
-            <Link href="/app/school/fellows" className="font-semibold text-link underline-offset-4 hover:underline">Book a Fellow</Link>
+            <h2 id="fellows-h" className="text-xl font-bold">Kalamite sessions</h2>
+            <Link href="/app/school/fellows" className="font-semibold text-link underline-offset-4 hover:underline">Book a Kalamite</Link>
           </div>
           {upcoming.length === 0 ? <p className="mt-2 text-muted">None booked.</p> : (
             <ul className="mt-3 grid gap-2">
               {upcoming.map((f) => (
-                <li key={f.id} className="border-t border-line pt-2">{ist(f.starts_at)} · {f.grade_band} · {f.fellow ? `with ${f.fellow}` : f.status === "scheduled" ? "finding a Fellow" : "waiting for Robokalam"}</li>
+                <li key={f.id} className="border-t border-line pt-2">{ist(f.starts_at)} · {f.grade_band} · {f.fellow ? `with ${f.fellow}` : f.status === "scheduled" ? "finding a Kalamite" : "waiting for Robokalam"}</li>
               ))}
             </ul>
           )}

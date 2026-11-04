@@ -9,7 +9,7 @@ const nav = [
   { href: "/21c-lab", label: "Schools" },
   { href: "/#solutions", label: "Solutions" },
   { href: "/learn", label: "Learn" },
-  { href: "/fellows", label: "Fellows" },
+  { href: "/kalamites", label: "Kalamites" },
 ];
 const small = [
   { href: "/partners", label: "Partners" },

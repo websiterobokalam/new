@@ -13,7 +13,7 @@ import { flagDecided } from "../email/notify";
  * Nothing here changes a tier, pay, gigs or a course on its own (brief: "AI may
  * flag issues, but a human decides any penalty"). Each check is an automated
  * system with a published notice and runs only from its effective date
- * (14 days' notice to Fellows).
+ * (14 days' notice to Kalamites).
  */
 
 export type Flag = { code: string; severity: "info" | "warn" | "high"; message: string; evidence?: string };
@@ -37,7 +37,7 @@ export function courseRuleChecks(d: Draft): Flag[] {
   if (d.world === "finlit") hit("finlit_investment", "high", "Financial literacy covers money basics only: no stock tips, trading, crypto or investment advice.", /\b(stock tips?|trading|intraday|crypto\w*|bitcoin|invest(ing|ment)? advice|which shares?|options trading|forex|multibagger)\b/i);
   if (d.world === "space") hit("space_propellant", "high", "Space education uses safe models. No live propellants without a qualified adult and permission.", /\b(propellant|rocket (fuel|motor|engine)|solid motor|black powder|igniter|launch (a|an|the)? ?rocket)\b/i);
   if (hasContactDetails(t)) out.push({ code: "contact_details", severity: "high", message: "Contact details or social handles aren't allowed. All contact stays on the platform.", evidence: find(t, /(\+?\d[\d\s().-]{7,}\d)|([\w.%+-]+@[\w.-]+\.[a-z]{2,})|(https?:\/\/\S+|www\.\S+)|@\w{3,}/i) });
-  hit("private_session", "high", "Fellow courses are small groups. No home visits or private sessions; one-to-one runs only in Robokalam's parent-supervised format.", /\b(1[:-]1|one[- ]on[- ]one|one[- ]to[- ]one|private (session|class|lesson)s?|home visits?|at (your|the student'?s) home)\b/i);
+  hit("private_session", "high", "Kalamite courses are small groups. No home visits or private sessions; one-to-one runs only in Robokalam's parent-supervised format.", /\b(1[:-]1|one[- ]on[- ]one|one[- ]to[- ]one|private (session|class|lesson)s?|home visits?|at (your|the student'?s) home)\b/i);
   hit("guarantee_claim", "warn", "No guarantees, ranks, selection or absolute claims (for example 'guaranteed', 'No.1', 'top 1%').", /\b(guarantee[ds]?|100% (result|success|placement)s?|no\.? ?1|number one|top 1%|assured (job|admission|rank)s?|job guarantee)\b/i);
   hit("institute_link", "warn", "Don't imply that IITs, NITs or other institutes endorse the course.", /\b(IIT|NIT|IIIT|BITS)[- ]?(approved|certified|endorsed|recognised|recognized)\b/i);
   if (d.syllabus.length !== d.sessions) out.push({ code: "syllabus_count", severity: "warn", message: `The syllabus lists ${d.syllabus.length} sessions but the course says ${d.sessions}.` });
@@ -153,10 +153,10 @@ export async function sessionSignals(c: Tx, fellowId: string): Promise<Flag[]> {
   return out;
 }
 
-/** Ops runs the teaching signals across live Fellows. */
+/** Ops runs the teaching signals across live Kalamites. */
 export async function runSessionSignals(ops: Account) {
   return system(async (c) => {
-    if (!(await systemEffective(c, "session-signals"))) throw new HttpError(409, "Teaching quality signals take effect after their 14-day notice to Fellows.");
+    if (!(await systemEffective(c, "session-signals"))) throw new HttpError(409, "Teaching quality signals take effect after their 14-day notice to Kalamites.");
     const fellows = (await c.query("SELECT account_id FROM fellows WHERE status IN ('live','paused')")).rows;
     let raised = 0;
     for (const f of fellows) raised += await saveFlags(c, "session-signals", { type: "fellow", id: f.account_id, fellowId: f.account_id }, await sessionSignals(c, f.account_id));
@@ -165,7 +165,7 @@ export async function runSessionSignals(ops: Account) {
   });
 }
 
-/** A person decides. The note is required and the Fellow can read it. */
+/** A person decides. The note is required and the Kalamite can read it. */
 export async function decideFlag(ops: Account, id: string, status: "dismissed" | "actioned", note: string) {
   if (note.trim().length < 5) throw new HttpError(422, "Write what you decided and why", { fields: { note: "Required" } });
   return system(async (c) => {

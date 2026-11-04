@@ -12,10 +12,10 @@ export const planned: Record<string, { title: string; phase: number; line: strin
   about: { title: "About Robokalam", phase: 2, line: "Robokalam Technologies Private Limited. Literature of Technologies." },
   careers: { title: "Careers", phase: 2, line: "Open roles at Robokalam." },
   faq: { title: "FAQ", phase: 2, line: "All our answers in one place.", cta: { href: "/#faq", label: "See the main FAQ" } },
-  contact: { title: "Contact", phase: 2, line: "Contact routed by door: learners, schools or Fellows.", cta: { href: "/login", label: "Pick your door" } },
+  contact: { title: "Contact", phase: 2, line: "Contact routed by door: learners, schools or Kalamites.", cta: { href: "/login", label: "Pick your door" } },
   validate: { title: "Validate a certificate", phase: 2, line: "Check that a Robokalam certificate is genuine. Integrates with validate.robokalam.com." },
   privacy: { title: "Privacy notice", phase: 2, line: "Itemised notice under India's DPDP Act: what we collect, why, how long, and your rights. Counsel to draft." },
   terms: { title: "Terms", phase: 2, line: "Terms of use. Counsel to draft." },
   refunds: { title: "Refunds", phase: 2, line: "Published refund terms and self-serve refund requests." },
-  "child-safety": { title: "Child safety", phase: 2, line: "Our safeguarding policy, named Safeguarding Lead and response time.", cta: { href: "/fellows/safety", label: "Read the Fellow rules" } },
+  "child-safety": { title: "Child safety", phase: 2, line: "Our safeguarding policy, named Safeguarding Lead and response time.", cta: { href: "/kalamites/safety", label: "Read the Kalamite rules" } },
 };

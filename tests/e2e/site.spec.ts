@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("home: three doors, each with its action", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("The technology behind future-ready schools");
-  for (const cta of ["Book a Free Build Session", "Book Turnkey Demo", "Become a Fellow"]) {
+  for (const cta of ["Book a Free Build Session", "Book Turnkey Demo", "Become a Kalamite"]) {
     await expect(page.getByRole("link", { name: cta }).first()).toBeVisible();
   }
 });
@@ -14,7 +14,7 @@ test("home: content is in the server HTML (crawlable without JS)", async ({ requ
 });
 
 test("unapproved claims never reach the HTML", async ({ request }) => {
-  for (const path of ["/", "/21c-lab", "/fellows"]) {
+  for (const path of ["/", "/21c-lab", "/kalamites"]) {
     const html = await (await request.get(path)).text();
     expect(html).not.toMatch(/20-day rollout|72-hour|12-year roadmap|SOC ?2|India's No/);
   }
@@ -22,7 +22,7 @@ test("unapproved claims never reach the HTML", async ({ request }) => {
 
 test("door click navigates to the door page", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: "Become a Fellow" }).first().click();
+  await page.getByRole("link", { name: "Become a Kalamite" }).first().click();
   await expect(page).toHaveURL(/\/fellows$/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Teach what you love");
 });
@@ -73,7 +73,7 @@ test("lab planner returns a plan", async ({ page }) => {
 });
 
 test("fellow application: phone first, then profile with an 18+ gate", async ({ page }) => {
-  await page.goto("/fellows/apply");
+  await page.goto("/kalamites/apply");
   await expect(page.getByLabel("Your mobile number")).toBeVisible();
   await expect(page.getByText("No fees, ever.")).toBeVisible();
 });
@@ -91,7 +91,7 @@ test("legacy URL 301s to the new page", async ({ request }) => {
 });
 
 test("no horizontal scroll on key pages", async ({ page }) => {
-  for (const p of ["/", "/learn", "/21c-lab", "/fellows", "/login"]) {
+  for (const p of ["/", "/learn", "/21c-lab", "/kalamites", "/login"]) {
     await page.goto(p);
     const over = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     expect(over, p).toBeLessThanOrEqual(0);

@@ -29,7 +29,7 @@ export async function addEarning(c: Tx, fellowId: string, e: { kind: string; des
     [id, fellowId, e.assignmentId ?? null, e.kind, e.description.slice(0, 255), e.gross, JSON.stringify(ded), net],
   );
   const rows = wrote ? [{ id }] : [];
-  // Educator earned: platform expense becomes a payable to the Fellow.
+  // Educator earned: platform expense becomes a payable to the Kalamite.
   if (rows[0]) await post(c, "educator_earned", rows[0].id, [["platform_expense", e.gross], ["educator_payable", -e.gross]]);
   return rows[0]?.id as string | undefined;
 }

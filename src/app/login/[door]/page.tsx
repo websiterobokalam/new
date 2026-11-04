@@ -22,7 +22,7 @@ const copy: Record<DoorId, { title: string; who: string; notes: string[] }> = {
     ],
   },
   school: { title: "School login", who: "Staff", notes: ["For school admins, trainers and lab instructors. Your school admin adds you first.", "Students use the school-issued AADHYA login from their trainer, not this page."] },
-  educator: { title: "Fellow login", who: "Your", notes: ["For vetted Kalam Fellows. Not a Fellow yet?"] },
+  educator: { title: "Kalamite login", who: "Your", notes: ["For vetted Kalamites. Not a Kalamite yet?"] },
 };
 
 export default async function DoorLogin({ params }: { params: Promise<{ door: string }> }) {
@@ -37,7 +37,7 @@ export default async function DoorLogin({ params }: { params: Promise<{ door: st
           <p className="eyebrow">{d.name} door</p>
           <h1 className="display-lg mt-3">{c.title}</h1>
           {c.notes.map((n) => <p key={n} className="mt-4 text-muted">{n}</p>)}
-          {d.id === "educator" && <Link className="mt-2 inline-block font-semibold text-link underline" href="/fellows/apply">Apply to Kalam Fellows</Link>}
+          {d.id === "educator" && <Link className="mt-2 inline-block font-semibold text-link underline" href="/kalamites/apply">Apply to Kalamites</Link>}
           <p className="mt-6 text-sm text-muted"><Link className="underline" href="/login">Choose a different door</Link></p>
         </div>
         <div className="card p-6 sm:p-8">

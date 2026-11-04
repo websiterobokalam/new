@@ -11,7 +11,7 @@ export const POST = handler(async (req) => {
     year: z.enum(["1", "2", "3", "4", "5", "PG", "Graduated"]), collegeEmail: z.string().trim().email().optional().or(z.literal("")),
     worlds: z.array(W).min(1, "Pick at least one world"), languages: z.array(z.enum(["en", "te", "hi"])).min(1),
     hoursPerWeek: z.coerce.number().int().min(1).max(40), city: z.string().trim().min(2).max(60),
-    ageConfirmed: z.literal(true, { message: "Kalam Fellows must be 18 or older" }),
+    ageConfirmed: z.literal(true, { message: "Kalamites must be 18 or older" }),
     ref: z.string().trim().regex(/^[A-Za-z0-9]{4,12}$/).optional().or(z.literal("").transform(() => undefined)),
   }));
   return ok(await apply(a, b));

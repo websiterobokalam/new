@@ -4,7 +4,7 @@ import { anon } from "@/lib/db";
 import { DbDown } from "@/components/app/DbDown";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Kalam Fellow terms", description: "Plain terms for Kalam Fellows: pay, deductions, declining gigs, notice of changes, removal and disputes. In English, Telugu and Hindi." };
+export const metadata: Metadata = { title: "Kalamite terms", description: "Plain terms for Kalamites: pay, deductions, declining gigs, notice of changes, removal and disputes. In English, Telugu and Hindi." };
 
 export default async function FellowTerms({ searchParams }: { searchParams: Promise<{ lang?: string }> }) {
   const q = (await searchParams).lang;
@@ -15,8 +15,8 @@ export default async function FellowTerms({ searchParams }: { searchParams: Prom
   } catch { return <DbDown />; }
   return (
     <section className="py-12 sm:py-20"><div className="wrap grid max-w-3xl gap-6">
-      <header><p className="eyebrow">Kalam Fellows</p><h1 className="display-lg mt-3">Fellow terms</h1>
-        <p className="lede mt-3">Plain terms, published in full. Any change gives Fellows 14 days&apos; notice.</p>
+      <header><p className="eyebrow">Kalamites</p><h1 className="display-lg mt-3">Kalamite terms</h1>
+        <p className="lede mt-3">Plain terms, published in full. Any change gives Kalamites 14 days&apos; notice.</p>
         <p className="mt-2 text-sm text-muted">Draft pending legal review.</p></header>
       <nav aria-label="Language" className="flex gap-2">{[["en", "English"], ["te", "తెలుగు"], ["hi", "हिन्दी"]].map(([v, l]) => <Link key={v} href={`?lang=${v}`} lang={v} className="chip" aria-current={v === lang ? "true" : undefined}>{l}</Link>)}</nav>
       {docs.map((d) => (
@@ -26,7 +26,7 @@ export default async function FellowTerms({ searchParams }: { searchParams: Prom
           <dl className="mt-4 grid gap-4">{d.body.sections.map(([h, b]: [string, string]) => <div key={h}><dt className="font-semibold text-heading">{h}</dt><dd className="mt-1 text-muted">{b}</dd></div>)}</dl>
         </article>
       ))}
-      <Link href="/fellows/apply" className="btn btn-primary justify-self-start">Become a Fellow</Link>
+      <Link href="/kalamites/apply" className="btn btn-primary justify-self-start">Become a Kalamite</Link>
     </div></section>
   );
 }

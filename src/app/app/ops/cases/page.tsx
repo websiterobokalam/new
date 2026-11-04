@@ -20,7 +20,7 @@ export default async function OpsCases() {
           <li key={k.id} className="card grid gap-2 p-5">
             <p className="font-semibold">{k.full_name} · {k.child_safety ? "Child safety (suspended)" : `notice until ${new Date(k.notice_until).toLocaleDateString("en-IN")}`}</p>
             <p className="text-sm">Reasons: {k.reasons}</p>
-            <p className="text-sm text-muted">Fellow&apos;s response: {k.responses_text ?? "none yet"}</p>
+            <p className="text-sm text-muted">Kalamite&apos;s response: {k.responses_text ?? "none yet"}</p>
             <div className="max-w-lg"><JsonForm compact url={`/api/ops/cases/${k.id}/decide`} submit="Record decision" fields={[
               { name: "decision", label: "Decision", type: "select", options: [["reinstated", "Reinstate / no action"], ["removed", k.notice_over || k.child_safety ? "Remove" : "Remove (available after notice)"]] },
               { name: "enquiryNotes", label: "Enquiry notes", type: "textarea" },

@@ -54,7 +54,7 @@ test("database: a flag can't be closed without a person and a note", async () =>
   await expect(ownerQuery("UPDATE quality_flags SET status = 'dismissed' WHERE id = $1", [id])).rejects.toThrow();
 });
 
-test("database: a Fellow course is never one-to-one", async () => {
+test("database: a Kalamite course is never one-to-one", async () => {
   const f = { account_id: newId() };
   await ownerQuery("INSERT INTO accounts (id, phone_e164, role) VALUES ($1,$2,'fellow')", [f.account_id, `+919${String(Math.floor(Math.random() * 1e9)).padStart(9, "0")}`]);
   await ownerQuery("INSERT INTO fellows (account_id, full_name, display_name, college, course, year, worlds, languages, hours_per_week, city, age_confirmed_at) VALUES ($1,'Test Person','Test P.','College','B.Tech','2','[\"coding\"]','[\"en\"]',5,'Hyderabad', now())", [f.account_id]);

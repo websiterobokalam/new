@@ -29,7 +29,7 @@ export default async function OpsQuality() {
             <p><strong className="text-heading">{SEV[f.severity]}</strong> · {f.display_name} · {f.message}{f.evidence ? ` (${f.evidence})` : ""}</p>
             <div className="max-w-md"><JsonForm compact url={`/api/ops/flags/${f.id}`} submit="Record decision" done="Recorded" fields={[
               { name: "status", label: "What happened", type: "select", options: [["actioned", "Talked it through / coaching agreed"], ["dismissed", "Not an issue"]] },
-              { name: "note", label: "Note the Fellow will read" },
+              { name: "note", label: "Note the Kalamite will read" },
             ]} /></div>
           </li>
         ))}

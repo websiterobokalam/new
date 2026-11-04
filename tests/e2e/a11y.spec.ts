@@ -3,7 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { login, addLearner, applyAsFellow, passSteps, ALL_STEPS, staffPage, makeSchool, startedSession, loginSchool, ownerQuery, newId } from "../helpers";
 
 for (const theme of ["light", "dark"] as const) {
-  for (const path of ["/", "/learn", "/21c-lab", "/21c-lab/planner", "/fellows", "/fellows/apply", "/login/learner", "/campus-ambassadors", "/one-to-one"]) {
+  for (const path of ["/", "/learn", "/21c-lab", "/21c-lab/planner", "/kalamites", "/kalamites/apply", "/login/learner", "/campus-ambassadors", "/one-to-one"]) {
     test(`a11y ${theme} ${path}`, async ({ page }) => {
       await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
       await page.goto(path);
@@ -41,7 +41,7 @@ for (const theme of ["light", "dark"] as const) {
 }
 
 for (const theme of ["light", "dark"] as const) {
-  test(`a11y ${theme} Fellow app and ops`, async ({ page, browser }) => {
+  test(`a11y ${theme} Kalamite app and ops`, async ({ page, browser }) => {
     test.setTimeout(90_000);
     await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
     const phone = await applyAsFellow(page);
@@ -53,7 +53,7 @@ for (const theme of ["light", "dark"] as const) {
     };
     for (const path of ["/app/fellow", "/app/fellow/test", "/app/fellow/academy", "/app/fellow/academy/child-safety", "/app/fellow/terms", "/app/fellow/checks", "/app/fellow/demo"]) await check(page, path);
     await passSteps(phone, ALL_STEPS, true);
-    for (const path of ["/app/fellow", "/app/fellow/gigs", "/app/fellow/earnings", "/app/fellow/growth", "/app/fellow/support", "/app/messages", "/fellow-terms", "/fellows/apply"]) await check(page, path);
+    for (const path of ["/app/fellow", "/app/fellow/gigs", "/app/fellow/earnings", "/app/fellow/growth", "/app/fellow/support", "/app/messages", "/kalamite-terms", "/kalamites/apply"]) await check(page, path);
     const ops = await staffPage(browser, "ops");
     await ops.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
     for (const path of ["/app/ops/fellows", "/app/ops/gigs", "/app/ops/payouts", "/app/ops/cases"]) await check(ops, path);
@@ -93,7 +93,7 @@ for (const theme of ["light", "dark"] as const) {
 
 
 for (const theme of ["light", "dark"] as const) {
-  test(`a11y ${theme} Phase 5: Fellow course and ambassador screens, ops marketplace screens`, async ({ page, browser }) => {
+  test(`a11y ${theme} Phase 5: Kalamite course and ambassador screens, ops marketplace screens`, async ({ page, browser }) => {
     test.setTimeout(60_000);
     const check = async (p: import("@playwright/test").Page, paths: string[]) => {
       await p.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });

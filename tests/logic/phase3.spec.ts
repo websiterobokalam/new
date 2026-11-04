@@ -6,7 +6,7 @@ import { gradeSubject, subjectTests } from "@/content/fellows/subject-tests";
 import { hasContactDetails } from "@/lib/fellows/community";
 import { statementCsv } from "@/lib/fellows/earnings";
 
-test("matching: the Fellow's worlds first, then earliest start", () => {
+test("matching: the Kalamite's worlds first, then earliest start", () => {
   const g = [
     { id: "a", world: "space", starts_at: "2026-11-10T05:00:00Z" },
     { id: "b", world: "robotics", starts_at: "2026-11-12T05:00:00Z" },

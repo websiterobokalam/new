@@ -43,10 +43,10 @@ export async function addLearner(page: Page, name: string, age = "9-11") {
   return page.url().split("/").pop()!;
 }
 
-/** Apply as a Fellow through the real flow. Returns the phone (without +91). */
+/** Apply as a Kalamite through the real flow. Returns the phone (without +91). */
 export async function applyAsFellow(page: Page, opts: { city?: string; name?: string; worlds?: string[]; ref?: string } = {}) {
   const phone = randomPhone();
-  await page.goto(opts.ref ? `/fellows/apply?ref=${opts.ref}` : "/fellows/apply");
+  await page.goto(opts.ref ? `/kalamites/apply?ref=${opts.ref}` : "/kalamites/apply");
   await page.getByLabel("Your mobile number").fill(phone);
   await page.getByRole("button", { name: "Send code" }).click();
   await page.getByLabel("6-digit code").fill("123456");
@@ -137,7 +137,7 @@ export async function attendedBooking(batchId: string, opts: { paid?: number; st
 }
 
 /**
- * Give a live Fellow a teaching record: delivered sessions, observations and
+ * Give a live Kalamite a teaching record: delivered sessions, observations and
  * verified 5-star reviews, so they clear the Phase 5 bars.
  */
 export async function teachingHistory(fellowId: string, opts: { sessions?: number; observation?: number; reviews?: number; tier?: string } = {}) {

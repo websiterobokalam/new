@@ -7,7 +7,7 @@ import { messageReceived, removalCaseOpened, safetyReported } from "../email/not
 export const CONTACT_PATTERN = /(\+?\d[\d\s().-]{7,}\d)|([\w.%+-]+@[\w.-]+\.[a-z]{2,})|(https?:\/\/|www\.)|\b(whats ?app|wa\.me|insta(gram)?|snap(chat)?|telegram|t\.me|facebook|fb\.com|discord)\b|(^|\s)@[\w.]{3,}/i;
 export const hasContactDetails = (s: string) => CONTACT_PATTERN.test(s);
 
-/** Threads: one per (batch, parent, Fellow). Created when either side opens it. */
+/** Threads: one per (batch, parent, Kalamite). Created when either side opens it. */
 export async function threadsFor(a: Account) {
   return asAccount(a, async (c) => (await c.query(
     `SELECT t.id, co.title, b.starts_at, f.display_name AS fellow_name, (a.id = t.guardian_account_id) AS i_am_parent,
@@ -20,7 +20,7 @@ export async function threadsFor(a: Account) {
 }
 
 export async function openThread(a: Account, bookingId: string) {
-  // Parent side: the booking must be theirs and the batch must have a Fellow.
+  // Parent side: the booking must be theirs and the batch must have a Kalamite.
   const b = await asAccount(a, async (c) => (await c.query("SELECT bk.batch_id, bt.educator_fellow_id FROM bookings bk JOIN batches bt ON bt.id = bk.batch_id WHERE bk.id = $1 AND bk.guardian_account_id = $2", [bookingId, a.id])).rows[0]);
   if (!b?.educator_fellow_id) throw new FellowError(404, "No educator assigned to this class yet");
   return system(async (c) => {
@@ -66,13 +66,13 @@ export async function send(a: Account, threadId: string, body: string) {
   return { delivered: true };
 }
 
-/** Reviews: only a verified parent, for an attended session the Fellow delivered (enforced by RLS too). */
+/** Reviews: only a verified parent, for an attended session the Kalamite delivered (enforced by RLS too). */
 export async function review(a: Account, bookingId: string, rating: number, body: string | null) {
-  // The parent can see their booking (RLS); which Fellow taught it is looked up as a server task.
+  // The parent can see their booking (RLS); which Kalamite taught it is looked up as a server task.
   const own = await asAccount(a, async (c) => (await c.query("SELECT batch_id FROM bookings WHERE id = $1 AND guardian_account_id = $2 AND status = 'attended'", [bookingId, a.id])).rows[0]);
   if (!own) throw new FellowError(403, "Reviews are for sessions your child attended");
   const f = await system(async (c) => (await c.query("SELECT ga.fellow_id FROM gigs g JOIN gig_assignments ga ON ga.gig_id = g.id AND ga.status = 'delivered' WHERE g.batch_id = $1 LIMIT 1", [own.batch_id])).rows[0]);
-  if (!f) throw new FellowError(403, "Reviews are for sessions a Fellow delivered");
+  if (!f) throw new FellowError(403, "Reviews are for sessions a Kalamite delivered");
   return asAccount(a, async (c) => {
     await c.query("INSERT INTO reviews (id, booking_id, fellow_id, guardian_account_id, rating, body) VALUES ($6,$1,$2,$3,$4,$5)", [bookingId, f.fellow_id, a.id, rating, body, uuid()]).catch((e) => {
       if (e.code === "23505") throw new FellowError(409, "You already reviewed this session");
@@ -89,7 +89,7 @@ export async function raiseDispute(a: Account, role: "fellow" | "parent", subjec
 
 /**
  * Removal case. Written reasons and 7 days' notice, with an enquiry and the
- * Fellow's response, before any removal. Only the Safeguarding role can mark
+ * Kalamite's response, before any removal. Only the Safeguarding role can mark
  * a case as child safety, which suspends access at once.
  */
 export async function openRemovalCase(staff: Account, fellowId: string, reasons: string, childSafety: boolean) {

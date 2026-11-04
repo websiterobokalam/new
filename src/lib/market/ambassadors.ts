@@ -8,9 +8,9 @@ import { requireMarketOpen } from "./gate";
 import { ambassadorChanged } from "../email/notify";
 
 /**
- * Campus Ambassadors: live Fellows who help classmates at their college apply.
- * They recruit Fellows only, never families or children (brief: no educator
- * incentives for converting a family). Any reward is per referred Fellow who
+ * Campus Ambassadors: live Kalamites who help classmates at their college apply.
+ * They recruit Kalamites only, never families or children (brief: no educator
+ * incentives for converting a family). Any reward is per referred Kalamite who
  * goes live, from an approved rate, and is never shown unless approved.
  */
 
@@ -28,7 +28,7 @@ export async function ambassadorChecks(c: Tx, fellowId: string) {
   const delivered = Number((await c.query("SELECT COUNT(*) AS n FROM gig_assignments WHERE fellow_id = $1 AND status = 'delivered'", [fellowId])).rows[0].n);
   const openCase = !!(await c.query("SELECT 1 FROM removal_cases WHERE fellow_id = $1 AND status = 'notice'", [fellowId])).rows[0];
   const checks = [
-    { label: "Live Kalam Fellow", ok: f?.status === "live", detail: f ? `You are ${f.status}` : "" },
+    { label: "Live Kalamite", ok: f?.status === "live", detail: f ? `You are ${f.status}` : "" },
     { label: `${AMBASSADOR_RULES.minSessions} sessions delivered`, ok: delivered >= AMBASSADOR_RULES.minSessions, detail: `${delivered} so far` },
     { label: "No open removal case", ok: !openCase, detail: openCase ? "A case is open" : "None" },
   ];
@@ -51,7 +51,7 @@ export async function applyAmbassador(a: Account, collegeId: string, pitch: stri
 
 /** Approving an ambassador is growth: only while the marketplace is open. Pausing or declining is always allowed. */
 export async function decideAmbassador(ops: Account, fellowId: string, to: "active" | "declined" | "paused" | "ended", note: string) {
-  if (note.trim().length < 5) throw new HttpError(422, "Write a note the Fellow will read", { fields: { note: "Required" } });
+  if (note.trim().length < 5) throw new HttpError(422, "Write a note the Kalamite will read", { fields: { note: "Required" } });
   if (to === "active") await requireMarketOpen();
   return system(async (c) => {
     const r = await c.query("UPDATE ambassadors SET status = $2, decided_by = $3, decided_at = UTC_TIMESTAMP(3), decision_note = $4 WHERE fellow_id = $1", [fellowId, to, ops.id, note]);
@@ -69,13 +69,13 @@ export async function recordReferral(c: Tx, fellowId: string, code: string | und
   await c.query("UPDATE fellows SET referred_by = $2 WHERE account_id = $1 AND referred_by IS NULL", [fellowId, code.toUpperCase()]);
 }
 
-/** Called when a Fellow goes live: pay the referring ambassador, once, if a reward is approved. */
+/** Called when a Kalamite goes live: pay the referring ambassador, once, if a reward is approved. */
 export async function rewardReferral(c: Tx, fellowId: string) {
   const f = (await c.query("SELECT f.referred_by, a.fellow_id AS amb FROM fellows f JOIN ambassadors a ON a.code = f.referred_by WHERE f.account_id = $1", [fellowId])).rows[0];
   if (!f) return;
   const reward = await referralReward(c);
   if (!reward) return;
-  await addEarning(c, f.amb, { kind: "referral", description: `Referral ${f.referred_by} · Fellow ${fellowId.slice(0, 8)} went live`, gross: reward });
+  await addEarning(c, f.amb, { kind: "referral", description: `Referral ${f.referred_by} · Kalamite ${fellowId.slice(0, 8)} went live`, gross: reward });
 }
 
 /** The ambassador's own view: counts by stage only. No applicant names or contact details. */

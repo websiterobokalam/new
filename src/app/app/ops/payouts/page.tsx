@@ -16,7 +16,7 @@ export default async function OpsPayouts() {
   const lastSunday = new Date(); lastSunday.setDate(lastSunday.getDate() - ((lastSunday.getDay() + 7) % 7 || 7));
   return (
     <section className="py-10"><div className="wrap grid gap-6 [&>*]:min-w-0">
-      <header><h1 className="display-lg">Payouts</h1><p className="text-muted">Weekly. Unpaid now: {inr(d.unpaid.net)} across {d.unpaid.fellows} Fellows. Bank transfers are recorded here until a payouts provider is connected.</p></header>
+      <header><h1 className="display-lg">Payouts</h1><p className="text-muted">Weekly. Unpaid now: {inr(d.unpaid.net)} across {d.unpaid.fellows} Kalamites. Bank transfers are recorded here until a payouts provider is connected.</p></header>
       <div className="card max-w-md p-6"><JsonForm url="/api/ops/payouts/run" submit="Create this week's payouts" done="Payouts created" fields={[{ name: "periodEnd", label: "Week ending (inclusive)", type: "date", defaultValue: lastSunday.toISOString().slice(0, 10) }]} /></div>
       <ul className="grid gap-3">
         {d.payouts.map((p) => (

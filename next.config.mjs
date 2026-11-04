@@ -17,7 +17,13 @@ const config = {
   reactStrictMode: true,
   images: { formats: ["image/avif", "image/webp"] },
   async redirects() {
-    return legacyRedirects.map((r) => ({ source: r.from, destination: r.to, statusCode: 301 }));
+    return [
+      ...legacyRedirects.map((r) => ({ source: r.from, destination: r.to, statusCode: 301 })),
+      // Kalam Fellows are now Kalamites. Old links keep working.
+      { source: "/fellows", destination: "/kalamites", statusCode: 301 },
+      { source: "/fellows/:path*", destination: "/kalamites/:path*", statusCode: 301 },
+      { source: "/fellow-terms", destination: "/kalamite-terms", statusCode: 301 },
+    ];
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

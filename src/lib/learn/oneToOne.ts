@@ -19,7 +19,7 @@ export const ONE_TO_ONE_ACK = [
 ] as const;
 export const ONE_TO_ONE_ACK_SHA = createHash("sha256").update(ONE_TO_ONE_ACK.join("\n")).digest("hex");
 
-/** The code of conduct version that contains the one-to-one rules. */
+/** The code of conduct versions that contain the one-to-one rules (this one, and the later Kalamite versions). */
 export const ONE_TO_ONE_TERMS_PREFIX = "code-of-conduct-2026-12-";
 
 export async function requireVerifiedEmailForOneToOne(c: Tx, accountId: string) {
@@ -43,9 +43,9 @@ export async function checkOneToOneBooking(c: Tx, guardianId: string, learnerId:
 export async function oneToOneTeacherCheck(c: Tx, fellowId: string): Promise<string | null> {
   const f = (await c.query("SELECT status, tier FROM fellows WHERE account_id = $1", [fellowId])).rows[0];
   if (!f || f.status !== "live") return "Available once you go live";
-  if (TIERS.indexOf(f.tier) < TIERS.indexOf("fellow")) return "One-to-one classes need tier Fellow or above";
+  if (TIERS.indexOf(f.tier) < TIERS.indexOf("fellow")) return "One-to-one classes need the Kalamite level or above";
   const accepted = (await c.query(
-    "SELECT 1 FROM terms_acceptances ta JOIN terms_versions tv ON tv.id = ta.terms_id WHERE ta.fellow_id = $1 AND tv.id LIKE $2 AND tv.effective_at <= UTC_TIMESTAMP(3)",
+    "SELECT 1 FROM terms_acceptances ta JOIN terms_versions tv ON tv.id = ta.terms_id WHERE ta.fellow_id = $1 AND (tv.id LIKE $2 OR tv.id LIKE 'kalamite-code-%') AND tv.effective_at <= UTC_TIMESTAMP(3)",
     [fellowId, `${ONE_TO_ONE_TERMS_PREFIX}%`])).rows[0];
   if (!accepted) return "Accept the updated code of conduct (one-to-one rules) first";
   const open = (await c.query(

@@ -32,7 +32,7 @@ export function statementCsv(lines: { earned_at: string; kind: string; descripti
 
 /**
  * Weekly payout run (ops). Groups every unpaid line earned before the period
- * end into one payout per Fellow. Bank transfer is recorded by ops (manual)
+ * end into one payout per Kalamite. Bank transfer is recorded by ops (manual)
  * until a payouts provider (e.g. RazorpayX) is connected.
  */
 export async function runPayouts(staff: Account, periodEnd: string) {

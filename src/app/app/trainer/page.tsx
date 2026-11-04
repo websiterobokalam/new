@@ -42,7 +42,7 @@ export default async function TrainerHome() {
 
         <div className="grid gap-4 md:grid-cols-2">
           <Link href="/app/school/tickets" className="card p-5 hover:border-heading"><h2 className="text-lg font-bold">Kit or hardware problem?</h2><p className="mt-1 text-muted">Raise a ticket. The replacement clock starts at once.</p></Link>
-          <Link href="/app/school/fellows" className="card p-5 hover:border-heading"><h2 className="text-lg font-bold">Fellow mentoring</h2><p className="mt-1 text-muted">Observe Kalam Fellows who teach at your school and score the session.</p></Link>
+          <Link href="/app/school/fellows" className="card p-5 hover:border-heading"><h2 className="text-lg font-bold">Kalamite mentoring</h2><p className="mt-1 text-muted">Observe Kalamites who teach at your school and score the session.</p></Link>
         </div>
       </div>
     </section>

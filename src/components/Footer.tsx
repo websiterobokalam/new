@@ -5,9 +5,9 @@ import { SITE } from "@/lib/site";
 const cols = [
   { title: "Learn", links: [["/learn", "Find a course"], ["/programs", "Ashaer tracks"], ["/bootcamps", "Bootcamps"], ["/internships", "Internships"], ["/kits", "Kits"]] },
   { title: "Schools", links: [["/21c-lab", "21C STEM & AI Lab"], ["/21c-lab/planner", "Lab Planner"], ["/impact", "Impact"], ["/partners", "Partners"]] },
-  { title: "Fellows", links: [["/fellows", "Kalam Fellows"], ["/fellows/apply", "Apply"], ["/fellows/earnings", "How pay works"], ["/fellows/safety", "Rules for teaching children"], ["/campus-ambassadors", "Campus Ambassadors"]] },
+  { title: "Kalamites", links: [["/kalamites", "Kalamites"], ["/kalamites/apply", "Apply"], ["/kalamites/earnings", "How pay works"], ["/kalamites/safety", "Rules for teaching children"], ["/campus-ambassadors", "Campus Ambassadors"]] },
   { title: "Robokalam", links: [["/about", "About"], ["/stories", "Stories"], ["/events", "Events"], ["/careers", "Careers"], ["/studio", "Studio"], ["/validate", "Validate a certificate"], ["/contact", "Contact"], ["/faq", "FAQ"]] },
-  { title: "Trust", links: [["/child-safety", "Child safety"], ["/one-to-one", "One-to-one classes"], ["/privacy", "Privacy"], ["/terms", "Terms"], ["/refunds", "Refunds"], ["/fellow-terms", "Fellow terms"]] },
+  { title: "Trust", links: [["/child-safety", "Child safety"], ["/one-to-one", "One-to-one classes"], ["/privacy", "Privacy"], ["/terms", "Terms"], ["/refunds", "Refunds"], ["/kalamite-terms", "Kalamite terms"]] },
 ];
 
 export function Footer() {

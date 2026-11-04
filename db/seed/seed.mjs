@@ -31,7 +31,7 @@ const PROJECTS = [
   ["space-2-sat", "space", 2, "Paper satellite", "A satellite model with a sensor payload", ["space-1-orbit", "iot-1-weather"], 10],
 ];
 
-/** Plain-language notices for each automated check. Shown to Fellows before they take effect. */
+/** Plain-language notices for each automated check. Shown to Kalamites before they take effect. */
 export const AUTOMATED_SYSTEMS = [
   ["course-draft-rules", "Course draft checks", "Rules read your course draft for things we never allow: investment or trading advice, live rocket propellants, contact details, home visits or private sessions outside the parent-supervised one-to-one format, and promises such as guaranteed results.", "A flag only puts a note in front of the reviewer. A person reads your draft and decides. It never changes your tier, pay or gigs."],
   ["course-draft-ai", "AI review of course drafts", "An AI model (Claude, by Anthropic) reads the text of your course draft (title, outcome, syllabus and kit only, never anything about children) and suggests issues for the reviewer: age fit, safety, clarity and honest claims.", "Suggestions only. A person reviews every draft and makes every decision. It never changes your tier, pay or gigs."],
@@ -47,7 +47,7 @@ export async function seedBase(c, root) {
     const sha = createHash("sha256").update(JSON.stringify({ title: n.title, ...body })).digest("hex");
     await c.query("INSERT IGNORE INTO consent_notices (id, language, title, body, sha256) VALUES (?,?,?,?,?)", [n.id, lang, n.title, JSON.stringify(body), sha]);
   }
-  // Fellow terms and code of conduct (first versions effective at once).
+  // Kalamite terms and code of conduct (first versions effective at once).
   const terms = JSON.parse(readFileSync(`${root}/db/seed/fellow-terms.json`, "utf8"));
   for (const kind of ["fellow_terms", "code_of_conduct"]) for (const lang of ["en", "te", "hi"]) {
     const t = terms[kind][lang];
@@ -63,14 +63,22 @@ export async function seedBase(c, root) {
     await c.query("INSERT IGNORE INTO terms_versions (id, kind, language, title, body, sha256, initial, published_at, effective_at) VALUES (?,?,?,?,?,?,FALSE, UTC_TIMESTAMP(3), UTC_TIMESTAMP(3) + INTERVAL 14 DAY)",
       [`code-of-conduct-2026-12-${lang}`, "code_of_conduct", lang, t.title, JSON.stringify({ sections: t.sections }), sha]);
   }
+  // Kalamite terms and code of conduct (the name change from Kalam Fellows): published now, effective 14 days later.
+  const kal = JSON.parse(readFileSync(`${root}/db/seed/kalamite-terms-2026-12.json`, "utf8"));
+  for (const [kind, prefix] of [["fellow_terms", "kalamite-terms-2026-12"], ["code_of_conduct", "kalamite-code-2026-12"]]) for (const lang of ["en", "te", "hi"]) {
+    const t = kal[kind][lang];
+    const sha = createHash("sha256").update(JSON.stringify(t)).digest("hex");
+    await c.query("INSERT IGNORE INTO terms_versions (id, kind, language, title, body, sha256, initial, published_at, effective_at) VALUES (?,?,?,?,?,?,FALSE, UTC_TIMESTAMP(3), UTC_TIMESTAMP(3) + INTERVAL 14 DAY)",
+      [`${prefix}-${lang}`, kind, lang, t.title, JSON.stringify({ sections: t.sections }), sha]);
+  }
   await c.query(
     "INSERT IGNORE INTO courses (id, slug, title, world, age_min, outcome, batch_size_max, sessions, fee_paise, fee_approved, published, kind) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
     [randomUUID(), "free-build-session", "Free Build Session", "robotics", 6, "Finish one real build in a small live session.", 6, 1, 0, true, true, "build_session"],
   );
-  // Cities: the pilot city starts as the only one taking Fellows.
+  // Cities: the pilot city starts as the only one taking Kalamites.
   const pilot = (process.env.PILOT_CITY ?? "Hyderabad").trim();
   await c.query("INSERT IGNORE INTO cities (slug, name, status, max_live) VALUES (?,?, 'pilot', ?)", [pilot.toLowerCase(), pilot, Number(process.env.PILOT_MAX_LIVE ?? 25)]);
-  // Automated systems that affect Fellows: published now, effective 14 days later (fair-work notice).
+  // Automated systems that affect Kalamites: published now, effective 14 days later (fair-work notice).
   for (const [id, name, description, affects] of AUTOMATED_SYSTEMS) {
     await c.query("INSERT IGNORE INTO automated_systems (id, name, description, affects, notice_at, effective_at) VALUES (?,?,?,?, UTC_TIMESTAMP(3), UTC_TIMESTAMP(3) + INTERVAL 14 DAY)", [id, name, description, affects]);
   }

@@ -12,7 +12,7 @@ const ist = (x: Date) => new Date(x).toLocaleString("en-IN", { day: "numeric", m
 export default async function Ambassador() {
   const { account, fellow } = await fellowContext("/app/fellow/ambassador");
   const [v, colleges] = await Promise.all([ambassadorView(account), collegesIn(fellow.city)]);
-  const link = v.amb ? `${SITE.url}/fellows/apply?ref=${v.amb.code}` : null;
+  const link = v.amb ? `${SITE.url}/kalamites/apply?ref=${v.amb.code}` : null;
 
   return (
     <section className="py-10">
@@ -20,7 +20,7 @@ export default async function Ambassador() {
         <header>
           <p className="eyebrow">Campus Ambassadors</p>
           <h1 className="display-lg mt-2">Bring classmates who&apos;d teach well</h1>
-          <p className="mt-2 max-w-2xl text-muted">Ambassadors run short info sessions at their college and help classmates apply. You recruit Fellows only, never families or children, and you never promise earnings.</p>
+          <p className="mt-2 max-w-2xl text-muted">Ambassadors run short info sessions at their college and help classmates apply. You recruit Kalamites only, never families or children, and you never promise earnings.</p>
         </header>
 
         <section className="card p-6" aria-labelledby="rules-h">
@@ -30,7 +30,7 @@ export default async function Ambassador() {
             <li>Say &quot;steady part-time income&quot;. No earnings figures beyond the published, dated examples.</li>
             <li>No college logos, and never suggest your college endorses Robokalam.</li>
             <li>Use your link so we can count referrals. You see counts only, never names.</li>
-            <li>{v.reward ? `Reward: ${inr(v.reward)} for each Fellow you referred who goes live.` : "There is no referral reward yet. If one is approved, we'll tell you 14 days before it starts."}</li>
+            <li>{v.reward ? `Reward: ${inr(v.reward)} for each Kalamite you referred who goes live.` : "There is no referral reward yet. If one is approved, we'll tell you 14 days before it starts."}</li>
           </ul>
         </section>
 
@@ -71,7 +71,7 @@ export default async function Ambassador() {
                   ))}
                 </ul>
                 <div className="mt-4 max-w-md"><JsonForm url="/api/fellow/ambassador/events" submit="Propose an info session" done="Sent for approval" fields={[
-                  { name: "title", label: "Title", defaultValue: "Teach with Kalam Fellows: info session" },
+                  { name: "title", label: "Title", defaultValue: "Teach with Kalamites: info session" },
                   { name: "plannedAt", label: "When", type: "datetime" },
                   { name: "venue", label: "Where on campus" },
                 ]} /></div>

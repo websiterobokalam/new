@@ -6,7 +6,7 @@ import { PILOT } from "@/lib/fellows/core";
 import { system } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Apply to Kalam Fellows", description: "Apply to teach as a Kalam Fellow. For college students aged 18+." };
+export const metadata: Metadata = { title: "Apply to Kalamites", description: "Apply to teach as a Kalamite. For college students aged 18+." };
 
 export default async function ApplyPage({ searchParams }: { searchParams: Promise<{ ref?: string }> }) {
   const a = await currentAccount().catch(() => null);
@@ -20,8 +20,8 @@ export default async function ApplyPage({ searchParams }: { searchParams: Promis
   return (
     <section className="py-12 sm:py-20" style={{ viewTransitionName: "door-hero" }}>
       <div className="wrap max-w-3xl">
-        <p className="eyebrow">Kalam Fellows · {cities.length > 1 ? `open in ${cities.join(", ")}` : `${cities[0]} pilot`}</p>
-        <h1 className="display-lg mt-3">Become a Fellow.</h1>
+        <p className="eyebrow">Kalamites · {cities.length > 1 ? `open in ${cities.join(", ")}` : `${cities[0]} pilot`}</p>
+        <h1 className="display-lg mt-3">Become a Kalamite.</h1>
         <p className="lede mt-3">Two minutes now. Then a subject test, a short recorded demo, safety checks and paid Kalam Academy training. No fees, ever.</p>
         <div className="mt-10"><FellowApply signedIn={!!a} pilotCity={cities[0]} openCities={cities} colleges={d.colleges} referral={ref && /^[A-Za-z0-9]{4,12}$/.test(ref) ? ref : undefined} /></div>
       </div>

@@ -14,7 +14,7 @@ export const WINDOW_DAYS = 60;
 export type MetricId = "fill_rate" | "satisfaction" | "safety_rate" | "refund_rate" | "complaint_rate" | "min_sessions";
 export const METRICS: { id: MetricId; label: string; better: "higher" | "lower"; unit: string; how: string }[] = [
   { id: "min_sessions", label: "Sessions delivered", better: "higher", unit: "sessions", how: "Delivered sessions in the window. Enough data to trust the other numbers." },
-  { id: "fill_rate", label: "Gig fill rate", better: "higher", unit: "%", how: "Share of gigs that started in the window with a Fellow confirmed. Onboarding gigs are left out." },
+  { id: "fill_rate", label: "Gig fill rate", better: "higher", unit: "%", how: "Share of gigs that started in the window with a Kalamite confirmed. Onboarding gigs are left out." },
   { id: "satisfaction", label: "Parent satisfaction", better: "higher", unit: "/ 5", how: "Average verified parent rating (only parents whose child attended can rate)." },
   { id: "safety_rate", label: "Safety reports", better: "lower", unit: "per 100 sessions", how: "Safety, contact-detail, inappropriate-behaviour and bullying reports per 100 delivered sessions." },
   { id: "refund_rate", label: "Refund requests", better: "lower", unit: "%", how: "Refund requests as a share of paid orders." },
@@ -97,7 +97,7 @@ export async function readiness(now = new Date()): Promise<Readiness> {
 
 export const fmt = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(n < 10 ? 2 : 1));
 
-/** For growth actions (publishing Fellow courses, opening cities, approving ambassadors). */
+/** For growth actions (publishing Kalamite courses, opening cities, approving ambassadors). */
 export async function requireMarketOpen() {
   const r = await readiness();
   if (!r.gate.isOpen) throw new HttpError(409, "The open marketplace isn't switched on yet. See Marketplace readiness.");

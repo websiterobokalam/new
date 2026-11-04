@@ -32,8 +32,8 @@ export const TEMPLATES = {
     blocks: [{ p: `Hi ${p.name}, thanks for your interest in a 21C STEM & AI Lab for ${p.institution}. Your reference is ${p.ref}.` }, { p: "Someone from our schools team will contact you at the time you chose to plan a demo." }],
   }) },
   lead_ack_educator: { category: "transactional", render: (p) => ({
-    subject: `Kalam Fellows: we got your interest (${p.ref})`, heading: "Thanks for your interest in Kalam Fellows",
-    blocks: [{ p: `Hi ${p.name}, thanks for your interest in teaching with Kalam Fellows. Your reference is ${p.ref}.` }, { cta: { label: "Start your application", href: "/fellows/apply" } }, { note: "No fees, ever. Pay is shown before you accept any gig." }],
+    subject: `Kalamites: we got your interest (${p.ref})`, heading: "Thanks for your interest in Kalamites",
+    blocks: [{ p: `Hi ${p.name}, thanks for your interest in teaching with Kalamites. Your reference is ${p.ref}.` }, { cta: { label: "Start your application", href: "/kalamites/apply" } }, { note: "No fees, ever. Pay is shown before you accept any gig." }],
   }) },
   staff_new_lead: { category: "staff", render: (p) => ({
     subject: `New ${p.door} lead ${p.ref}`, heading: `New ${p.door} lead`,
@@ -102,15 +102,15 @@ export const TEMPLATES = {
   }) },
 
   fellow_application: { category: "transactional", render: (p) => ({
-    subject: "Kalam Fellows: application received", heading: `Thanks, ${p.name}`,
-    blocks: [{ p: p.status === "waitlisted" ? `We've added you to the waitlist for ${p.city}. We'll email you when your city opens. Nothing to do now.` : "Your application is in. Next: the subject test, a short recorded demo, safety checks and paid Kalam Academy training." }, { cta: { label: "Open the Fellow app", href: "/app/fellow" } }, { note: "No fees, ever." }],
+    subject: "Kalamites: application received", heading: `Thanks, ${p.name}`,
+    blocks: [{ p: p.status === "waitlisted" ? `We've added you to the waitlist for ${p.city}. We'll email you when your city opens. Nothing to do now.` : "Your application is in. Next: the subject test, a short recorded demo, safety checks and paid Kalam Academy training." }, { cta: { label: "Open the Kalamite app", href: "/app/fellow" } }, { note: "No fees, ever." }],
   }) },
   fellow_step: { category: "transactional", render: (p) => ({
     subject: `${p.step}: ${p.outcome === "passed" ? "passed" : "needs attention"}`, heading: p.outcome === "passed" ? `${p.step}: done` : `${p.step}: needs attention`,
-    blocks: [{ p: p.outcome === "passed" ? "Nice work. Your next step is waiting in the app." : "A reviewer has asked for another look. The note explains why." }, rows([["Note", p.note]]), { cta: { label: "Open the Fellow app", href: "/app/fellow" } }],
+    blocks: [{ p: p.outcome === "passed" ? "Nice work. Your next step is waiting in the app." : "A reviewer has asked for another look. The note explains why." }, rows([["Note", p.note]]), { cta: { label: "Open the Kalamite app", href: "/app/fellow" } }],
   }) },
   fellow_live: { category: "transactional", render: (p) => ({
-    subject: "You're live as a Kalam Fellow", heading: `You're live, ${p.name}`,
+    subject: "You're live as a Kalamite", heading: `You're live, ${p.name}`,
     blocks: [{ p: "Every check is done. Open gigs that match you are on the gig board, with pay and deductions shown before you accept. Declining is always free." }, { cta: { label: "Open the gig board", href: "/app/fellow/gigs" } }],
   }) },
   gig_confirmed: { category: "transactional", render: (p) => ({
@@ -130,11 +130,11 @@ export const TEMPLATES = {
     blocks: [rows([["Amount", p.amount], ["Bank reference", p.ref]]), { cta: { label: "Download your statement", href: "/app/fellow/earnings" } }],
   }) },
   terms_notice: { category: "transactional", render: (p) => ({
-    subject: `Your Fellow terms change on ${p.effective}`, heading: "Your Fellow terms and code of conduct are changing",
-    blocks: [{ p: `New Fellow terms take effect on ${p.effective}, at least 14 days from today. ${p.summary}` }, { cta: { label: "Read the new terms", href: "/fellow-terms" } }, { note: "Questions or concerns? Raise them with your point of contact or the dispute committee." }],
+    subject: `Your Kalamite terms change on ${p.effective}`, heading: "Your Kalamite terms and code of conduct are changing",
+    blocks: [{ p: `New Kalamite terms take effect on ${p.effective}, at least 14 days from today. ${p.summary}` }, { cta: { label: "Read the new terms", href: "/kalamite-terms" } }, { note: "Questions or concerns? Raise them with your point of contact or the dispute committee." }],
   }) },
   case_notice: { category: "transactional", render: (p) => ({
-    subject: "Important: a case about your Fellow account", heading: "A case has been opened",
+    subject: "Important: a case about your Kalamite account", heading: "A case has been opened",
     blocks: [{ p: p.childSafety ? "Your access is paused while the Safeguarding Lead looks into a child-safety concern. You'll get written reasons and a chance to respond." : `You have until ${p.noticeUntil} to respond. Nothing changes before then. The written reasons are in the app.` }, { cta: { label: "Read and respond", href: "/app/fellow/support" } }],
   }) },
   course_review: { category: "transactional", render: (p) => ({
@@ -159,16 +159,16 @@ export const TEMPLATES = {
     blocks: [rows([["Problem", p.summary], ["Status", p.status], ["Due", p.due], ["Clock", p.clock], ["Note", p.note]]), { cta: { label: "Open tickets", href: "/app/school/tickets" } }],
   }) },
   fellow_request_update: { category: "transactional", render: (p) => ({
-    subject: `Kalam Fellow session ${p.when}: ${p.status}`, heading: `Fellow session: ${p.status}`,
-    blocks: [rows([["When", p.when], ["Status", p.status], ["Fellow", p.fellow], ["Note", p.note]]), { cta: { label: "Open Kalam Fellows", href: "/app/school/fellows" } }],
+    subject: `Kalamite session ${p.when}: ${p.status}`, heading: `Kalamite session: ${p.status}`,
+    blocks: [rows([["When", p.when], ["Status", p.status], ["Kalamite", p.fellow], ["Note", p.note]]), { cta: { label: "Open Kalamites", href: "/app/school/fellows" } }],
   }) },
   staff_course_submitted: { category: "staff", render: (p) => ({
-    subject: `Course to review: ${p.title}`, heading: "A Fellow submitted a course",
-    blocks: [rows([["Course", p.title], ["Fellow", p.fellow], ["Points raised", p.flags]]), { cta: { label: "Open course reviews", href: "/app/ops/courses" } }],
+    subject: `Course to review: ${p.title}`, heading: "A Kalamite submitted a course",
+    blocks: [rows([["Course", p.title], ["Kalamite", p.fellow], ["Points raised", p.flags]]), { cta: { label: "Open course reviews", href: "/app/ops/courses" } }],
   }) },
   staff_ambassador_applied: { category: "staff", render: (p) => ({
     subject: `Ambassador application: ${p.fellow}`, heading: "New Campus Ambassador application",
-    blocks: [rows([["Fellow", p.fellow], ["College", p.college]]), { cta: { label: "Review", href: "/app/ops/ambassadors" } }],
+    blocks: [rows([["Kalamite", p.fellow], ["College", p.college]]), { cta: { label: "Review", href: "/app/ops/ambassadors" } }],
   }) },
 } satisfies Record<string, Def>;
 
