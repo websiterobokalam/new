@@ -1,6 +1,6 @@
 /** Door page hero. Carries the view-transition name the tapped door expands into. */
 export function PageHero({ eyebrow, title, lede, children, tone = "sky", art }: { eyebrow: string; title: React.ReactNode; lede?: React.ReactNode; children?: React.ReactNode; tone?: "sky" | "aqua" | "leaf"; art?: React.ReactNode }) {
-  const glow = { sky: "rgba(26,176,226,.16)", aqua: "rgba(92,198,236,.18)", leaf: "rgba(151,188,61,.2)" }[tone];
+  const glow = { sky: "rgba(26,176,226,.16)", aqua: "rgba(0,203,214,.18)", leaf: "rgba(0,152,214,.2)" }[tone];
   return (
     <section className="relative overflow-hidden pb-14 pt-12 sm:pb-20 sm:pt-20" style={{ viewTransitionName: "door-hero" }}>
       <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: `radial-gradient(50% 70% at 80% 10%, ${glow}, transparent 70%)` }} />

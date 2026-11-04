@@ -3,7 +3,7 @@ import type { Dict } from "@/i18n/en";
 
 const WORLDS = ["coding", "robotics", "iot", "ai", "finlit", "space"] as const;
 const NAMES: Record<string, string> = { coding: "Coding", robotics: "Robotics", iot: "IoT", ai: "AI", finlit: "Money", space: "Space" };
-const COLOR: Record<string, string> = { coding: "#0B2B3D", robotics: "#1AB0E2", iot: "#1590BC", ai: "#F7A21C", finlit: "#7A9E2C", space: "#0B4168" };
+const COLOR: Record<string, string> = { coding: "#0B2B3D", robotics: "#0098D6", iot: "#1590BC", ai: "#FFD31D", finlit: "#7A9E2C", space: "#00445F" };
 const W = 170, H = 120, NW = 140, NH = 64;
 
 /**
@@ -29,7 +29,7 @@ export function JourneyMap({ nodes, t }: { nodes: JourneyNode[]; t: Dict }) {
       <div className="overflow-x-auto rounded-[var(--radius-card)] border border-line bg-surface" tabIndex={0} role="region" aria-label="Journey map (scrolls sideways)">
         <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} className="block" aria-hidden>
           <defs>
-            <linearGradient id="jm-g" x1="0" x2="1"><stop offset="0" stopColor="#1AB0E2" /><stop offset=".5" stopColor="#5CC6EC" /><stop offset="1" stopColor="#97BC3D" /></linearGradient>
+            <linearGradient id="jm-g" x1="0" x2="1"><stop offset="0" stopColor="#0098D6" /><stop offset=".5" stopColor="#00CBD6" /><stop offset="1" stopColor="#00B16A" /></linearGradient>
           </defs>
           {WORLDS.map((w, i) => (
             <text key={w} x={20 + i * W + NW / 2} y={28} textAnchor="middle" fontFamily="var(--font-mono)" fontSize="12" letterSpacing="2" fill="var(--muted)">{NAMES[w].toUpperCase()}</text>
@@ -50,7 +50,7 @@ export function JourneyMap({ nodes, t }: { nodes: JourneyNode[]; t: Dict }) {
             const ink = n.state === "built" ? "#fff" : n.state === "locked" ? "var(--muted)" : "var(--heading)";
             return (
               <g key={n.id} transform={`translate(${p.x} ${p.y})`} opacity={n.state === "locked" ? 0.6 : 1}>
-                {n.recommended && <rect x={-5} y={-5} width={NW + 10} height={NH + 10} rx={18} fill="none" stroke="#F7A21C" strokeWidth={3} />}
+                {n.recommended && <rect x={-5} y={-5} width={NW + 10} height={NH + 10} rx={18} fill="none" stroke="#FFD31D" strokeWidth={3} />}
                 <rect width={NW} height={NH} rx={14} fill={fill} stroke={c} strokeWidth={n.state === "available" ? 2.5 : 1.5} strokeDasharray={n.state === "locked" ? "4 4" : undefined} />
                 <text x={12} y={26} fontFamily="var(--font-display)" fontWeight="700" fontSize="14" fill={ink}>{n.title.length > 17 ? n.title.slice(0, 16) + "…" : n.title}</text>
                 <text x={12} y={46} fontFamily="var(--font-mono)" fontSize="10.5" fill={ink}>L{n.level} · {t[n.state]}</text>

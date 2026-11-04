@@ -41,11 +41,13 @@ function WorldMotif({ shape, color }: { shape: string; color: string }) {
         </>
       )}
       {shape === "growth" && (<><path {...common} d="M4 82 C 60 80, 90 70, 120 50 S 170 12, 196 8" /><path d="M4 86 H196" stroke="var(--line)" strokeWidth="2" /></>)}
-      {shape === "orbit" && (<><ellipse cx="100" cy="45" rx="88" ry="28" {...common} transform="rotate(-12 100 45)" /><circle cx="100" cy="45" r="13" fill="#F7A21C" /><circle cx="176" cy="30" r="6" fill={color} /></>)}
+      {shape === "orbit" && (<><ellipse cx="100" cy="45" rx="88" ry="28" {...common} transform="rotate(-12 100 45)" /><circle cx="100" cy="45" r="13" fill="#FFD31D" /><circle cx="176" cy="30" r="6" fill={color} /></>)}
       {shape === "code" && (<><path {...common} d="M60 20 L30 45 L60 70 M140 20 L170 45 L140 70 M112 14 L88 76" /></>)}
     </svg>
   );
 }
+
+const WORLD_ICON: Record<WorldId, string> = { robotics: "🤖", iot: "📡", ai: "🧠", finlit: "💰", space: "🚀", coding: "💻" };
 
 const span: Record<WorldId, string> = {
   robotics: "md:col-span-2 md:row-span-2",
@@ -64,8 +66,11 @@ export function WorldsBento() {
         <ul className="mt-12 grid gap-4 md:grid-cols-3 md:grid-rows-[auto_auto_auto]">
           {worlds.map((w) => (
             <li key={w.id} data-stagger className={span[w.id]}>
-              <Link href={w.href} className="group card flex h-full flex-col p-6 transition-colors hover:border-heading">
-                <div><WorldMotif shape={w.shape} color={w.accent} /></div>
+              <Link href={w.href} className={`group world-tile world-${w.id} flex h-full flex-col p-6`}>
+                <div className="flex items-start justify-between gap-3">
+                  <span aria-hidden className="world-icon">{WORLD_ICON[w.id]}</span>
+                  <WorldMotif shape={w.shape} color={w.accent} />
+                </div>
                 <h3 className={`mt-4 font-[family-name:var(--font-display)] font-bold ${w.id === "robotics" ? "text-4xl" : "text-2xl"}`}>{w.name}</h3>
                 <p className="mt-2 text-fg">{w.line}</p>
                 {w.note && <p className="mt-2 text-sm text-muted">{w.note}</p>}
@@ -198,16 +203,16 @@ export function FellowsBand() {
 export function ImpactBand() {
   const stats = approvedClaims("impact.");
   return (
-    <section aria-label="Impact" className="relative bg-navy py-20 text-white">
+    <section aria-label="Impact" className="impact-band relative py-20 text-[#04202F]">
       <div data-power className="wrap">
-        <p className="font-semibold text-[#9ad7f0]" data-stagger>Impact</p>
+        <p className="kicker !text-[#04202F]" data-stagger>Impact</p>
         {stats.length > 0 ? (
           <div className="mt-6 grid grid-cols-2 gap-8 md:grid-cols-4">
-            {stats.map((s) => <Stat key={s.id} id={s.id} light />)}
+            {stats.map((s) => <Stat key={s.id} id={s.id} />)}
           </div>
         ) : (
           <div className="mt-4 max-w-3xl" data-stagger>
-            <p className="font-[family-name:var(--font-display)] text-3xl font-bold leading-tight !text-white sm:text-5xl">Real numbers, with dates and evidence. Nothing less.</p>
+            <p className="font-[family-name:var(--font-display)] text-3xl font-bold leading-tight !text-[#04202F] sm:text-5xl">Real numbers, with dates and evidence. Nothing less.</p>
             <p className="mt-4 text-lg">We publish a figure only once it has a definition, an as-of date and evidence behind it. Verified numbers will appear here.</p>
           </div>
         )}

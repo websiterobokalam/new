@@ -26,12 +26,12 @@ const T = {
   floor: { top: "#EAF6FB", left: "#C7E3EF", right: "#A9D2E3" },
   wall: { top: "#FFFFFF", left: "#F4FAFD", right: "#E3F1F8" },
   bench: { top: "#FFFFFF", left: "#D6EAF3", right: "#BCDCEA" },
-  navy: { top: "#1B6A93", left: "#0B4168", right: "#08324B" },
-  aqua: { top: "#9ED9F0", left: "#5CC6EC", right: "#1590BC" },
-  leaf: { top: "#C5DD8A", left: "#97BC3D", right: "#7A9E2C" },
-  spark: { top: "#FBC46A", left: "#F7A21C", right: "#D9870A" },
+  navy: { top: "#1B6A93", left: "#00445F", right: "#08324B" },
+  aqua: { top: "#9ED9F0", left: "#00CBD6", right: "#1590BC" },
+  leaf: { top: "#C5DD8A", left: "#00B16A", right: "#7A9E2C" },
+  spark: { top: "#FBC46A", left: "#FFD31D", right: "#D9870A" },
   pcb: { top: "#2E8B57", left: "#24704A", right: "#1B5A3A" },
-  sky: { top: "#7DCDEE", left: "#1AB0E2", right: "#1590BC" },
+  sky: { top: "#7DCDEE", left: "#0098D6", right: "#1590BC" },
 };
 
 export function IsoLab({ className = "", idp = "iso" }: { className?: string; idp?: string }) {
@@ -41,10 +41,10 @@ export function IsoLab({ className = "", idp = "iso" }: { className?: string; id
     <svg viewBox="-440 -250 880 720" className={className} role="img" aria-label="Illustration of a Robokalam STEM and AI lab: benches, robots, a satellite model, circuit boards and kit shelves">
       <defs>
         <linearGradient id={`${idp}-k`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#1AB0E2" /><stop offset=".5" stopColor="#5CC6EC" /><stop offset="1" stopColor="#97BC3D" />
+          <stop offset="0" stopColor="#0098D6" /><stop offset=".5" stopColor="#00CBD6" /><stop offset="1" stopColor="#00B16A" />
         </linearGradient>
         <radialGradient id={`${idp}-shadow`} cx=".5" cy=".5" r=".5">
-          <stop offset="0" stopColor="#0B4168" stopOpacity=".22" /><stop offset="1" stopColor="#0B4168" stopOpacity="0" />
+          <stop offset="0" stopColor="#00445F" stopOpacity=".22" /><stop offset="1" stopColor="#00445F" stopOpacity="0" />
         </radialGradient>
       </defs>
       <ellipse cx="0" cy="470" rx="380" ry="40" fill={`url(#${idp}-shadow)`} />
@@ -56,12 +56,12 @@ export function IsoLab({ className = "", idp = "iso" }: { className?: string; id
       <polygon points={pts([[5, 1.04, 5], [20, 1.04, 5], [20, 1.04, 14], [5, 1.04, 14]])} fill="#FFFFFF" stroke="#CFE4EE" strokeWidth="1.2" />
       <polyline points={boardTrace} fill="none" stroke={`url(#${idp}-k)`} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
       {[[7, 7], [18, 9], [14, 11]].map(([x, z], i) => (
-        <circle key={i} cx={iso([x, 1.05, z])[0]} cy={iso([x, 1.05, z])[1]} r="4.5" fill={i === 1 ? "#97BC3D" : "#5CC6EC"} />
+        <circle key={i} cx={iso([x, 1.05, z])[0]} cy={iso([x, 1.05, z])[1]} r="4.5" fill={i === 1 ? "#00B16A" : "#00CBD6"} />
       ))}
       {/* orbit poster on side wall */}
-      <polygon points={pts([[1.04, 24, 6], [1.04, 34, 6], [1.04, 34, 14], [1.04, 24, 14]])} fill="#0B4168" />
-      <ellipse cx={iso([1.04, 29, 10])[0]} cy={iso([1.04, 29, 10])[1]} rx="40" ry="14" fill="none" stroke="#5CC6EC" strokeWidth="1.6" transform={`rotate(-30 ${iso([1.04, 29, 10])[0]} ${iso([1.04, 29, 10])[1]})`} />
-      <circle cx={iso([1.04, 29, 10])[0]} cy={iso([1.04, 29, 10])[1]} r="7" fill="#F7A21C" />
+      <polygon points={pts([[1.04, 24, 6], [1.04, 34, 6], [1.04, 34, 14], [1.04, 24, 14]])} fill="#00445F" />
+      <ellipse cx={iso([1.04, 29, 10])[0]} cy={iso([1.04, 29, 10])[1]} rx="40" ry="14" fill="none" stroke="#00CBD6" strokeWidth="1.6" transform={`rotate(-30 ${iso([1.04, 29, 10])[0]} ${iso([1.04, 29, 10])[1]})`} />
+      <circle cx={iso([1.04, 29, 10])[0]} cy={iso([1.04, 29, 10])[1]} r="7" fill="#FFD31D" />
       {/* kit shelves */}
       <Box x={1} y={10} z={0} w={3} d={10} h={9} tone={T.bench} />
       {[0, 1, 2].map((i) => (
@@ -72,10 +72,10 @@ export function IsoLab({ className = "", idp = "iso" }: { className?: string; id
       {/* bench 1: monitor + circuit board */}
       <Box x={9} y={8} z={0} w={15} d={6} h={6} tone={T.bench} />
       <Box x={11} y={8.6} z={6} w={5} d={0.6} h={4.4} tone={T.navy} />
-      <polygon points={pts([[11.3, 9.22, 6.4], [15.7, 9.22, 6.4], [15.7, 9.22, 10.1], [11.3, 9.22, 10.1]])} fill="#5CC6EC" opacity=".9" />
+      <polygon points={pts([[11.3, 9.22, 6.4], [15.7, 9.22, 6.4], [15.7, 9.22, 10.1], [11.3, 9.22, 10.1]])} fill="#00CBD6" opacity=".9" />
       <polyline points={pts([[11.8, 9.25, 7.4], [13, 9.25, 8.6], [14, 9.25, 7.6], [15.2, 9.25, 9.3]])} fill="none" stroke="#fff" strokeWidth="1.6" />
       <Box x={17.5} y={9.5} z={6} w={4.5} d={3.4} h={0.35} tone={T.pcb} />
-      <polyline points={pts([[18, 10, 6.4], [20, 10, 6.4], [20, 12, 6.4], [21.5, 12, 6.4]])} fill="none" stroke="#F7A21C" strokeWidth="1.2" />
+      <polyline points={pts([[18, 10, 6.4], [20, 10, 6.4], [20, 12, 6.4], [21.5, 12, 6.4]])} fill="none" stroke="#FFD31D" strokeWidth="1.2" />
       <Box x={19.6} y={10.6} z={6.35} w={1.2} d={1} h={0.5} tone={T.navy} />
       {/* bench 2: robot + satellite */}
       <Box x={9} y={21} z={0} w={15} d={6} h={6} tone={T.bench} />
@@ -85,8 +85,8 @@ export function IsoLab({ className = "", idp = "iso" }: { className?: string; id
         const [cx, cy] = iso([x, 25.12, 9.8]);
         return <circle key={x} cx={cx} cy={cy} r="3" fill="#fff" />;
       })}
-      <line x1={iso([12.7, 24, 10.6])[0]} y1={iso([12.7, 24, 10.6])[1]} x2={iso([12.7, 24, 12.4])[0]} y2={iso([12.7, 24, 12.4])[1]} stroke="#0B4168" strokeWidth="1.6" />
-      <circle cx={iso([12.7, 24, 12.6])[0]} cy={iso([12.7, 24, 12.6])[1]} r="3.4" fill="#F7A21C" />
+      <line x1={iso([12.7, 24, 10.6])[0]} y1={iso([12.7, 24, 10.6])[1]} x2={iso([12.7, 24, 12.4])[0]} y2={iso([12.7, 24, 12.4])[1]} stroke="#00445F" strokeWidth="1.6" />
+      <circle cx={iso([12.7, 24, 12.6])[0]} cy={iso([12.7, 24, 12.6])[1]} r="3.4" fill="#FFD31D" />
       <Box x={17} y={23} z={6} w={0.6} d={0.6} h={2.5} tone={T.navy} />
       <Box x={16.4} y={22.4} z={8.5} w={1.8} d={1.8} h={1.8} tone={T.spark} />
       <Box x={14.2} y={22.9} z={9.1} w={2.2} d={0.8} h={0.15} tone={T.sky} />
@@ -105,7 +105,7 @@ export function IsoLab({ className = "", idp = "iso" }: { className?: string; id
       {/* nodes */}
       {[[4, 37], [7, 17], [24, 3]].map(([x, y], i) => {
         const [cx, cy] = iso([x, y, 0.06]);
-        return <ellipse key={i} cx={cx} cy={cy} rx="7" ry="4" fill={i === 2 ? "#97BC3D" : "#5CC6EC"} />;
+        return <ellipse key={i} cx={cx} cy={cy} rx="7" ry="4" fill={i === 2 ? "#00B16A" : "#00CBD6"} />;
       })}
     </svg>
   );

@@ -43,7 +43,7 @@ export function Wordmark({ tone = "auto" }: { tone?: "auto" | "light" }) {
         <g clipPath={`url(#${id}-clip)`}><GlobeDigits /></g>
       </g>
       <text x="72" y="36" fontFamily="var(--font-brand), 'Times New Roman', serif" fontWeight={700} fontSize="31" letterSpacing="0.6" fill="currentColor">ROBOKALAM</text>
-      <text x="73" y="56" fontFamily="var(--font-instrument), Arial, sans-serif" fontWeight={500} fontSize="15" fill="#97BC3D">literature of technologies</text>
+      <text x="73" y="56" fontFamily="var(--font-poppins), Arial, sans-serif" fontWeight={500} fontSize="15" fill="#97BC3D">literature of technologies</text>
     </svg>
   );
 }
