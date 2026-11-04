@@ -1,6 +1,7 @@
 import { system, uuid } from "../db";
 import { asAccount, type Account } from "../auth/session";
 import { FellowError } from "./core";
+import { messageReceived, removalCaseOpened, safetyReported } from "../email/notify";
 
 /** Same patterns the database trigger uses; checked here first so the sender gets a clear message. */
 export const CONTACT_PATTERN = /(\+?\d[\d\s().-]{7,}\d)|([\w.%+-]+@[\w.-]+\.[a-z]{2,})|(https?:\/\/|www\.)|\b(whats ?app|wa\.me|insta(gram)?|snap(chat)?|telegram|t\.me|facebook|fb\.com|discord)\b|(^|\s)@[\w.]{3,}/i;
@@ -50,10 +51,16 @@ export async function send(a: Account, threadId: string, body: string) {
     if (!t) throw new FellowError(404, "Conversation not found");
     const ins = await c.query("INSERT INTO messages (thread_id, sender_account_id, body, blocked) VALUES ($1,$2,$3,$4)", [threadId, a.id, body, flagged]);
     // Read back: the database trigger may also have blocked it.
-    return (await c.query("SELECT id, blocked FROM messages WHERE id = $1", [ins.insertId])).rows[0];
+    const row = (await c.query("SELECT id, blocked FROM messages WHERE id = $1", [ins.insertId])).rows[0];
+    if (!row.blocked) await messageReceived(c, threadId, a.id);
+    return row;
   });
   if (row.blocked) {
-    await system((c) => c.query("INSERT INTO safety_reports (id, reporter_account_id, page, category, details, respond_by) VALUES ($3, NULL, $1, 'contact_details', $2, now() + INTERVAL 24 HOUR)", [`/messages/${threadId}`, `Message ${row.id} blocked automatically: it looked like it contained contact details.`, uuid()]));
+    const rid = uuid();
+    await system(async (c) => {
+      await c.query("INSERT INTO safety_reports (id, reporter_account_id, page, category, details, respond_by) VALUES ($3, NULL, $1, 'contact_details', $2, now() + INTERVAL 24 HOUR)", [`/messages/${threadId}`, `Message ${row.id} blocked automatically: it looked like it contained contact details.`, rid]);
+      await safetyReported(c, rid);
+    });
     return { delivered: false };
   }
   return { delivered: true };
@@ -96,6 +103,7 @@ export async function openRemovalCase(staff: Account, fellowId: string, reasons:
     );
     if (childSafety) await suspend(c, fellowId);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,'removal_case_opened','fellow',$2,$3)", [staff.id, fellowId, { childSafety }]);
+    await removalCaseOpened(c, rows[0].id);
     return rows[0];
   });
 }

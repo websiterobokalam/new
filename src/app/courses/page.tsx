@@ -52,10 +52,11 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
               <li key={c.id} className="card flex flex-col p-6">
                 <p className="text-sm font-semibold text-link">Age {c.age_min}{c.age_max ? `–${c.age_max}` : "+"} · {worlds.find((w) => w.id === c.world)?.name}</p>
                 <h2 className="mt-1 text-xl font-bold">{c.title}</h2>
+                {c.format === "one_to_one" && <p className="mt-1 text-sm font-semibold text-heading">One-to-one · online · <Link className="underline" href="/one-to-one">parent-supervised</Link></p>}
                 {c.programme === "Fellow's Own Course" && <p className="mt-1 text-sm font-semibold text-heading">Fellow&apos;s Own Course · reviewed by Robokalam</p>}
                 <p className="mt-2 text-muted">{c.outcome}</p>
                 <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
-                  <div><dt className="text-muted">Batch</dt><dd className="font-semibold">Up to {c.batch_size_max}</dd></div>
+                  <div><dt className="text-muted">Batch</dt><dd className="font-semibold">{c.format === "one_to_one" ? "One learner" : `Up to ${c.batch_size_max}`}</dd></div>
                   <div><dt className="text-muted">Classes</dt><dd className="font-semibold">{c.sessions}</dd></div>
                   <div><dt className="text-muted">Next start</dt><dd className="font-semibold">{c.next_start ? new Date(c.next_start).toLocaleDateString("en-IN", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" }) : "To be scheduled"}</dd></div>
                   <div><dt className="text-muted">Language</dt><dd className="font-semibold">{c.languages.map((l) => LANG[l] ?? l).join(", ") || "—"}</dd></div>

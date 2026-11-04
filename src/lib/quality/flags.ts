@@ -6,6 +6,7 @@ import { HttpError } from "../api";
 import type { Account } from "../auth/session";
 import { hasContactDetails } from "../fellows/community";
 import { testProvidersAllowed } from "../providers";
+import { flagDecided } from "../email/notify";
 
 /**
  * Quality tools. Rules and AI may FLAG; a person decides, with a written note.
@@ -36,7 +37,7 @@ export function courseRuleChecks(d: Draft): Flag[] {
   if (d.world === "finlit") hit("finlit_investment", "high", "Financial literacy covers money basics only: no stock tips, trading, crypto or investment advice.", /\b(stock tips?|trading|intraday|crypto\w*|bitcoin|invest(ing|ment)? advice|which shares?|options trading|forex|multibagger)\b/i);
   if (d.world === "space") hit("space_propellant", "high", "Space education uses safe models. No live propellants without a qualified adult and permission.", /\b(propellant|rocket (fuel|motor|engine)|solid motor|black powder|igniter|launch (a|an|the)? ?rocket)\b/i);
   if (hasContactDetails(t)) out.push({ code: "contact_details", severity: "high", message: "Contact details or social handles aren't allowed. All contact stays on the platform.", evidence: find(t, /(\+?\d[\d\s().-]{7,}\d)|([\w.%+-]+@[\w.-]+\.[a-z]{2,})|(https?:\/\/\S+|www\.\S+)|@\w{3,}/i) });
-  hit("private_session", "high", "No private one-to-one sessions or home visits with children.", /\b(1[:-]1|one[- ]on[- ]one|one[- ]to[- ]one|private (session|class|lesson)s?|home visits?|at (your|the student'?s) home)\b/i);
+  hit("private_session", "high", "Fellow courses are small groups. No home visits or private sessions; one-to-one runs only in Robokalam's parent-supervised format.", /\b(1[:-]1|one[- ]on[- ]one|one[- ]to[- ]one|private (session|class|lesson)s?|home visits?|at (your|the student'?s) home)\b/i);
   hit("guarantee_claim", "warn", "No guarantees, ranks, selection or absolute claims (for example 'guaranteed', 'No.1', 'top 1%').", /\b(guarantee[ds]?|100% (result|success|placement)s?|no\.? ?1|number one|top 1%|assured (job|admission|rank)s?|job guarantee)\b/i);
   hit("institute_link", "warn", "Don't imply that IITs, NITs or other institutes endorse the course.", /\b(IIT|NIT|IIIT|BITS)[- ]?(approved|certified|endorsed|recognised|recognized)\b/i);
   if (d.syllabus.length !== d.sessions) out.push({ code: "syllabus_count", severity: "warn", message: `The syllabus lists ${d.syllabus.length} sessions but the course says ${d.sessions}.` });
@@ -60,7 +61,7 @@ const AI_SYSTEM = `You review course drafts written by college-student educators
 Your notes go to a human reviewer, who makes every decision. You never approve or reject.
 Check the draft against these rules and report only real issues, quoting the words that raise each one:
 - Age fit: activities and language suit the stated ages.
-- Safety: tools, electricity, heat, chemicals and sharp items are age-appropriate and supervised. No live rocket propellants. No private one-to-one sessions, home visits or contact outside the platform.
+- Safety: tools, electricity, heat, chemicals and sharp items are age-appropriate and supervised. No live rocket propellants. No home visits or contact outside the platform. These are group courses; one-to-one runs only in a separate parent-supervised format.
 - Honest claims: no guarantees of results, ranks, jobs, admissions or earnings; no implied endorsement by institutes or famous people.
 - Money basics: budgeting, saving, pricing and simple business only. No stock tips, trading calls, crypto promotion or investment advice.
 - Clarity: a clear outcome, and each session ends with something the learner builds.
@@ -171,5 +172,6 @@ export async function decideFlag(ops: Account, id: string, status: "dismissed" |
     const r = await c.query("UPDATE quality_flags SET status = $2, decided_by = $3, decided_at = UTC_TIMESTAMP(3), decision_note = $4 WHERE id = $1 AND status = 'open'", [id, status, ops.id, note]);
     if (!r.affectedRows) throw new HttpError(409, "Already decided");
     await audit(c, ops.id, `flag_${status}`, "quality_flag", id);
+    await flagDecided(c, id);
   });
 }

@@ -6,6 +6,7 @@ import { addEarning, rateFor } from "./pay";
 
 import { noteCity, cityFor, takesFellows } from "../market/cities";
 import { recordReferral, rewardReferral } from "../market/ambassadors";
+import { fellowApplied, fellowLive, fellowStep } from "../email/notify";
 
 export const STEPS = ["subject_test", "demo", "identity", "background", "references", "academy", "terms", "shadow", "co_teach"] as const;
 export type Step = (typeof STEPS)[number];
@@ -69,6 +70,7 @@ export async function apply(a: Account, app: Application) {
     await recordReferral(c, a.id, app.ref);
     for (const s of STEPS) await insertOnce(c, "INSERT INTO vetting_steps (fellow_id, step, detail) VALUES ($1,$2,'{}')", [a.id, s]);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,'fellow_applied','fellow',$2,$3)", [a.id, a.id, { city: app.city, inPilot }]);
+    await fellowApplied(c, a.id);
     return { status: inPilot ? "vetting" : "waitlisted" };
   });
 }
@@ -147,6 +149,7 @@ export async function reviewStep(staff: Account, fellowId: string, step: Step, o
       if (rate) await addEarning(c, fellowId, { kind: "demo", description: "Recorded demo", gross: rate.per_session_paise });
     }
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,'vetting_review','fellow',$2,$3)", [staff.id, fellowId, { step, outcome, note }]);
+    await fellowStep(c, fellowId, STEP_LABEL[step], outcome, note);
   });
 }
 
@@ -169,6 +172,7 @@ export async function goLive(staff: Account, fellowId: string) {
     if (live >= city!.max_live) throw new FellowError(409, `${city!.name} is full (${city!.max_live} live Fellows)`);
     await c.query("UPDATE fellows SET status = 'live', went_live_at = now() WHERE account_id = $1", [fellowId]);
     await rewardReferral(c, fellowId);
+    await fellowLive(c, fellowId);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id) VALUES ($1,'fellow_live','fellow',$2)", [staff.id, fellowId]);
   });
 }

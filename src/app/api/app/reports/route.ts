@@ -2,6 +2,7 @@ import { z } from "zod";
 import { body, handler, limit, ok } from "@/lib/api";
 import { currentAccount } from "@/lib/auth/session";
 import { tx, uuid } from "@/lib/db";
+import { safetyReported } from "@/lib/email/notify";
 
 /** Target response time for the Safeguarding Lead. Placeholder until the named Lead confirms it. */
 const RESPOND_HOURS = Number(process.env.SAFEGUARDING_RESPONSE_HOURS ?? 24);
@@ -24,6 +25,7 @@ export const POST = handler(async (req) => {
       [rows[0].id, a?.id ?? null, learnerId, b.page, b.category, b.details, rows[0].respond_by],
     );
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,'safety_report','safety_report',$2,$3)", [a?.id ?? null, rows[0].id, { category: b.category }]);
+    await safetyReported(c, rows[0].id);
     return rows[0];
   });
   // Phase 2: alert channel for the Safeguarding Lead (email/WhatsApp) is configured with their contact.

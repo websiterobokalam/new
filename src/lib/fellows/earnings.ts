@@ -2,6 +2,7 @@ import { insertOnce, system, uuid } from "../db";
 import { asAccount, type Account } from "../auth/session";
 import { post } from "../ledger";
 import { weekStartIST } from "./pay";
+import { payoutSent } from "../email/notify";
 
 export async function earnings(a: Account) {
   return asAccount(a, async (c) => {
@@ -64,5 +65,6 @@ export async function markPayoutPaid(staff: Account, payoutId: string, bankRef: 
     await c.query("UPDATE payouts SET status = 'paid', provider_ref = $2, paid_at = now() WHERE id = $1", [payoutId, bankRef]);
     await post(c, "payout_paid", payoutId, [["educator_payable", p.gross_paise], ["deductions_payable", -p.deductions_paise], ["payouts_bank", -p.net_paise]]);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,'payout_paid','payout',$2,$3)", [staff.id, payoutId, { bankRef }]);
+    await payoutSent(c, payoutId);
   });
 }

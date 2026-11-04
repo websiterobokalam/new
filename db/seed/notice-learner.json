@@ -1,46 +1,193 @@
 {
   "_status": "DRAFT for counsel review under the DPDP Act and Rules. Telugu and Hindi are machine-drafted and need native review. Not approved.",
   "en": {
-    "id": "learner-2026-11-en",
+    "id": "learner-2026-12-en",
     "title": "How Robokalam uses your child's information",
     "items": [
-      { "purpose": "account", "required": true, "what": "Your phone number, your child's first name and age band.", "why": "To create your family account and let you manage it.", "keep": "Until you delete the account." },
-      { "purpose": "live_classes", "required": true, "what": "Attendance, projects your child builds, and educator feedback.", "why": "To run classes and show you progress.", "keep": "While the account is active, then 1 year." },
-      { "purpose": "class_recording", "required": true, "what": "Video and audio of online classes.", "why": "Child safety and quality checks. Recordings are watched only for review, never sold or used for ads.", "keep": "A fixed short period, then deleted unless needed for a safety case." },
-      { "purpose": "ai_helper", "required": false, "what": "Questions your child types to the AI helper.", "why": "To give hints. You can see every use.", "keep": "90 days." },
-      { "purpose": "portfolio_sharing", "required": false, "what": "Your child's project page.", "why": "To share it by link. Private unless you turn this on.", "keep": "Until you turn it off." },
-      { "purpose": "whatsapp", "required": false, "what": "Your phone number on WhatsApp.", "why": "Class reminders and updates.", "keep": "Until you opt out." },
-      { "purpose": "follow_up", "required": false, "what": "Your phone number.", "why": "One follow-up after the Free Build Session.", "keep": "One message only." }
+      {
+        "purpose": "account",
+        "required": true,
+        "what": "Your phone number, your child's first name and age band.",
+        "why": "To create your family account and let you manage it.",
+        "keep": "Until you delete the account."
+      },
+      {
+        "purpose": "live_classes",
+        "required": true,
+        "what": "Attendance, projects your child builds, and educator feedback.",
+        "why": "To run classes and show you progress.",
+        "keep": "While the account is active, then 1 year."
+      },
+      {
+        "purpose": "class_recording",
+        "required": true,
+        "what": "Video and audio of online classes.",
+        "why": "Child safety and quality checks. Recordings are watched only for review, never sold or used for ads.",
+        "keep": "A fixed short period, then deleted unless needed for a safety case."
+      },
+      {
+        "purpose": "ai_helper",
+        "required": false,
+        "what": "Questions your child types to the AI helper.",
+        "why": "To give hints. You can see every use.",
+        "keep": "90 days."
+      },
+      {
+        "purpose": "portfolio_sharing",
+        "required": false,
+        "what": "Your child's project page.",
+        "why": "To share it by link. Private unless you turn this on.",
+        "keep": "Until you turn it off."
+      },
+      {
+        "purpose": "whatsapp",
+        "required": false,
+        "what": "Your phone number on WhatsApp.",
+        "why": "Class reminders and updates.",
+        "keep": "Until you opt out."
+      },
+      {
+        "purpose": "follow_up",
+        "required": false,
+        "what": "Your phone number.",
+        "why": "One follow-up after the Free Build Session.",
+        "keep": "One message only."
+      },
+      {
+        "purpose": "one_to_one",
+        "required": false,
+        "what": "One-to-one online classes with a vetted educator, your verified email address, and a record of each session.",
+        "why": "So your child can learn one-to-one while you stay in the loop: a notice before and a written summary after every session, and you can join any session.",
+        "keep": "Session records while the account is active; recordings 30 days."
+      }
     ],
     "rights": "You can see, correct, download or delete your child's data, and withdraw any consent, at any time from the Consent centre. We never track your child for ads, never profile their behaviour and never sell data.",
     "grievance": "Grievance officer contact will be published before launch."
   },
   "te": {
-    "id": "learner-2026-11-te",
+    "id": "learner-2026-12-te",
     "title": "మీ పిల్లల సమాచారాన్ని రోబోకలం ఎలా ఉపయోగిస్తుంది",
     "items": [
-      { "purpose": "account", "required": true, "what": "మీ ఫోన్ నంబర్, మీ పిల్లల మొదటి పేరు మరియు వయస్సు వర్గం.", "why": "మీ కుటుంబ ఖాతాను సృష్టించి, మీరు నిర్వహించడానికి.", "keep": "మీరు ఖాతాను తొలగించే వరకు." },
-      { "purpose": "live_classes", "required": true, "what": "హాజరు, మీ పిల్లలు తయారు చేసే ప్రాజెక్టులు, ఉపాధ్యాయుల అభిప్రాయం.", "why": "తరగతులు నడపడానికి మరియు పురోగతిని చూపించడానికి.", "keep": "ఖాతా ఉన్నంత వరకు, తర్వాత 1 సంవత్సరం." },
-      { "purpose": "class_recording", "required": true, "what": "ఆన్‌లైన్ తరగతుల వీడియో మరియు ఆడియో.", "why": "పిల్లల భద్రత మరియు నాణ్యత తనిఖీ కోసం. ప్రకటనల కోసం ఎప్పుడూ ఉపయోగించము.", "keep": "కొద్ది కాలం, తర్వాత తొలగిస్తాము." },
-      { "purpose": "ai_helper", "required": false, "what": "AI సహాయకుడికి మీ పిల్లలు అడిగే ప్రశ్నలు.", "why": "సూచనలు ఇవ్వడానికి. ప్రతి వాడకాన్ని మీరు చూడవచ్చు.", "keep": "90 రోజులు." },
-      { "purpose": "portfolio_sharing", "required": false, "what": "మీ పిల్లల ప్రాజెక్ట్ పేజీ.", "why": "లింక్ ద్వారా పంచుకోవడానికి. మీరు ఆన్ చేసే వరకు ప్రైవేట్.", "keep": "మీరు ఆఫ్ చేసే వరకు." },
-      { "purpose": "whatsapp", "required": false, "what": "వాట్సాప్‌లో మీ ఫోన్ నంబర్.", "why": "తరగతి గుర్తుచేతలు మరియు అప్‌డేట్‌లు.", "keep": "మీరు నిలిపివేసే వరకు." },
-      { "purpose": "follow_up", "required": false, "what": "మీ ఫోన్ నంబర్.", "why": "ఫ్రీ బిల్డ్ సెషన్ తర్వాత ఒక్కసారి సంప్రదించడానికి.", "keep": "ఒక్క సందేశం మాత్రమే." }
+      {
+        "purpose": "account",
+        "required": true,
+        "what": "మీ ఫోన్ నంబర్, మీ పిల్లల మొదటి పేరు మరియు వయస్సు వర్గం.",
+        "why": "మీ కుటుంబ ఖాతాను సృష్టించి, మీరు నిర్వహించడానికి.",
+        "keep": "మీరు ఖాతాను తొలగించే వరకు."
+      },
+      {
+        "purpose": "live_classes",
+        "required": true,
+        "what": "హాజరు, మీ పిల్లలు తయారు చేసే ప్రాజెక్టులు, ఉపాధ్యాయుల అభిప్రాయం.",
+        "why": "తరగతులు నడపడానికి మరియు పురోగతిని చూపించడానికి.",
+        "keep": "ఖాతా ఉన్నంత వరకు, తర్వాత 1 సంవత్సరం."
+      },
+      {
+        "purpose": "class_recording",
+        "required": true,
+        "what": "ఆన్‌లైన్ తరగతుల వీడియో మరియు ఆడియో.",
+        "why": "పిల్లల భద్రత మరియు నాణ్యత తనిఖీ కోసం. ప్రకటనల కోసం ఎప్పుడూ ఉపయోగించము.",
+        "keep": "కొద్ది కాలం, తర్వాత తొలగిస్తాము."
+      },
+      {
+        "purpose": "ai_helper",
+        "required": false,
+        "what": "AI సహాయకుడికి మీ పిల్లలు అడిగే ప్రశ్నలు.",
+        "why": "సూచనలు ఇవ్వడానికి. ప్రతి వాడకాన్ని మీరు చూడవచ్చు.",
+        "keep": "90 రోజులు."
+      },
+      {
+        "purpose": "portfolio_sharing",
+        "required": false,
+        "what": "మీ పిల్లల ప్రాజెక్ట్ పేజీ.",
+        "why": "లింక్ ద్వారా పంచుకోవడానికి. మీరు ఆన్ చేసే వరకు ప్రైవేట్.",
+        "keep": "మీరు ఆఫ్ చేసే వరకు."
+      },
+      {
+        "purpose": "whatsapp",
+        "required": false,
+        "what": "వాట్సాప్‌లో మీ ఫోన్ నంబర్.",
+        "why": "తరగతి గుర్తుచేతలు మరియు అప్‌డేట్‌లు.",
+        "keep": "మీరు నిలిపివేసే వరకు."
+      },
+      {
+        "purpose": "follow_up",
+        "required": false,
+        "what": "మీ ఫోన్ నంబర్.",
+        "why": "ఫ్రీ బిల్డ్ సెషన్ తర్వాత ఒక్కసారి సంప్రదించడానికి.",
+        "keep": "ఒక్క సందేశం మాత్రమే."
+      },
+      {
+        "purpose": "one_to_one",
+        "required": false,
+        "what": "పరిశీలించిన విద్యావేత్తతో ఒకరికి ఒకరు ఆన్‌లైన్ తరగతులు, మీ ధృవీకరించిన ఇమెయిల్, ప్రతి సెషన్ రికార్డ్.",
+        "why": "మీ పిల్లలు ఒకరికి ఒకరు నేర్చుకోవడానికి; ప్రతి సెషన్‌కు ముందు మీకు సమాచారం, తర్వాత రాతపూర్వక సారాంశం వస్తాయి, మీరు ఏ సెషన్‌లోనైనా చేరవచ్చు.",
+        "keep": "ఖాతా ఉన్నంత వరకు సెషన్ రికార్డులు; రికార్డింగ్‌లు 30 రోజులు."
+      }
     ],
     "rights": "కన్సెంట్ సెంటర్ నుండి మీ పిల్లల డేటాను ఎప్పుడైనా చూడవచ్చు, సరిచేయవచ్చు, డౌన్‌లోడ్ చేయవచ్చు లేదా తొలగించవచ్చు, మరియు ఏ అనుమతినైనా ఉపసంహరించుకోవచ్చు.",
     "grievance": "ఫిర్యాదుల అధికారి వివరాలు ప్రారంభానికి ముందు ప్రచురిస్తాము."
   },
   "hi": {
-    "id": "learner-2026-11-hi",
+    "id": "learner-2026-12-hi",
     "title": "रोबोकलम आपके बच्चे की जानकारी का उपयोग कैसे करता है",
     "items": [
-      { "purpose": "account", "required": true, "what": "आपका फ़ोन नंबर, आपके बच्चे का पहला नाम और आयु वर्ग।", "why": "आपका परिवार खाता बनाने और उसे आप द्वारा प्रबंधित करने के लिए।", "keep": "जब तक आप खाता न हटाएँ।" },
-      { "purpose": "live_classes", "required": true, "what": "उपस्थिति, आपके बच्चे के बनाए प्रोजेक्ट और शिक्षक की प्रतिक्रिया।", "why": "कक्षाएँ चलाने और प्रगति दिखाने के लिए।", "keep": "खाता सक्रिय रहने तक, फिर 1 वर्ष।" },
-      { "purpose": "class_recording", "required": true, "what": "ऑनलाइन कक्षाओं का वीडियो और ऑडियो।", "why": "बच्चों की सुरक्षा और गुणवत्ता जाँच के लिए। विज्ञापन के लिए कभी नहीं।", "keep": "थोड़े समय तक, फिर हटा दिया जाता है।" },
-      { "purpose": "ai_helper", "required": false, "what": "AI सहायक से आपके बच्चे के प्रश्न।", "why": "संकेत देने के लिए। आप हर उपयोग देख सकते हैं।", "keep": "90 दिन।" },
-      { "purpose": "portfolio_sharing", "required": false, "what": "आपके बच्चे का प्रोजेक्ट पेज।", "why": "लिंक से साझा करने के लिए। आपके चालू करने तक निजी।", "keep": "जब तक आप बंद न करें।" },
-      { "purpose": "whatsapp", "required": false, "what": "व्हाट्सऐप पर आपका फ़ोन नंबर।", "why": "कक्षा अनुस्मारक और अपडेट।", "keep": "जब तक आप ऑप्ट-आउट न करें।" },
-      { "purpose": "follow_up", "required": false, "what": "आपका फ़ोन नंबर।", "why": "फ्री बिल्ड सेशन के बाद एक बार संपर्क के लिए।", "keep": "केवल एक संदेश।" }
+      {
+        "purpose": "account",
+        "required": true,
+        "what": "आपका फ़ोन नंबर, आपके बच्चे का पहला नाम और आयु वर्ग।",
+        "why": "आपका परिवार खाता बनाने और उसे आप द्वारा प्रबंधित करने के लिए।",
+        "keep": "जब तक आप खाता न हटाएँ।"
+      },
+      {
+        "purpose": "live_classes",
+        "required": true,
+        "what": "उपस्थिति, आपके बच्चे के बनाए प्रोजेक्ट और शिक्षक की प्रतिक्रिया।",
+        "why": "कक्षाएँ चलाने और प्रगति दिखाने के लिए।",
+        "keep": "खाता सक्रिय रहने तक, फिर 1 वर्ष।"
+      },
+      {
+        "purpose": "class_recording",
+        "required": true,
+        "what": "ऑनलाइन कक्षाओं का वीडियो और ऑडियो।",
+        "why": "बच्चों की सुरक्षा और गुणवत्ता जाँच के लिए। विज्ञापन के लिए कभी नहीं।",
+        "keep": "थोड़े समय तक, फिर हटा दिया जाता है।"
+      },
+      {
+        "purpose": "ai_helper",
+        "required": false,
+        "what": "AI सहायक से आपके बच्चे के प्रश्न।",
+        "why": "संकेत देने के लिए। आप हर उपयोग देख सकते हैं।",
+        "keep": "90 दिन।"
+      },
+      {
+        "purpose": "portfolio_sharing",
+        "required": false,
+        "what": "आपके बच्चे का प्रोजेक्ट पेज।",
+        "why": "लिंक से साझा करने के लिए। आपके चालू करने तक निजी।",
+        "keep": "जब तक आप बंद न करें।"
+      },
+      {
+        "purpose": "whatsapp",
+        "required": false,
+        "what": "व्हाट्सऐप पर आपका फ़ोन नंबर।",
+        "why": "कक्षा अनुस्मारक और अपडेट।",
+        "keep": "जब तक आप ऑप्ट-आउट न करें।"
+      },
+      {
+        "purpose": "follow_up",
+        "required": false,
+        "what": "आपका फ़ोन नंबर।",
+        "why": "फ्री बिल्ड सेशन के बाद एक बार संपर्क के लिए।",
+        "keep": "केवल एक संदेश।"
+      },
+      {
+        "purpose": "one_to_one",
+        "required": false,
+        "what": "जाँचे-परखे शिक्षक के साथ वन-टू-वन ऑनलाइन कक्षाएँ, आपका सत्यापित ईमेल, और हर सत्र का रिकॉर्ड।",
+        "why": "ताकि आपका बच्चा वन-टू-वन सीख सके और आप जुड़े रहें: हर सत्र से पहले सूचना, बाद में लिखित सारांश, और आप कभी भी जुड़ सकते हैं।",
+        "keep": "खाता सक्रिय रहने तक सत्र रिकॉर्ड; रिकॉर्डिंग 30 दिन।"
+      }
     ],
     "rights": "कंसेंट सेंटर से आप कभी भी अपने बच्चे का डेटा देख, सुधार, डाउनलोड या हटा सकते हैं, और कोई भी सहमति वापस ले सकते हैं।",
     "grievance": "शिकायत अधिकारी का विवरण लॉन्च से पहले प्रकाशित किया जाएगा।"

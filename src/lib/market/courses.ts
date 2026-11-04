@@ -5,6 +5,7 @@ import { requireFellow } from "../fellows/core";
 import { TIERS, weekMinutes } from "../fellows/gigs";
 import { checkDraft, type Draft } from "../quality/flags";
 import { requireMarketOpen } from "./gate";
+import { courseReviewed, courseSubmitted } from "../email/notify";
 
 /**
  * Fellow's Own Course (brief §11): online, small groups, reviewed and
@@ -89,7 +90,12 @@ export async function submitDraft(a: Account, id: string) {
     await audit(c, a.id, "course_submitted", "course_draft", id);
     return x;
   });
-  return checkDraft(d);
+  const res = await checkDraft(d);
+  await system(async (c) => {
+    const n = Number((await c.query("SELECT COUNT(*) AS n FROM quality_flags WHERE subject_type = 'course_draft' AND subject_id = $1 AND status = 'open'", [id])).rows[0].n);
+    await courseSubmitted(c, id, n);
+  });
+  return res;
 }
 
 export async function withdrawDraft(a: Account, id: string) {
@@ -120,10 +126,12 @@ export async function reviewDraft(ops: Account, id: string, decision: "approve" 
       );
       await c.query("UPDATE course_drafts SET status = 'approved', course_id = $2, reviewed_by = $3, reviewed_at = UTC_TIMESTAMP(3), review_note = $4 WHERE id = $1", [id, courseId, ops.id, note]);
       await audit(c, ops.id, "course_approved", "course_draft", id, { course: courseId, author: f?.display_name ?? null });
+      await courseReviewed(c, id);
       return courseId;
     }
     await c.query("UPDATE course_drafts SET status = $2, reviewed_by = $3, reviewed_at = UTC_TIMESTAMP(3), review_note = $4 WHERE id = $1", [id, decision === "changes" ? "changes" : "rejected", ops.id, note]);
     await audit(c, ops.id, decision === "changes" ? "course_changes_requested" : "course_rejected", "course_draft", id);
+    await courseReviewed(c, id);
     return null;
   });
 }
@@ -139,6 +147,7 @@ export async function publishCourse(ops: Account, id: string) {
     await c.query("UPDATE courses SET published = TRUE, fellow_share_pct = $2 WHERE id = $1", [d.course_id, share]);
     await c.query("UPDATE course_drafts SET status = 'published' WHERE id = $1", [id]);
     await audit(c, ops.id, "course_published", "course_draft", id, { share });
+    await courseReviewed(c, id);
   });
 }
 

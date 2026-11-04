@@ -23,7 +23,7 @@ export default async function OpsGigs() {
       <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
         <div className="card p-6"><h2 className="mb-4 text-xl font-bold">Post a gig</h2>
           <JsonForm url="/api/ops/gigs" submit="Post gig" done="Gig posted" fixed={{}} fields={[
-            { name: "kind", label: "Type", type: "select", options: [["live_batch", "Live Batch"], ["campus_session", "Campus Session"], ["weekend_workshop", "Weekend Workshop"], ["doubt_desk", "Doubt Desk"], ["project_mentor", "Project Mentor"], ["build_session", "Free Build Session"], ["shadow", "Shadow (onboarding)"], ["co_teach", "Co-teach (onboarding)"]] },
+            { name: "kind", label: "Type", type: "select", options: [["live_batch", "Live Batch"], ["campus_session", "Campus Session"], ["weekend_workshop", "Weekend Workshop"], ["doubt_desk", "Doubt Desk"], ["project_mentor", "Project Mentor"], ["build_session", "Free Build Session"], ["shadow", "Shadow (onboarding)"], ["co_teach", "Co-teach (onboarding)"], ["one_to_one", "One-to-one (online, parent-supervised)"]] },
             { name: "title", label: "Title" },
             { name: "world", label: "World", type: "select", options: [["robotics", "Robotics"], ["iot", "IoT"], ["ai", "AI"], ["coding", "Coding"], ["finlit", "Financial Literacy"], ["space", "Space"]] },
             { name: "language", label: "Language", type: "select", options: [["en", "English"], ["te", "Telugu"], ["hi", "Hindi"]] },

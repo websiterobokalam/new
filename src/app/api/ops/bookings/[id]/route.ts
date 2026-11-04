@@ -2,6 +2,7 @@ import { z } from "zod";
 import { body, handler, HttpError, ok } from "@/lib/api";
 import { requireRole } from "@/lib/staff";
 import { system } from "@/lib/db";
+import { sessionDelivered } from "@/lib/email/notify";
 
 /**
  * Record what happened in a session: attendance, plain feedback, next step,
@@ -20,6 +21,8 @@ export const POST = handler(async (req, ctx) => {
       await c.query("INSERT INTO learner_progress (learner_id, project_id, status, reviewed_by, completed_at) VALUES ($1,$2,'built',$3, now()) ON DUPLICATE KEY UPDATE status = 'built', reviewed_by = VALUES(reviewed_by), completed_at = now()", [r.rows[0].learner_id, b.builtProject, a.id]);
     }
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,'session_recorded','booking',$2,$3)", [a.id, id, { status: b.status, built: b.builtProject ?? null }]);
+    const built = b.builtProject ? (await c.query("SELECT title FROM projects WHERE id = $1", [b.builtProject])).rows[0]?.title ?? null : null;
+    await sessionDelivered(c, `ops-${id}`, [{ bookingId: id, attended: b.status === "attended", built, feedback: b.feedback ?? null }]);
   });
   return ok();
 });

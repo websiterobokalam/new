@@ -69,6 +69,31 @@ try {
     await c.query("ALTER TABLE earnings_lines DROP CONSTRAINT earn_kind");
     await c.query("ALTER TABLE earnings_lines ADD CONSTRAINT earn_kind CHECK (kind IN ('session','training','demo','shadow','co_teach','adjustment','own_course','referral'))");
   }
+  // Email and one-to-one changes to existing tables (guarded).
+  if (!(await hasColumn("accounts", "email"))) {
+    await c.query("ALTER TABLE accounts ADD COLUMN email VARCHAR(160) NULL, ADD COLUMN email_verified_at DATETIME(3) NULL, ADD COLUMN email_updates BOOLEAN NOT NULL DEFAULT TRUE");
+  }
+  if (!(await hasColumn("courses", "format"))) {
+    await c.query("ALTER TABLE courses ADD COLUMN format VARCHAR(10) NOT NULL DEFAULT 'group'");
+    await c.query("ALTER TABLE courses DROP CONSTRAINT courses_batch");
+    // One-to-one is online, one learner; groups are 2 to 30.
+    await c.query("ALTER TABLE courses ADD CONSTRAINT courses_batch CHECK ((format = 'group' AND batch_size_max BETWEEN 2 AND 30) OR (format = 'one_to_one' AND batch_size_max = 1))");
+  }
+  if (!(await hasColumn("course_drafts", "format"))) {
+    await c.query("ALTER TABLE course_drafts ADD COLUMN format VARCHAR(10) NOT NULL DEFAULT 'group'");
+    await c.query("ALTER TABLE course_drafts DROP CONSTRAINT drafts_batch");
+    await c.query("ALTER TABLE course_drafts ADD CONSTRAINT drafts_batch CHECK ((format = 'group' AND batch_size_max BETWEEN 2 AND 8) OR (format = 'one_to_one' AND batch_size_max = 1))");
+  }
+  if (!(await checkClause("consent_purpose")).includes("one_to_one")) {
+    await c.query("ALTER TABLE consent_events DROP CONSTRAINT consent_purpose");
+    await c.query("ALTER TABLE consent_events ADD CONSTRAINT consent_purpose CHECK (purpose IN ('account','live_classes','class_recording','ai_helper','portfolio_sharing','whatsapp','follow_up','one_to_one'))");
+  }
+  if (!(await checkClause("gigs_kind")).includes("one_to_one")) {
+    await c.query("ALTER TABLE gigs DROP CONSTRAINT gigs_kind");
+    await c.query("ALTER TABLE gigs ADD CONSTRAINT gigs_kind CHECK (kind IN ('live_batch','campus_session','weekend_workshop','doubt_desk','project_mentor','build_session','shadow','co_teach','own_course','one_to_one'))");
+    // One-to-one gigs are online only.
+    await c.query("ALTER TABLE gigs ADD CONSTRAINT gigs_one_to_one CHECK (kind <> 'one_to_one' OR mode = 'online')");
+  }
   let skipped = 0;
   for (const [name, sql] of hardening) {
     const [[{ n }]] = await c.query("SELECT COUNT(*) AS n FROM information_schema.triggers WHERE trigger_schema = DATABASE() AND trigger_name = ?", [name]);

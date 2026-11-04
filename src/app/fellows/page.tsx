@@ -32,7 +32,7 @@ const fellowFaqs = [
   { q: "Do I pay anything to join?", a: "No. Never. Training hours in Kalam Academy are paid, and so are demo and shadow sessions." },
   { q: "Is this a job? How much will I earn?", a: "It is flexible, part-time teaching work. Think of it as steady part-time income, not a salary. The calculator shows an estimate, not a promise, once rates are published." },
   { q: "What if I say no to a gig?", a: "Nothing happens. Declining a gig carries no penalty and does not affect your tier." },
-  { q: "Will I teach children alone or at their homes?", a: "No. There are no home visits and no private 1:1 sessions with under-18s. Online classes are recorded on the platform. In-person gigs happen at a partner school or centre with a responsible adult present." },
+  { q: "Will I teach children alone or at their homes?", a: "Never at homes. One-to-one classes happen only online on Robokalam, recorded, with the parent's consent, a notice to the parent before and your written summary after every session, and the parent free to join. They're open to experienced Fellows who accept the updated code of conduct. In-person gigs happen at a partner school or centre with a responsible adult present." },
   { q: "How are tiers decided?", a: "By reliability, learner progress and parent feedback, using a formula we publish. Not by popularity. Any change to the rules is announced 14 days ahead." },
 ];
 

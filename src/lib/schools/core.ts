@@ -4,6 +4,8 @@ import type { Account } from "../auth/session";
 import { weekStartIST } from "../fellows/pay";
 import { createGig } from "../fellows/gigs";
 import { PILOT } from "../fellows/core";
+import { schoolRequestChanged, staffAdded, ticketChanged } from "../email/notify";
+import { sendVerification } from "../email/verify";
 
 /**
  * Schools, staff, timetable, hardware tickets and Fellow requests.
@@ -41,12 +43,12 @@ const schoolAudit = (c: Tx, actor: string, action: string, entity: string, id: s
 
 /* ------------------------------ Ops setup ------------------------------ */
 
-export async function createSchool(ops: Account, i: { name: string; city: string; board?: string; slaHours: number; aadhyaTenant?: string; erpRef?: string; adminPhone: string; adminName: string }) {
+export async function createSchool(ops: Account, i: { name: string; city: string; board?: string; slaHours: number; aadhyaTenant?: string; erpRef?: string; adminPhone: string; adminName: string; adminEmail?: string }) {
   return system(async (c) => {
     const id = uuid();
     await c.query("INSERT INTO schools (id, name, city, board, sla_hours, aadhya_tenant, erp_school_ref, created_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
       [id, i.name, i.city, i.board ?? null, i.slaHours, i.aadhyaTenant ?? null, i.erpRef ?? null, ops.id]);
-    await addStaffIn(c, ops.id, id, { phone: i.adminPhone, name: i.adminName, role: "school_admin" });
+    await addStaffIn(c, ops.id, id, { phone: i.adminPhone, name: i.adminName, role: "school_admin", email: i.adminEmail });
     await schoolAudit(c, ops.id, "school_created", "school", id, id);
     return id;
   });
@@ -75,7 +77,7 @@ export async function addAsset(ops: Account, labId: string, i: { kind: string; l
 
 /* ------------------------------ Staff ------------------------------ */
 
-async function addStaffIn(c: Tx, actorId: string, schoolId: string, i: { phone: string; name: string; role: Staff["role"] }) {
+async function addStaffIn(c: Tx, actorId: string, schoolId: string, i: { phone: string; name: string; role: Staff["role"]; email?: string }) {
   const existing = (await c.query("SELECT id, role FROM accounts WHERE phone_e164 = $1", [i.phone])).rows[0];
   let accountId: string;
   if (existing) {
@@ -95,10 +97,13 @@ async function addStaffIn(c: Tx, actorId: string, schoolId: string, i: { phone: 
   }
   await c.query("INSERT INTO school_staff (account_id, school_id, role, display_name, added_by) VALUES ($1,$2,$3,$4,$5)", [accountId, schoolId, i.role, i.name, actorId]);
   await schoolAudit(c, actorId, "staff_added", "account", accountId, schoolId, { role: i.role });
+  // New staff confirm their email by link; staff whose email is already confirmed get a welcome now.
+  if (i.email) await sendVerification(c, accountId, i.email, i.name);
+  await staffAdded(c, accountId);
   return accountId;
 }
 
-export async function addStaff(admin: Account, i: { phone: string; name: string; role: Staff["role"] }) {
+export async function addStaff(admin: Account, i: { phone: string; name: string; role: Staff["role"]; email?: string }) {
   const s = await requireStaff(admin, "school_admin");
   return system((c) => addStaffIn(c, admin.id, s.schoolId, i));
 }
@@ -217,20 +222,8 @@ export async function recordSession(a: Account, sessionId: string, i: { status: 
 
 /* ------------------------------ Hardware tickets ------------------------------ */
 
-export type Clock = { state: "running" | "overdue" | "met" | "missed"; hours: number; label: string };
-
-/** The replacement clock. Stops at resolution; never restarts on reopen. */
-export function ticketClock(t: { due_at: Date | string; resolved_at: Date | string | null }, now = new Date()): Clock {
-  const due = new Date(t.due_at).getTime();
-  if (t.resolved_at) {
-    const met = new Date(t.resolved_at).getTime() <= due;
-    return { state: met ? "met" : "missed", hours: 0, label: met ? "Fixed within the agreed time" : "Fixed, but after the agreed time" };
-  }
-  const left = (due - now.getTime()) / 3600_000;
-  if (left >= 0) return { state: "running", hours: left, label: `${fmtHours(left)} left` };
-  return { state: "overdue", hours: -left, label: `Overdue by ${fmtHours(-left)}` };
-}
-const fmtHours = (h: number) => (h >= 24 ? `${Math.floor(h / 24)}d ${Math.floor(h % 24)}h` : h >= 1 ? `${Math.floor(h)}h ${Math.round((h % 1) * 60)}m` : `${Math.max(1, Math.round(h * 60))}m`);
+export { ticketClock, type Clock } from "./clock";
+import { ticketClock } from "./clock";
 
 export async function raiseTicket(a: Account, i: { labId: string; assetId?: string; category: string; summary: string; details?: string }) {
   const s = await requireStaff(a);
@@ -250,6 +243,7 @@ export async function raiseTicket(a: Account, i: { labId: string; assetId?: stri
     if (i.assetId) await c.query("UPDATE lab_assets SET status = 'faulty', updated_at = UTC_TIMESTAMP(3) WHERE id = $1", [i.assetId]);
     await c.query("INSERT INTO hardware_ticket_events (ticket_id, actor_account_id, status, note) VALUES ($1,$2,'open',$3)", [id, a.id, i.summary]);
     await schoolAudit(c, a.id, "ticket_raised", "hardware_ticket", id, s.schoolId, { ref });
+    await ticketChanged(c, id);
     return { id, ref };
   });
 }
@@ -273,6 +267,7 @@ export async function opsTicketAction(ops: Account, id: string, to: "acknowledge
     if (to === "resolved" && t.asset_id) await c.query("UPDATE lab_assets SET status = 'working', updated_at = UTC_TIMESTAMP(3) WHERE id = $1", [t.asset_id]);
     await c.query("INSERT INTO hardware_ticket_events (ticket_id, actor_account_id, status, note) VALUES ($1,$2,$3,$4)", [id, ops.id, to, note || null]);
     await schoolAudit(c, ops.id, `ticket_${to}`, "hardware_ticket", id, t.school_id, { ref: t.ref });
+    await ticketChanged(c, id, note || null);
   });
 }
 
@@ -291,6 +286,7 @@ export async function confirmTicket(a: Account, id: string, fixed: boolean, note
     }
     await c.query("INSERT INTO hardware_ticket_events (ticket_id, actor_account_id, status, note) VALUES ($1,$2,$3,$4)", [id, a.id, fixed ? "closed" : "open", note ?? null]);
     await schoolAudit(c, a.id, fixed ? "ticket_closed" : "ticket_reopened", "hardware_ticket", id, s.schoolId, { ref: t.ref });
+    await ticketChanged(c, id, note ?? null);
   });
 }
 
@@ -339,6 +335,7 @@ export async function scheduleRequest(ops: Account, id: string, i: { minTier?: s
   await system(async (c) => {
     await c.query("UPDATE fellow_requests SET status = 'scheduled', gig_id = $2, decided_by = $3 WHERE id = $1 AND status = 'requested'", [id, gigId, ops.id]);
     await schoolAudit(c, ops.id, "fellow_request_scheduled", "fellow_request", id, r.school_id, { gig: gigId });
+    await schoolRequestChanged(c, id);
   });
   return gigId;
 }
@@ -349,6 +346,7 @@ export async function declineRequest(ops: Account, id: string, note: string) {
     if (!r) throw new HttpError(409, "Already decided");
     await c.query("UPDATE fellow_requests SET status = 'declined', decision_note = $2, decided_by = $3 WHERE id = $1", [id, note, ops.id]);
     await schoolAudit(c, ops.id, "fellow_request_declined", "fellow_request", id, r.school_id);
+    await schoolRequestChanged(c, id);
   });
 }
 

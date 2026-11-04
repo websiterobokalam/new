@@ -3,6 +3,7 @@ import { body, handler, HttpError, ok } from "@/lib/api";
 import { requireRole } from "@/lib/staff";
 import { system } from "@/lib/db";
 import { payRefund } from "@/lib/learn/refunds";
+import { refundChanged } from "@/lib/email/notify";
 
 /** Ops decides a refund request. Approve pays it through the gateway. */
 export const POST = handler(async (req, ctx) => {
@@ -17,6 +18,7 @@ export const POST = handler(async (req, ctx) => {
     );
     if (r.affectedRows === 0) throw new HttpError(409, "Already decided");
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,$2,'refund',$3,$4)", [a.id, `refund_${b.decision}d`, id, { note: b.note }]);
+    await refundChanged(c, id);
     return status;
   });
   if (status === "approved") await payRefund(id);

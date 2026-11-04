@@ -26,6 +26,7 @@ export default async function SchoolStaff() {
             <JsonForm url="/api/school/staff" submit="Add to staff" done="Added. They can sign in now." fields={[
               { name: "name", label: "Full name" },
               { name: "phone", label: "Mobile number", type: "text", hint: "They sign in with a code sent to this number" },
+              { name: "email", label: "Email (optional)", type: "email", optional: true, hint: "We send a confirmation link, then ticket and booking updates" },
               { name: "role", label: "Role", type: "select", options: [["trainer", "Trainer or lab instructor"], ["school_admin", "School admin"]] },
             ]} />
           </section>

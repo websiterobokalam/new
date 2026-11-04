@@ -33,7 +33,7 @@ const PROJECTS = [
 
 /** Plain-language notices for each automated check. Shown to Fellows before they take effect. */
 export const AUTOMATED_SYSTEMS = [
-  ["course-draft-rules", "Course draft checks", "Rules read your course draft for things we never allow: investment or trading advice, live rocket propellants, contact details, private one-to-one sessions, and promises such as guaranteed results.", "A flag only puts a note in front of the reviewer. A person reads your draft and decides. It never changes your tier, pay or gigs."],
+  ["course-draft-rules", "Course draft checks", "Rules read your course draft for things we never allow: investment or trading advice, live rocket propellants, contact details, home visits or private sessions outside the parent-supervised one-to-one format, and promises such as guaranteed results.", "A flag only puts a note in front of the reviewer. A person reads your draft and decides. It never changes your tier, pay or gigs."],
   ["course-draft-ai", "AI review of course drafts", "An AI model (Claude, by Anthropic) reads the text of your course draft (title, outcome, syllabus and kit only, never anything about children) and suggests issues for the reviewer: age fit, safety, clarity and honest claims.", "Suggestions only. A person reviews every draft and makes every decision. It never changes your tier, pay or gigs."],
   ["session-signals", "Teaching quality signals", "Rules look at your delivered sessions: observation scores, no-shows, low verified parent ratings and blocked attempts to share contact details.", "A flag starts a conversation with your point of contact. A person decides any action, with written reasons. Flags never change your tier or pay on their own."],
 ];
@@ -54,6 +54,14 @@ export async function seedBase(c, root) {
     const sha = createHash("sha256").update(JSON.stringify(t)).digest("hex");
     await c.query("INSERT IGNORE INTO terms_versions (id, kind, language, title, body, sha256, initial, effective_at) VALUES (?,?,?,?,?,?,TRUE, UTC_TIMESTAMP(3))",
       [`${kind.replace("_", "-")}-2026-11-${lang}`, kind, lang, t.title, JSON.stringify({ sections: t.sections }), sha]);
+  }
+  // Code of conduct v2 (one-to-one rules): published now, effective 14 days later (fair-work notice).
+  const coc2 = JSON.parse(readFileSync(`${root}/db/seed/code-of-conduct-2026-12.json`, "utf8")).code_of_conduct;
+  for (const lang of ["en", "te", "hi"]) {
+    const t = coc2[lang];
+    const sha = createHash("sha256").update(JSON.stringify(t)).digest("hex");
+    await c.query("INSERT IGNORE INTO terms_versions (id, kind, language, title, body, sha256, initial, published_at, effective_at) VALUES (?,?,?,?,?,?,FALSE, UTC_TIMESTAMP(3), UTC_TIMESTAMP(3) + INTERVAL 14 DAY)",
+      [`code-of-conduct-2026-12-${lang}`, "code_of_conduct", lang, t.title, JSON.stringify({ sections: t.sections }), sha]);
   }
   await c.query(
     "INSERT IGNORE INTO courses (id, slug, title, world, age_min, outcome, batch_size_max, sessions, fee_paise, fee_approved, published, kind) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -86,17 +94,24 @@ export async function seedSample(c) {
       [randomUUID(), slug, title, world, prog, amin, amax, outcome, sessions, kit, fee],
     );
   }
-  const [rows] = await c.query("SELECT id, slug FROM courses WHERE slug IN (?)", [["free-build-session", ...courses.map((x) => x[0])]]);
+  // A parent-supervised one-to-one course (online, one learner).
+  await c.query(
+    "INSERT IGNORE INTO courses (id, slug, title, world, programme, age_min, age_max, outcome, batch_size_max, sessions, kit, fee_paise, fee_approved, sample, published, format) VALUES (?,?,?,?,?,?,?,?,1,?,?,?,FALSE,TRUE,TRUE,'one_to_one')",
+    [randomUUID(), "robotics-project-mentoring-1-1", "Robotics project mentoring · one-to-one", "robotics", "One-to-one, parent-supervised", 9, 17, "Finish your own robot project with an educator's full attention, one session at a time.", 4, null, 300000],
+  );
+  const [rows] = await c.query("SELECT id, slug, format FROM courses WHERE slug IN (?)", [["free-build-session", "robotics-project-mentoring-1-1", ...courses.map((x) => x[0])]]);
   const slots = [[2, 10, "en", "online"], [3, 16, "te", "online"], [5, 11, "en", "offline"], [6, 17, "hi", "online"]];
   for (const co of rows) {
     const [[{ n }]] = await c.query("SELECT COUNT(*) AS n FROM batches WHERE course_id = ? AND starts_at > UTC_TIMESTAMP(3)", [co.id]);
     if (n > 0) continue;
     for (const [d, h, lang, mode] of slots) {
-      await c.query("INSERT INTO batches (id, course_id, starts_at, duration_min, capacity, language, mode, location, educator_label) VALUES (?,?,?,60,6,?,?,?,?)",
-        [randomUUID(), co.id, istAt(d, h), lang, mode, mode === "offline" ? "Partner centre, Hyderabad (sample)" : null, "Trainer · Sample"]);
+      const oto = co.format === "one_to_one";
+      if (oto && mode !== "online") continue;
+      await c.query("INSERT INTO batches (id, course_id, starts_at, duration_min, capacity, language, mode, location, educator_label) VALUES (?,?,?,60,?,?,?,?,?)",
+        [randomUUID(), co.id, istAt(d, h), oto ? 1 : 6, lang, mode, mode === "offline" ? "Partner centre, Hyderabad (sample)" : null, "Trainer · Sample"]);
     }
   }
-  const rates = [["live_batch", 60000, 60], ["campus_session", 70000, 60], ["weekend_workshop", 150000, 180], ["doubt_desk", 30000, 30], ["project_mentor", 40000, 45], ["build_session", 50000, 60], ["shadow", 30000, 60], ["co_teach", 45000, 60], ["training_hour", 25000, 60], ["demo", 25000, 20]];
+  const rates = [["live_batch", 60000, 60], ["campus_session", 70000, 60], ["weekend_workshop", 150000, 180], ["doubt_desk", 30000, 30], ["project_mentor", 40000, 45], ["build_session", 50000, 60], ["shadow", 30000, 60], ["co_teach", 45000, 60], ["training_hour", 25000, 60], ["demo", 25000, 20], ["one_to_one", 50000, 60]];
   for (const [k, p, m] of rates) await c.query("INSERT IGNORE INTO rate_card (gig_kind, per_session_paise, minutes, approved, sample) VALUES (?,?,?,FALSE,TRUE)", [k, p, m]);
   const rate = Object.fromEntries(rates.map(([k, p]) => [k, p]));
   const [gb] = await c.query(
