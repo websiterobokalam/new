@@ -72,7 +72,7 @@ for (const theme of ["light", "dark"] as const) {
   test(`a11y ${theme} contact and newsletter forms`, async ({ page }) => {
     if (theme === "dark") await page.addInitScript(() => { try { localStorage.setItem("rk-theme", "dark"); } catch {} });
     await page.emulateMedia({ reducedMotion: "reduce" });
-    for (const path of ["/contact", "/newsletter"]) {
+    for (const path of ["/contact", "/newsletter", "/events"]) {
       await page.goto(path);
       const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
       const issues = r.violations.map((v) => `${path} ${v.id}: ${v.nodes.slice(0, 3).map((n) => n.target.join(" ")).join(", ")}`);

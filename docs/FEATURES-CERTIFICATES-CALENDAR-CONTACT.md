@@ -58,3 +58,26 @@ Bots are filtered by a hidden field and a rate limit.
 - **Unsubscribing:** a link, plus mail apps' one-click unsubscribe (RFC 8058).
 - **Account holders and enquirers are never added automatically.**
 - **Ops → Enquiries and newsletter:** shows counts and lets you download a CSV of confirmed subscribers. Each row has that person's own unsubscribe link; put it in every newsletter you send from your email tool.
+
+## Events
+
+**Ops → Events:**
+- Create an event as a draft, check it, then publish it to `/events`.
+- Kinds: Code Week, workshop, camp, science fair, webinar, teacher training, open day.
+- Events are free.
+- In-person children's events must name the responsible adult at the school or centre (also enforced in the database).
+
+**Public pages:**
+- `/events` lists what's coming up, then the formats we run.
+- Each event page has the date, place and places left, an *Add to calendar* file, and `Event` structured data so Google can show it.
+
+**Registering:**
+- **Children's events:** a signed-in parent picks children already on their account. Only children with the required consents and in the event's age group can be picked.
+- **Adult events:** the adult registers themselves.
+- Places are checked under a lock, so an event can't be overbooked.
+- A confirmation email goes out, and the event appears in the family's calendar feed.
+- People can cancel their place, which frees it for someone else.
+
+**Running and cancelling:**
+- *Who's coming (CSV)* lists first name, age band and the parent's email. Nothing else about the child.
+- Cancelling an event emails everyone registered with the reason, and the public page shows it.

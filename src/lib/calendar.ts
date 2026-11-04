@@ -91,12 +91,25 @@ export async function familyEvents(c: Tx, accountId: string, bookingId?: string)
      ORDER BY b.starts_at LIMIT 200`,
     bookingId ? [accountId, bookingId] : [accountId],
   )).rows;
-  return rows.map((r) => ({
+  return rows.map((r): CalEvent => ({
     uid: `booking-${r.id}`, start: new Date(r.starts_at), minutes: Number(r.duration_min),
     title: `${r.first_name}: ${r.title}`,
     description: [`Robokalam class for ${r.first_name}.`, r.educator ? `Educator: ${r.educator}.` : "", r.mode === "online" ? "Join from your family home on Robokalam. Classes are recorded for safety." : "A responsible adult from the school or centre is present."].filter(Boolean).join(" "),
     location: r.mode === "online" ? "Online, on Robokalam" : r.location ?? undefined,
     url: `${SITE.url}/app`,
+  })).concat(bookingId ? [] : await familyEventRegistrations(c, accountId));
+}
+
+/** Events this account registered for (children or themselves). */
+async function familyEventRegistrations(c: Tx, accountId: string): Promise<CalEvent[]> {
+  const rows = (await c.query(
+    `SELECT e.id, e.slug, e.title, e.summary, e.starts_at, e.duration_min, e.mode, e.venue, GROUP_CONCAT(COALESCE(l.first_name, 'You') ORDER BY r.created_at SEPARATOR ', ') AS who
+     FROM event_registrations r JOIN events e ON e.id = r.event_id LEFT JOIN learners l ON l.id = r.learner_id
+     WHERE r.account_id = $1 AND r.status = 'registered' AND e.status = 'published' AND e.starts_at > UTC_TIMESTAMP(3) - INTERVAL 7 DAY
+     GROUP BY e.id, e.slug, e.title, e.summary, e.starts_at, e.duration_min, e.mode, e.venue ORDER BY e.starts_at LIMIT 100`, [accountId])).rows;
+  return rows.map((r) => ({
+    uid: `event-${r.id}-${accountId}`, start: new Date(r.starts_at), minutes: Number(r.duration_min),
+    title: `${r.who}: ${r.title}`, description: r.summary, location: r.mode === "online" ? "Online, on Robokalam" : r.venue ?? undefined, url: `${SITE.url}/events/${r.slug}`,
   }));
 }
 
