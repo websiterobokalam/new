@@ -37,17 +37,24 @@ export const SOCIAL = [
   { name: "Pinterest", href: "https://www.pinterest.com/robokalam" },
 ] as const;
 
+export const COMPANY = "Robokalam Technologies Private Limited";
+
 /**
- * Named people the law and our safeguarding policy require us to publish.
- * Set in the server settings; until then pages say they are to be published.
+ * The people the law and our safeguarding policy require us to publish.
+ * Robokalam's decision (4 November 2026): published under the company's name at
+ * info@robokalam.com until named individuals are set in the server settings.
  */
-const person = (name?: string, email?: string) => (name?.trim() ? { name: name.trim(), email: email?.trim() || CONTACT.email } : null);
+const person = (role: string, name?: string, email?: string) => ({
+  name: name?.trim() || `${role}, ${COMPANY}`,
+  email: email?.trim() || CONTACT.email,
+  named: !!name?.trim(),
+});
 export const PEOPLE = {
-  safeguardingLead: person(process.env.SAFEGUARDING_LEAD_NAME, process.env.SAFEGUARDING_EMAIL),
-  grievanceOfficer: person(process.env.GRIEVANCE_OFFICER_NAME, process.env.GRIEVANCE_OFFICER_EMAIL),
+  safeguardingLead: person("Safeguarding Lead", process.env.SAFEGUARDING_LEAD_NAME, process.env.SAFEGUARDING_EMAIL),
+  grievanceOfficer: person("Grievance Officer", process.env.GRIEVANCE_OFFICER_NAME, process.env.GRIEVANCE_OFFICER_EMAIL),
 };
 
-/** Counsel has approved the privacy, terms and child-safety pages (LEGAL_PAGES_APPROVED=1). */
-export const LEGAL_APPROVED = process.env.LEGAL_PAGES_APPROVED === "1";
+/** Legal pages approved by Robokalam on 4 November 2026. LEGAL_PAGES_APPROVED=0 puts the draft notices back. */
+export const LEGAL_APPROVED = process.env.LEGAL_PAGES_APPROVED !== "0";
 
 export const isExternal = (href: string) => /^https?:\/\//.test(href);

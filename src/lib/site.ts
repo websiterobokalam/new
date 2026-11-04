@@ -23,7 +23,7 @@ export function siteUrl(raw = process.env.NEXT_PUBLIC_SITE_URL): string {
 export const SITE = {
   name: "Robokalam",
   tagline: "Literature of Technologies",
-  /** Registered company name. Set LEGAL_NAME once confirmed (Phase 6 launch check). */
+  /** Registered company name, confirmed by Robokalam on 4 November 2026. LEGAL_NAME overrides it. */
   legalName: process.env.LEGAL_NAME?.trim() || "Robokalam Technologies Private Limited",
   positioning: "Where India stops watching technology and starts building it.",
   url: siteUrl(),

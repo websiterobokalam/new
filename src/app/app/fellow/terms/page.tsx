@@ -1,3 +1,4 @@
+import { LEGAL_APPROVED } from "@/content/company";
 import Link from "next/link";
 import { fellowContext } from "@/lib/fellows/context";
 import { asAccount } from "@/lib/auth/session";
@@ -19,7 +20,7 @@ export default async function TermsPage({ searchParams }: { searchParams: Promis
   return (
     <section className="py-10"><div className="wrap max-w-3xl grid gap-6">
       <header><p className="eyebrow">Step 5 · Terms and code of conduct</p><h1 className="display-lg mt-2">Plain terms. No small print.</h1>
-        <p className="mt-2 text-sm text-muted">Draft pending legal review. Any change gives you 14 days&apos; notice.</p></header>
+        <p className="mt-2 text-sm text-muted">{LEGAL_APPROVED ? "Approved by Robokalam Technologies Private Limited." : "Draft pending legal review."} Any change gives you 14 days&apos; notice.</p></header>
       <nav aria-label="Language" className="flex gap-2">{[["en", "English"], ["te", "తెలుగు"], ["hi", "हिन्दी"]].map(([v, l]) => <Link key={v} href={`?lang=${v}`} className="chip" aria-current={v === lang ? "true" : undefined} lang={v}>{l}</Link>)}</nav>
       {upcoming.map((d) => (
         <article key={d.id} className="card border-heading p-6" lang={lang} aria-label={`Coming: ${d.title}`}>

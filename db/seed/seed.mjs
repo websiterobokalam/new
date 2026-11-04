@@ -46,6 +46,8 @@ export async function seedBase(c, root) {
     const body = { items: n.items, rights: n.rights, grievance: n.grievance };
     const sha = createHash("sha256").update(JSON.stringify({ title: n.title, ...body })).digest("hex");
     await c.query("INSERT IGNORE INTO consent_notices (id, language, title, body, sha256) VALUES (?,?,?,?,?)", [n.id, lang, n.title, JSON.stringify(body), sha]);
+    // Approved by Robokalam Technologies Private Limited on 4 November 2026 (text unchanged, so the hash still pins it).
+    if (notices._approved) await c.query("UPDATE consent_notices SET approved = TRUE WHERE id = ? AND sha256 = ?", [n.id, sha]);
   }
   // Kalamite terms and code of conduct (first versions effective at once).
   const terms = JSON.parse(readFileSync(`${root}/db/seed/fellow-terms.json`, "utf8"));

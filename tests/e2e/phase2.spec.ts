@@ -82,7 +82,7 @@ test("paid course: fee with GST shown before payment, mock payment, invoice, bal
   expect(m.gst_payable).toBe(-order.gst_paise);
 });
 
-test("refund: self-serve request, ops approves, gateway refund, ledger reversal", async ({ page, browser }) => {
+test("refund: self-serve request, paid automatically under the approved policy, ledger reversal", async ({ page }) => {
   await login(page);
   await addLearner(page, "Sana", "9-11");
   const batch = (await ownerQuery<{ id: string }>("SELECT b.id FROM batches b JOIN courses c ON c.id = b.course_id WHERE c.slug = 'codo-ashaers-junior-l1' AND b.starts_at > now() + INTERVAL 30 HOUR LIMIT 1"))[0];
@@ -91,21 +91,13 @@ test("refund: self-serve request, ops approves, gateway refund, ledger reversal"
   await page.getByRole("button", { name: /^Pay ₹/ }).click();
   await page.getByRole("button", { name: "Pay (test)" }).click();
   await expect(page).toHaveURL(/\/app\/orders$/);
+  await expect(page.getByText("Refund terms (draft, pending approval)")).toHaveCount(0);
   await page.getByRole("button", { name: "Request a refund" }).click();
   const reason = `Timing does not work for us ${Math.random().toString(36).slice(2, 8)}`;
   await page.getByLabel("Reason").fill(reason);
   await page.getByRole("button", { name: "Send refund request" }).click();
-  // The form closes once a refund is open; the order shows the policy decision.
+  // The order shows the policy decision; a full refund before the start is paid at once.
   await expect(page.getByText(/Full refund: requested \d+ hours before the first class/)).toBeVisible();
-  await expect(page.getByText(/Refund: requested/)).toBeVisible();
-  // Ops reviews (policy not yet approved, so nothing is auto-decided)
-  const opsPhone = randomPhone();
-  const ops = await (await browser.newContext()).newPage();
-  await login(ops, opsPhone);
-  await ownerQuery("UPDATE accounts SET role = 'ops' WHERE phone_e164 = $1", ["+91" + opsPhone]);
-  await ops.goto("/app/ops");
-  await ops.locator("li", { hasText: reason }).getByRole("button", { name: "Approve and pay" }).click();
-  await expect(ops.getByText(reason)).toHaveCount(0);
   await page.reload();
   await expect(page.getByText(/Refund: paid/)).toBeVisible();
   const j = await ownerQuery<{ n: string }>("SELECT count(*) AS n FROM ledger_journals WHERE kind = 'refund_paid'");

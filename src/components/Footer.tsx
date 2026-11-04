@@ -72,8 +72,8 @@ export function Footer() {
         <div className="mt-10 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-[#8aa5b5] sm:flex-row sm:justify-between">
           <div className="flex flex-wrap items-center gap-4"><p>© {new Date().getFullYear()} {SITE.legalName}</p><ThemeToggle /></div>
           <p>
-            Safeguarding Lead: <a href={`mailto:${PEOPLE.safeguardingLead?.email ?? CONTACT.email}`} className="text-[#c9dbe5] hover:text-white">{PEOPLE.safeguardingLead?.name ?? CONTACT.email}</a>
-            {" · "}Grievance Officer: <a href={`mailto:${PEOPLE.grievanceOfficer?.email ?? CONTACT.email}`} className="text-[#c9dbe5] hover:text-white">{PEOPLE.grievanceOfficer?.name ?? CONTACT.email}</a>
+            Safeguarding Lead: <a href={`mailto:${PEOPLE.safeguardingLead.email}`} className="text-[#c9dbe5] hover:text-white">{PEOPLE.safeguardingLead.named ? PEOPLE.safeguardingLead.name : PEOPLE.safeguardingLead.email}</a>
+            {" · "}Grievance Officer: <a href={`mailto:${PEOPLE.grievanceOfficer.email}`} className="text-[#c9dbe5] hover:text-white">{PEOPLE.grievanceOfficer.named ? PEOPLE.grievanceOfficer.name : PEOPLE.grievanceOfficer.email}</a>
             {" · "}<Link href="/child-safety#report" className="text-[#c9dbe5] hover:text-white">Report a concern</Link>
           </p>
         </div>
