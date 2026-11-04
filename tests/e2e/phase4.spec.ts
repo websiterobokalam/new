@@ -22,6 +22,7 @@ test("admin: lab health, coverage and contract window on the school home", async
 });
 
 test("admin adds a trainer and a class; the trainer signs in and sees their week", async ({ page, browser }) => {
+  test.setTimeout(60_000); // several browsers and sign-ins in one journey
   const s = await makeSchool();
   await loginSchool(page, s.adminPhone);
   const phone = randomPhone();
@@ -107,6 +108,7 @@ test("trainers only see their own school's classes", async ({ page }) => {
 });
 
 test("hardware ticket: the clock starts on raise, never resets, and the school confirms the fix", async ({ page, browser }) => {
+  test.setTimeout(60_000); // several browsers and sign-ins in one journey
   const s = await makeSchool();
   await loginSchool(page, s.trainerPhone);
   await page.goto("/app/school/tickets");
@@ -170,6 +172,7 @@ test("hardware ticket: an overdue ticket says so in words", async ({ page }) => 
 });
 
 test("Kalamite booking: school asks, ops schedules a Campus Session, a vetted Kalamite accepts, a trainer observes", async ({ page, browser }) => {
+  test.setTimeout(60_000); // several browsers and sign-ins in one journey
   const s = await makeSchool();
   await loginSchool(page, s.adminPhone);
   await page.goto("/app/school/fellows");
