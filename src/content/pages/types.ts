@@ -21,6 +21,8 @@ export type Block =
   | { kind: "claim"; id: string }
   /** A highlighted band with actions. */
   | { kind: "cta"; title: string; body?: string; actions: Action[] }
+  /** A form: the contact form or the newsletter sign-up. */
+  | { kind: "form"; form: "contact" | "newsletter" }
   /** A short notice, e.g. "Draft pending legal review". */
   | { kind: "note"; text: string };
 

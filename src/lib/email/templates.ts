@@ -19,6 +19,18 @@ const FOOTER: Record<Category, string> = {
 const rows = (r: [string, string | null | undefined][]) => ({ rows: r.filter(([, v]) => v != null && v !== "") as [string, string][] });
 
 export const TEMPLATES = {
+  enquiry_ack: { category: "transactional", render: (p) => ({
+    subject: `We got your message (${p.ref})`, heading: "Thanks, we've got your message",
+    blocks: [{ p: `Hi ${p.name}, thanks for writing to Robokalam about ${String(p.topic).toLowerCase()}. Your reference is ${p.ref}.` }, { p: "Someone from the right team will reply by email, usually within one working day (Monday to Saturday)." }, { note: "Reply to this email if you want to add anything." }],
+  }) },
+  staff_enquiry: { category: "staff", render: (p) => ({
+    subject: `New enquiry ${p.ref}: ${p.topic}`, heading: "New contact-page enquiry",
+    blocks: [rows([["Reference", p.ref], ["Topic", p.topic], ["Name", p.name], ["Email", p.email], ["Phone", p.phone], ["Organisation", p.organisation]]), { p: p.message }, { cta: { label: "Open enquiries", href: "/app/ops/enquiries" } }],
+  }) },
+  newsletter_confirm: { category: "transactional", render: (p) => ({
+    subject: "Confirm your Robokalam newsletter subscription", heading: "One click to confirm",
+    blocks: [{ p: "Please confirm you'd like the Robokalam newsletter: new projects, guides for parents and schools, and events. About twice a month." }, { cta: { label: "Yes, subscribe me", href: p.link } }, { note: `Didn't ask for this? Ignore this email and you won't hear from us. Changed your mind later? Unsubscribe any time: ${p.unsubscribe}` }],
+  }) },
   certificate_issued: { category: "transactional", render: (p) => ({
     subject: `Certificate: ${p.title}`, heading: "Your certificate is ready",
     blocks: [{ p: `Congratulations, ${p.name}! Your Robokalam certificate for ${p.title} is ready.` }, { rows: [["Certificate ID", p.code]] }, { cta: { label: "View and print", href: p.link } }, { note: "Anyone can check it's genuine at robokalam.com/validate with this ID. Share the ID only with people you choose." }],

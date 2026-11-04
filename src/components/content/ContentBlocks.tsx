@@ -3,6 +3,7 @@ import type { Action, Block, ContentPage } from "@/content/pages";
 import { CONTACT, isExternal } from "@/content/company";
 import { Claim } from "@/components/Claim";
 import { SmartLink } from "@/components/SmartLink";
+import { ContactForm, NewsletterForm } from "@/components/forms/Engage";
 
 function Actions({ actions }: { actions: Action[] }) {
   return (
@@ -138,6 +139,8 @@ function BlockView({ b }: { b: Block }) {
           <Actions actions={b.actions} />
         </section>
       );
+    case "form":
+      return b.form === "contact" ? <ContactForm /> : <NewsletterForm source="page" />;
     case "note":
       return <p className="rounded-xl border border-dashed border-line px-4 py-3 text-sm text-muted">{b.text}</p>;
   }
