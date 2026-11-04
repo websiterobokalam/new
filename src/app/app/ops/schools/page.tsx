@@ -24,10 +24,10 @@ export default async function OpsSchools() {
 
   return (
     <section className="py-10"><div className="wrap grid gap-8 [&>*]:min-w-0">
-      <header><h1 className="display-lg">Schools</h1><p className="mt-2 text-muted">Partner schools, their labs and equipment, and requests for Kalam Fellows.</p></header>
+      <header><h1 className="display-lg">Schools</h1><p className="mt-2 text-muted">Partner schools, their labs and equipment, and requests for Kalamites.</p></header>
 
       <section className="card p-6" aria-labelledby="req-h">
-        <h2 id="req-h" className="text-xl font-bold">Fellow requests to schedule</h2>
+        <h2 id="req-h" className="text-xl font-bold">Kalamite requests to schedule</h2>
         {d.requests.length === 0 && <p className="mt-2 text-muted">None waiting.</p>}
         <ul className="mt-3 grid gap-4">
           {d.requests.map((r) => (
@@ -36,7 +36,7 @@ export default async function OpsSchools() {
               {r.notes && <p className="text-sm text-muted">{r.notes}</p>}
               <div className="grid gap-4 md:grid-cols-2">
                 <JsonForm compact url={`/api/ops/schools/requests/${r.id}`} fixed={{ action: "schedule" }} submit="Schedule as Campus Session gig" done="Gig posted" fields={[
-                  { name: "minTier", label: "Minimum tier", type: "select", options: [["apprentice", "Apprentice"], ["fellow", "Fellow"], ["senior", "Senior"], ["lead", "Lead"]] },
+                  { name: "minTier", label: "Minimum level", type: "select", options: [["apprentice", "Junior Kalamite"], ["fellow", "Kalamite"], ["senior", "Senior Kalamite"], ["lead", "Lead Kalamite"]] },
                   { name: "kitList", label: "Kit list", optional: true },
                 ]} />
                 <JsonForm compact tone="danger" url={`/api/ops/schools/requests/${r.id}`} fixed={{ action: "decline" }} submit="Decline" done="Declined" fields={[

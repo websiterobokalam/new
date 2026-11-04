@@ -11,8 +11,8 @@ import { KalamBot, GigPhone } from "@/components/art/Small";
 import { JsonLd, faqLd } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
-  title: "Kalam Fellows: teach what you love, earn while you study",
-  description: "A flexible teaching gig for college students aged 18+. Teach robotics, IoT, AI, coding, financial literacy and space education. Fixed pay per session, weekly payouts.",
+  title: "Kalamites: teach what you love, earn while you study",
+  description: "Kalamites are everyone who builds Robokalam: our team, trainers and the college students who teach with us. Join as a Junior Kalamite from wherever you are, teach robotics, IoT, AI and coding, and grow into the next level.",
 };
 
 const why = [
@@ -22,17 +22,18 @@ const why = [
   { t: "Proof of skill", d: "Teaching certificate, portfolio, letters for verified hours, and a path to Robokalam internships and jobs." },
 ];
 const tiers = [
-  { t: "Apprentice", d: "Finished Kalam Academy. Co-teaching." },
-  { t: "Fellow", d: "Teaching your own batches." },
-  { t: "Senior Fellow", d: "Mentoring, workshops, project reviews." },
-  { t: "Lead Fellow", d: "Leading teams and shaping courses." },
+  { t: "Junior Kalamite", d: "Finished Kalam Academy. Shadowing, then co-teaching." },
+  { t: "Kalamite", d: "Teaching your own batches." },
+  { t: "Senior Kalamite", d: "Mentoring, workshops, project reviews." },
+  { t: "Lead Kalamite", d: "Leading teams and shaping courses." },
 ];
 const fellowFaqs = [
-  { q: "Who can join?", a: "College students aged 18 and over. Full eligibility rules publish when the pilot opens. Your college does not need to partner with us." },
+  { q: "Who can join?", a: "Students aged 18 and over at any college or university: engineering, degree, MS and more, in India or abroad. Your college does not need to partner with us. We open cities and online roles step by step; until yours opens, you join the waitlist and get training updates." },
+  { q: "Who is a Kalamite?", a: "Everyone who builds Robokalam: our team, trainers and lab instructors, and the students who teach with us. Students start as Junior Kalamites and grow through the levels." },
   { q: "Do I pay anything to join?", a: "No. Never. Training hours in Kalam Academy are paid, and so are demo and shadow sessions." },
   { q: "Is this a job? How much will I earn?", a: "It is flexible, part-time teaching work. Think of it as steady part-time income, not a salary. The calculator shows an estimate, not a promise, once rates are published." },
   { q: "What if I say no to a gig?", a: "Nothing happens. Declining a gig carries no penalty and does not affect your tier." },
-  { q: "Will I teach children alone or at their homes?", a: "Never at homes. One-to-one classes happen only online on Robokalam, recorded, with the parent's consent, a notice to the parent before and your written summary after every session, and the parent free to join. They're open to experienced Fellows who accept the updated code of conduct. In-person gigs happen at a partner school or centre with a responsible adult present." },
+  { q: "Will I teach children alone or at their homes?", a: "Never at homes. One-to-one classes happen only online on Robokalam, recorded, with the parent's consent, a notice to the parent before and your written summary after every session, and the parent free to join. They're open to experienced Kalamites who accept the updated code of conduct. In-person gigs happen at a partner school or centre with a responsible adult present." },
   { q: "How are tiers decided?", a: "By reliability, learner progress and parent feedback, using a formula we publish. Not by popularity. Any change to the rules is announced 14 days ahead." },
 ];
 
@@ -40,12 +41,31 @@ export default function FellowsPage() {
   return (
     <>
       <JsonLd data={faqLd(fellowFaqs)} />
-      <PageHero eyebrow="Educator door · Kalam Fellows · 18+" tone="leaf" art={<GigPhone />}
+      <PageHero eyebrow="Educator door · Kalamites · 18+" tone="leaf" art={<GigPhone />}
         title={<>Teach what you love. <span className="grad-text">Earn while you study.</span></>}
-        lede="Teach robotics, IoT, AI, coding, money basics and space to younger learners, on your schedule. Fixed pay per session. Weekly payouts. Zero fees to join.">
-        <Link href="/fellows/apply" className="btn btn-primary !min-h-14 !px-8 text-lg" data-magnetic>Become a Fellow <span aria-hidden>→</span></Link>
+        lede="Become a Kalamite: teach robotics, IoT, AI, coding, money basics and space to younger learners, from wherever you are, on your schedule. Fixed pay per session. Weekly payouts. Zero fees to join.">
+        <Link href="/kalamites/apply" className="btn btn-primary !min-h-14 !px-8 text-lg" data-magnetic>Become a Kalamite <span aria-hidden>→</span></Link>
         <a href="#earnings" className="btn btn-ghost">How pay works</a>
       </PageHero>
+
+      <Section label="Who are Kalamites" className="kalamite-story">
+        <div className="wrap grid items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
+          <div>
+            <p className="kicker" data-stagger>Kalam + dynamite</p>
+            <h2 className="display-lg mt-3 !text-white" data-stagger>Small spark. Big impact.</h2>
+            <p className="mt-5 text-lg leading-relaxed text-[#C9D6E3]" data-stagger>Everyone who builds Robokalam is a Kalamite: our team, our trainers and lab instructors, and the students who teach with us. Like dynamite, a Kalamite is small, packed with energy, and sets big things in motion.</p>
+            <p className="mt-4 text-lg leading-relaxed text-[#C9D6E3]" data-stagger>We can&apos;t reach every corner of India, and beyond, on our own. Kalamites can. You learn how technology really works in classrooms and labs, share what you know with the next generation, and help close the gap between what colleges teach and what industry needs.</p>
+          </div>
+          <ol className="grid gap-3" aria-label="Kalamite levels">
+            {[["Junior Kalamite", "Students at any college or university: engineering, degree, MS and more. Start from wherever you are."], ["Kalamite", "Teaching your own batches, online or at partner schools."], ["Senior Kalamite", "Mentoring others, running workshops, reviewing projects."], ["Lead Kalamite", "Leading teams, shaping courses, opening new regions."]].map(([t, d], i) => (
+              <li key={t} data-stagger className="flex gap-4 rounded-2xl border border-white/10 bg-white/5 p-5">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-sm font-bold text-[#04202F]" style={{ background: i === 3 ? "#FFD31D" : "linear-gradient(135deg,#0098D6,#00CBD6)" }}>{i + 1}</span>
+                <span><span className="block text-lg font-bold text-white">{t}</span><span className="text-[#C9D6E3]">{d}</span></span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </Section>
 
       <Section label="How it works">
         <div className="wrap">
@@ -72,7 +92,7 @@ export default function FellowsPage() {
                 <h3 className="mt-2 text-2xl font-bold">{g.name}</h3>
                 <p className="mt-3 text-sm"><span className="text-muted">Where: </span>{g.where}</p>
                 <p className="mt-1 text-sm"><span className="text-muted">Format: </span>{g.format}</p>
-                {g.name === "Fellow's Own Course" && <p className="mt-3 text-sm font-semibold text-heading"><Claim id="fellows.own-course-share" fallback="Revenue share published before launch." /></p>}
+                {g.name === "Kalamite's Own Course" && <p className="mt-3 text-sm font-semibold text-heading"><Claim id="fellows.own-course-share" fallback="Revenue share published before launch." /></p>}
               </li>
             ))}
           </ul>
@@ -81,15 +101,15 @@ export default function FellowsPage() {
 
       <Section id="earnings" label="Earnings calculator">
         <div className="wrap">
-          <SectionHead eyebrow="Earnings" title="See the maths before you commit." lede={<>Estimates only. We never show a top earner as normal. <Link className="text-link underline" href="/fellows/earnings">How pay works</Link>.</>} />
+          <SectionHead eyebrow="Earnings" title="See the maths before you commit." lede={<>Estimates only. We never show a top earner as normal. <Link className="text-link underline" href="/kalamites/earnings">How pay works</Link>.</>} />
           <div className="mt-10"><EarningsCalculator /></div>
         </div>
       </Section>
 
-      <Section label="Why Fellows care" className="bg-panel/50">
+      <Section label="Why Kalamites care" className="bg-panel/50">
         <div className="wrap grid gap-10 lg:grid-cols-[1.2fr_1fr]">
           <div>
-            <SectionHead eyebrow="Why Fellows care" title="Built like the apps you already use. Fairer." />
+            <SectionHead eyebrow="Why Kalamites care" title="Built like the apps you already use. Fairer." />
             <ul className="mt-8 grid gap-4 sm:grid-cols-2">
               {why.map((w) => <li key={w.t} data-stagger className="card p-5"><h3 className="text-lg font-bold">{w.t}</h3><p className="mt-1 text-sm text-muted">{w.d}</p></li>)}
             </ul>
@@ -133,14 +153,14 @@ export default function FellowsPage() {
           <ul className="mt-10 grid gap-3 md:grid-cols-2">
             {fellowRules.map((r) => <li key={r} data-stagger className="rounded-2xl border border-white/10 bg-white/5 p-5 text-[#e3eff5]">{r}</li>)}
           </ul>
-          <Link href="/fellows/safety" className="btn mt-8 border border-white/25 text-white">Read all the rules</Link>
+          <Link href="/kalamites/safety" className="btn mt-8 border border-white/25 text-white">Read all the rules</Link>
         </div>
       </Section>
 
-      <AwaitingContent title="Fellow stories" need="Real Fellow stories after the pilot launches. No invented stories before then." />
+      <AwaitingContent title="Kalamite stories" need="Real Kalamite stories after the pilot launches. No invented stories before then." />
       <Faq items={fellowFaqs} />
       <div className="h-20 md:hidden" />
-      <StickyCta href="/fellows/apply" label="Become a Fellow" />
+      <StickyCta href="/kalamites/apply" label="Become a Kalamite" />
     </>
   );
 }

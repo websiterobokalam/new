@@ -39,10 +39,10 @@ export const doors: {
   {
     id: "educator",
     name: "Educator",
-    who: "Kalam Fellows: college students who teach",
+    who: "Kalamites: college students who teach",
     line: "Teach what you love. Earn while you study",
-    cta: "Become a Fellow",
-    href: "/fellows",
+    cta: "Become a Kalamite",
+    href: "/kalamites",
     login: "/login/educator",
     accent: "var(--color-leaf)",
   },
@@ -84,7 +84,7 @@ export const ladder = [
   { stage: "Age 8+", title: "CODO Ashaers", detail: "Blocks become code." },
   { stage: "Age 9+", title: "Advance Ashaers", detail: "Sensors, IoT and AI." },
   { stage: "Teens", title: "Bootcamps and camps", detail: "AIML Bootcamp, Robotics Summer Camp." },
-  { stage: "College", title: "Internships, or become a Fellow", detail: "Build for real clients. Teach the next batch." },
+  { stage: "College", title: "Internships, or become a Kalamite", detail: "Build for real clients. Teach the next batch." },
 ];
 
 export const platform = [
@@ -98,10 +98,10 @@ export const platform = [
 export const gigs = [
   { name: "Live Batch", where: "Online", format: "4 to 8 learners, Robokalam curriculum" },
   { name: "Campus Session", where: "Partner school or lab near your college", format: "A trainer or teacher is always present" },
-  { name: "Weekend Workshop", where: "School, centre or event", format: "Teach as a team of Fellows" },
+  { name: "Weekend Workshop", where: "School, centre or event", format: "Teach as a team of Kalamites" },
   { name: "Doubt Desk", where: "Online group room", format: "Short, recorded help sessions" },
   { name: "Project Mentor", where: "Online", format: "Project reviews parents can see, 2+ learners" },
-  { name: "Fellow's Own Course", where: "Online", format: "Reviewed and approved before it goes live" },
+  { name: "Kalamite's Own Course", where: "Online", format: "Reviewed and approved before it goes live" },
 ];
 
 export const fellowJourney = [
@@ -124,7 +124,7 @@ export const fellowSteps = [
 ];
 
 export const fellowRules = [
-  "Fellows are 18+ and fully vetted before any contact with a child.",
+  "Kalamites are 18+ and fully vetted before any contact with a child.",
   "No home visits, ever. One-to-one with under-18s only online on Robokalam, recorded, with the parent's consent and a notice to them before and after every session.",
   "All contact stays on the platform. No personal numbers, social media or private chats.",
   "Every online class is recorded. Parents can see your profile and class schedule.",
@@ -133,7 +133,7 @@ export const fellowRules = [
 ];
 
 export const parentTrust = [
-  { title: "Vetted educators", detail: "Every Fellow passes identity, background and reference checks, a subject test and a child-safety course before teaching." },
+  { title: "Vetted educators", detail: "Every Kalamite passes identity, background and reference checks, a subject test and a child-safety course before teaching." },
   { title: "Classes stay on the platform", detail: "Recorded online classes. No personal numbers or private chats. Contact details in messages are blocked." },
   { title: "Fees before you pay", detail: "The full fee is shown before payment. No loans, no financing, no multi-year lock-ins." },
   { title: "Self-serve refunds", detail: "Published refund terms and a refund button in your account." },
@@ -144,12 +144,20 @@ export const parentTrust = [
 
 export const faqs = [
   {
+    q: "What does Robokalam do for schools?",
+    a: "We're an EdTech technology company. For schools we provide the AADHYA AI learning platform, 21cschool ERP, turnkey 21C STEM & AI labs (design, furniture, kits and devices), curriculum development, and teacher training and support, built to work together.",
+  },
+  {
+    q: "Can you work with the software our school already uses?",
+    a: "Yes. Our platforms connect through APIs, and our studio builds integrations and custom tools for schools and EdTech companies. We'll look at what you have before proposing anything new.",
+  },
+  {
     q: "What happens in a Free Build Session?",
-    a: "Your child gets a mini mission, joins a small live session with a vetted Fellow or trainer, and finishes one build. You get the build, plain feedback and a suggested next step with the full fee shown. We follow up once, only if you agree.",
+    a: "Your child gets a mini mission, joins a small live session with a vetted Kalamite or trainer, and finishes one build. You get the build, plain feedback and a suggested next step with the full fee shown. We follow up once, only if you agree.",
   },
   {
     q: "Who teaches my child?",
-    a: "A Robokalam trainer or a Kalam Fellow. Fellows are college students aged 18+ who pass a subject test, a recorded demo, identity and background checks, references, and Kalam Academy, including a mandatory child-safety and POCSO course.",
+    a: "A Robokalam trainer or a Kalamite. Kalamites are college students aged 18+ who pass a subject test, a recorded demo, identity and background checks, references, and Kalam Academy, including a mandatory child-safety and POCSO course.",
   },
   {
     q: "Are classes one to one?",
@@ -164,7 +172,7 @@ export const faqs = [
     a: "Book a Turnkey Demo or try the Lab Planner. We suggest a package and a rollout plan for your board, classes, student numbers and room.",
   },
   {
-    q: "How do Kalam Fellows get paid?",
+    q: "How do Kalamites get paid?",
     a: "Robokalam-curriculum gigs pay a fixed amount per session, shown before you accept. Payouts are weekly, with every deduction listed. Earnings examples are estimates, not promises.",
   },
   {

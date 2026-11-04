@@ -1,6 +1,6 @@
 import { system } from "@/lib/db";
 
-/** Fair work: tell Fellows about every automated check, 14 days before it takes effect. */
+/** Fair work: tell Kalamites about every automated check, 14 days before it takes effect. */
 export async function AutomatedNotices({ ids }: { ids?: string[] }) {
   const rows = await system(async (c) => (await c.query(
     `SELECT id, name, description, affects, notice_at, effective_at FROM automated_systems ${ids ? "WHERE id IN ($1)" : ""} ORDER BY effective_at`, ids ? [ids] : [])).rows);

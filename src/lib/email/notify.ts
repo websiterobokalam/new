@@ -7,7 +7,7 @@ import { ticketClock } from "../schools/clock";
 /**
  * Email at every step. Each helper looks up who should hear about an event
  * and queues the email inside the caller's transaction. Recipients are
- * adults only: parents, Fellows, school staff and the Robokalam team.
+ * adults only: parents, Kalamites, school staff and the Robokalam team.
  */
 
 export const ist = (d: Date | string) => new Date(d).toLocaleString("en-IN", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }) + " IST";
@@ -110,7 +110,7 @@ export async function dataRequested(c: Tx, accountId: string, kind: "export" | "
   await enqueue(c, { accountId, template: "data_request", dedupe: `data:${ref}`, payload: { kind } });
 }
 
-/* ---------------- Fellows ---------------- */
+/* ---------------- Kalamites ---------------- */
 
 export async function fellowApplied(c: Tx, fellowId: string) {
   const f = (await c.query("SELECT full_name, status, city FROM fellows WHERE account_id = $1", [fellowId])).rows[0];
@@ -131,7 +131,7 @@ export async function gigAccepted(c: Tx, gigId: string, fellowId: string) {
   if (!g) return;
   await enqueue(c, { accountId: fellowId, template: "gig_confirmed", dedupe: `gig-ok:${gigId}:${fellowId}`, payload: {
     title: g.title, when: ist(g.starts_at), where: g.mode === "online" ? "Online" : g.location, pay: g.kind === "own_course" ? "Your share of fees" : inr(g.pay_paise), link: `/app/fellow/gigs/${gigId}` } });
-  // A school that asked for this Fellow hears that the session is confirmed.
+  // A school that asked for this Kalamite hears that the session is confirmed.
   const fr = (await c.query("SELECT fr.id, fr.school_id, fr.starts_at FROM fellow_requests fr WHERE fr.gig_id = $1", [gigId])).rows[0];
   if (fr) await schoolRequestChanged(c, fr.id, "confirmed");
 }
@@ -174,7 +174,7 @@ export async function ambassadorChanged(c: Tx, fellowId: string) {
 
 export async function flagDecided(c: Tx, flagId: string) {
   const f = (await c.query("SELECT fellow_id, subject_type, message, status, decision_note FROM quality_flags WHERE id = $1", [flagId])).rows[0];
-  // Course-draft flags reach the Fellow through the course review email.
+  // Course-draft flags reach the Kalamite through the course review email.
   if (f?.fellow_id && f.subject_type === "fellow") await enqueue(c, { accountId: f.fellow_id, template: "flag_decision", dedupe: `flag:${flagId}`, payload: { message: f.message, status: f.status, note: f.decision_note } });
 }
 
@@ -203,7 +203,7 @@ export async function schoolRequestChanged(c: Tx, requestId: string, event?: "co
   const r = (await c.query(
     `SELECT fr.*, f.display_name AS fellow FROM fellow_requests fr LEFT JOIN gig_assignments ga ON ga.gig_id = fr.gig_id AND ga.status IN ('accepted','delivered') LEFT JOIN fellows f ON f.account_id = ga.fellow_id WHERE fr.id = $1`, [requestId])).rows[0];
   if (!r) return;
-  const status = event === "confirmed" ? "confirmed" : ({ scheduled: "scheduled, finding a Fellow", declined: "not possible", cancelled: "cancelled", requested: "received" }[r.status as string] ?? r.status);
+  const status = event === "confirmed" ? "confirmed" : ({ scheduled: "scheduled, finding a Kalamite", declined: "not possible", cancelled: "cancelled", requested: "received" }[r.status as string] ?? r.status);
   for (const to of await schoolAdmins(c, r.school_id, [r.requested_by])) {
     await enqueue(c, { accountId: to, template: "fellow_request_update", dedupe: `freq:${requestId}:${status}:${to}`, payload: { when: ist(r.starts_at), status, fellow: r.fellow ?? null, note: r.decision_note ?? null } });
   }
@@ -213,7 +213,7 @@ export async function schoolRequestChanged(c: Tx, requestId: string, event?: "co
 
 /**
  * Runs every few minutes. Queues reminders 24 hours before each session, and
- * terms-change notices to Fellows. Dedupe keys make it safe to run often.
+ * terms-change notices to Kalamites. Dedupe keys make it safe to run often.
  */
 export async function scheduleReminders() {
   return system(async (c) => {
@@ -234,7 +234,7 @@ export async function scheduleReminders() {
         profile: b.educator_fellow_id ? `/educators/${b.educator_fellow_id}` : "/app", classLink: "/app",
       } })) n++;
     }
-    // Fellows: their accepted gigs in the next 25 hours.
+    // Kalamites: their accepted gigs in the next 25 hours.
     const gigs = (await c.query(
       `SELECT ga.id, ga.fellow_id, g.id AS gig_id, g.title, g.starts_at, g.mode, g.location, g.kind FROM gig_assignments ga JOIN gigs g ON g.id = ga.gig_id
        WHERE ga.status = 'accepted' AND g.starts_at BETWEEN UTC_TIMESTAMP(3) AND UTC_TIMESTAMP(3) + INTERVAL 25 HOUR`)).rows;
@@ -242,7 +242,7 @@ export async function scheduleReminders() {
       const sendAfter = new Date(Math.max(Date.now(), new Date(g.starts_at).getTime() - 24 * 3600_000));
       if (await enqueue(c, { accountId: g.fellow_id, template: "gig_reminder", sendAfter, dedupe: `gig-remind:${g.id}`, payload: { title: g.title, when: ist(g.starts_at), where: g.mode === "online" ? "Online" : g.location, oneToOne: g.kind === "one_to_one", link: `/app/fellow/gigs/${g.gig_id}` } })) n++;
     }
-    // Fellow terms published but not yet in effect: tell every Fellow once.
+    // Kalamite terms published but not yet in effect: tell every Kalamite once.
     const upcoming = (await c.query("SELECT id, effective_at FROM terms_versions WHERE language = 'en' AND initial = FALSE AND effective_at > UTC_TIMESTAMP(3)")).rows;
     for (const t of upcoming) {
       const fellows = (await c.query("SELECT account_id FROM fellows WHERE status IN ('vetting','live','paused')")).rows;
@@ -253,5 +253,7 @@ export async function scheduleReminders() {
 }
 
 export const TERMS_SUMMARY: Record<string, string> = {
+  "kalamite-terms-2026-12-en": "What's new: Kalam Fellows are now Kalamites, and the levels are Junior Kalamite, Kalamite, Senior Kalamite and Lead Kalamite. Only the names change: your pay, rights and rules stay the same.",
+  "kalamite-code-2026-12-en": "What's new: the code of conduct now uses the Kalamite name. The rules, including the one-to-one rules, stay the same.",
   "code-of-conduct-2026-12-en": "What's new: one-to-one online classes for under-18s, with the parent's specific consent, a notice to the parent before and a written summary after every session, and recording. Nothing else changes.",
 };

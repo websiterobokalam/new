@@ -101,7 +101,7 @@ export function BuildSessionFlow({ notice, signedIn, preset }: { notice: Notice;
       {step === "slot" && (
         <div className="grid gap-4">
           <h2 className="display-md">Pick a time</h2>
-          <p className="text-muted">About 60 minutes, live, in a small group, with a vetted Fellow or trainer. Recorded on the platform for safety.</p>
+          <p className="text-muted">About 60 minutes, live, in a small group, with a vetted Kalamite or trainer. Recorded on the platform for safety.</p>
           {batches === null ? <p role="status" className="text-muted">Loading times…</p> : batches.length === 0 ? (
             <p className="rounded-xl bg-panel p-4">No sessions are open right now. We add new times every week, so check back soon.</p>
           ) : (

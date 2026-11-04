@@ -4,10 +4,12 @@ import { ThemeToggle } from "./ThemeToggle";
 import { RegionPicker } from "./RegionPicker";
 import { AccountLink } from "./AccountLink";
 
+// Schools first: Robokalam leads as a technology partner for schools.
 const nav = [
-  { href: "/learn", label: "Learn" },
   { href: "/21c-lab", label: "Schools" },
-  { href: "/fellows", label: "Fellows" },
+  { href: "/#solutions", label: "Solutions" },
+  { href: "/learn", label: "Learn" },
+  { href: "/kalamites", label: "Kalamites" },
 ];
 const small = [
   { href: "/partners", label: "Partners" },

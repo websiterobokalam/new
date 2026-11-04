@@ -79,7 +79,7 @@ test("one-to-one: needs email, specific consent and the parent's checklist; over
   expect((await ownerQuery("SELECT text_sha256 FROM one_to_one_acks WHERE booking_id = $1", [booking.id])).length).toBe(1);
   await expect.poll(async () => sent(await emailsTo({ to: email }, "payment_receipt"))).toBe(1);
 
-  // 4. Only an experienced Fellow under the updated code of conduct can take it.
+  // 4. Only an experienced Kalamite under the updated code of conduct can take it.
   const fp = await (await browser.newContext()).newPage();
   const fphone = await applyAsFellow(fp, { name: "Kiran Mentor" });
   const fid = await passSteps(fphone, ALL_STEPS, true);
@@ -87,7 +87,7 @@ test("one-to-one: needs email, specific consent and the parent's checklist; over
   await ownerQuery("INSERT INTO gigs (id, kind, batch_id, title, world, starts_at, duration_min, mode, city, pay_paise) VALUES ($1,'one_to_one',$2,$3,'robotics', now() + INTERVAL 20 HOUR, 60, 'online', 'Hyderabad', 50000)", [gig, batch.id, `One-to-one ${gig.slice(0, 6)}`]);
   await fp.goto("/app/fellow/gigs");
   const card = fp.locator("li", { hasText: `One-to-one ${gig.slice(0, 6)}` });
-  await expect(card.getByText("One-to-one classes need tier Fellow or above")).toBeVisible();
+  await expect(card.getByText("One-to-one classes need the Kalamite level or above")).toBeVisible();
   await ownerQuery("UPDATE fellows SET tier = 'fellow' WHERE account_id = $1", [fid]);
   await fp.reload();
   await expect(card.getByText(/Accept the updated code of conduct/)).toBeVisible();

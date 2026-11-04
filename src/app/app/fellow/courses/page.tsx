@@ -43,11 +43,11 @@ export default async function FellowCourses() {
     <section className="py-10">
       <div className="wrap grid gap-8 [&>*]:min-w-0">
         <header>
-          <p className="eyebrow">Fellow&apos;s Own Course</p>
+          <p className="eyebrow">Kalamite&apos;s Own Course</p>
           <h1 className="display-lg mt-2">Teach your own course</h1>
           <p className="mt-2 max-w-2xl text-muted">
             Online, in groups of 2 to 8. A Robokalam reviewer reads every course before any family can book it.{" "}
-            {share ? `You keep ${share}% of the fees, paid as each session is delivered.` : "Your share of the fees is set in the Fellow terms before courses go public; we give 14 days' notice."}
+            {share ? `You keep ${share}% of the fees, paid as each session is delivered.` : "Your share of the fees is set in the Kalamite terms before courses go public; we give 14 days' notice."}
           </p>
         </header>
 

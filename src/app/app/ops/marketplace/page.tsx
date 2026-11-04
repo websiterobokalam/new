@@ -16,7 +16,7 @@ export default async function Marketplace() {
     <section className="py-10"><div className="wrap grid gap-8 [&>*]:min-w-0">
       <header>
         <h1 className="display-lg">Marketplace readiness</h1>
-        <p className="mt-2 max-w-3xl text-muted">The open marketplace (Fellow-authored courses, new cities, Campus Ambassadors) starts only when fill rate, safety and parent satisfaction meet agreed targets. A rising safety, refund or complaint rate pauses growth. Last {WINDOW_DAYS} days ({d(r.window.from)} to {d(r.window.to)}), compared with the {WINDOW_DAYS} days before.</p>
+        <p className="mt-2 max-w-3xl text-muted">The open marketplace (Kalamite-authored courses, new cities, Campus Ambassadors) starts only when fill rate, safety and parent satisfaction meet agreed targets. A rising safety, refund or complaint rate pauses growth. Last {WINDOW_DAYS} days ({d(r.window.from)} to {d(r.window.to)}), compared with the {WINDOW_DAYS} days before.</p>
       </header>
 
       <section className={`card p-6 ${r.open ? "border-heading" : ""}`} aria-labelledby="gate-h" data-gate={r.open ? "open" : r.gate.isOpen ? "paused" : "closed"}>
@@ -68,7 +68,7 @@ export default async function Marketplace() {
           </ul>
           <div className="mt-4"><JsonForm url="/api/ops/market/cities" fixed={{ action: "open" }} submit="Open this city" done="City opened. Waitlisted applicants there have moved to checks." fields={[
             { name: "name", label: "City to open" },
-            { name: "maxLive", label: "Most live Fellows there", type: "number", defaultValue: 25 },
+            { name: "maxLive", label: "Most live Kalamites there", type: "number", defaultValue: 25 },
             { name: "note", label: "Why, and who agreed (recorded)" },
           ]} /></div>
           <p className="mt-2 text-sm text-muted">Opening a city needs the marketplace open. Applicants waiting there move to checks at once.</p>

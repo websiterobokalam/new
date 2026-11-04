@@ -2,11 +2,14 @@ import { system, uuid, type Tx } from "../db";
 import { oneToOneConsented, oneToOneTeacherCheck } from "../learn/oneToOne";
 import { earningAdded, gigAccepted, safetyReported, sessionDelivered } from "../email/notify";
 import { asAccount, type Account } from "../auth/session";
-import { FellowError, requireFellow, STEPS, type Fellow, type Step } from "./core";
+import { FellowError, requireFellow, STEPS, type Kalamite, type Step } from "./core";
 import { addEarning, deductionsFor, rateFor, weekStartIST, type DeductionLine } from "./pay";
 import { post } from "../ledger";
 
 export const TIERS = ["apprentice", "fellow", "senior", "lead"] as const;
+/** How each level is shown. Stored values stay the same. */
+export const TIER_LABEL: Record<string, string> = { apprentice: "Junior Kalamite", fellow: "Kalamite", senior: "Senior Kalamite", lead: "Lead Kalamite" };
+export const tierLabel = (t: string) => TIER_LABEL[t] ?? t;
 const tierRank = (t: string) => TIERS.indexOf(t as (typeof TIERS)[number]);
 
 /** Before any contact with a child, every check except shadow/co-teach must be passed. */
@@ -21,11 +24,11 @@ export type Gig = {
 export type BoardItem = Gig & { deductions: DeductionLine[]; net_paise: number; canAccept: boolean; reason: string | null; why: string; myStatus: string | null };
 
 /**
- * THE MATCHING FORMULA (published to Fellows, see /app/fellow/growth):
- *   1. Show open gigs the Fellow is eligible for: tier, a language they teach in,
+ * THE MATCHING FORMULA (published to Kalamites, see /app/fellow/growth):
+ *   1. Show open gigs the Kalamite is eligible for: tier, a language they teach in,
  *      and for in-person gigs their city.
- *   2. Order by: gigs in one of the Fellow's worlds first, then earliest start.
- * Inputs are only the gig and the Fellow's stated worlds, languages, city and
+ *   2. Order by: gigs in one of the Kalamite's worlds first, then earliest start.
+ * Inputs are only the gig and the Kalamite's stated worlds, languages, city and
  * tier. No protected characteristics are collected or used, and declines are
  * never an input.
  */
@@ -33,7 +36,7 @@ export function orderBoard<T extends { world: string; starts_at: string }>(gigs:
   return [...gigs].sort((a, b) => Number(worlds.includes(b.world)) - Number(worlds.includes(a.world)) || +new Date(a.starts_at) - +new Date(b.starts_at));
 }
 
-export function eligible(g: Pick<Gig, "min_tier" | "language" | "mode" | "city">, f: Pick<Fellow, "tier" | "languages" | "city">) {
+export function eligible(g: Pick<Gig, "min_tier" | "language" | "mode" | "city">, f: Pick<Kalamite, "tier" | "languages" | "city">) {
   if (tierRank(f.tier) < tierRank(g.min_tier)) return false;
   if (!f.languages.includes(g.language)) return false;
   if (g.mode === "offline" && g.city.toLowerCase() !== f.city.toLowerCase()) return false;
@@ -54,8 +57,8 @@ function onboardingKind(kind: string) {
   return kind === "shadow" || kind === "co_teach";
 }
 
-/** Why a Fellow can or cannot accept, in plain words. */
-async function acceptability(c: Tx, f: Fellow, steps: Record<Step, { status: string }>, g: Gig): Promise<string | null> {
+/** Why a Kalamite can or cannot accept, in plain words. */
+async function acceptability(c: Tx, f: Kalamite, steps: Record<Step, { status: string }>, g: Gig): Promise<string | null> {
   if (f.exam_mode_until && new Date(f.exam_mode_until) >= new Date(new Date().toDateString())) return "Exam Mode is on";
   if (onboardingKind(g.kind)) {
     if (!preContact().every((s) => steps[s].status === "passed")) return "Finish your checks, Academy and terms first";
@@ -76,7 +79,7 @@ async function acceptability(c: Tx, f: Fellow, steps: Record<Step, { status: str
   return null;
 }
 
-export async function board(a: Account): Promise<{ items: BoardItem[]; fellow: Fellow; weekMinutes: number }> {
+export async function board(a: Account): Promise<{ items: BoardItem[]; fellow: Kalamite; weekMinutes: number }> {
   const { fellow, steps } = await requireFellow(a);
   return asAccount(a, async (c) => {
     const gigs = (await c.query(
@@ -92,7 +95,7 @@ export async function board(a: Account): Promise<{ items: BoardItem[]; fellow: F
       items.push({
         ...g, deductions, net_paise: g.pay_paise - deductions.reduce((s, d) => s + d.paise, 0), myStatus: g.my_status,
         canAccept: !g.my_status && !reason, reason,
-        why: fellow.worlds.includes(g.world) ? `Matches your world: ${g.world}` : "Open to Fellows who teach in this language",
+        why: fellow.worlds.includes(g.world) ? `Matches your world: ${g.world}` : "Open to Kalamites who teach in this language",
       });
     }
     return { items, fellow, weekMinutes: await weekMinutes(c, a.id, new Date()) };
@@ -159,8 +162,8 @@ export async function createGig(staff: Account, input: {
 export type RosterRow = { booking_id: string; first_name: string; age_band: string; built: number; status: string };
 
 /**
- * The ONLY way a Fellow reads learner data: first name, age band, number of
- * finished builds and booking status, and only for a class this Fellow has
+ * The ONLY way a Kalamite reads learner data: first name, age band, number of
+ * finished builds and booking status, and only for a class this Kalamite has
  * accepted or delivered. No ids of learners, no parents, no contact details.
  */
 export async function rosterFor(c: Tx, gigId: string, fellowId: string): Promise<RosterRow[]> {
@@ -194,7 +197,7 @@ export async function teach(a: Account, gigId: string) {
 /**
  * Mark a session delivered: attendance and builds for each learner, then pay.
  * Paid bookings release one session's share from escrow to revenue; the
- * Fellow's fixed pay is booked as an expense owed to them.
+ * Kalamite's fixed pay is booked as an expense owed to them.
  */
 export async function deliver(a: Account, gigId: string, records: { bookingId: string; attended: boolean; builtProject?: string; feedback?: string }[]) {
   const { fellow } = await requireFellow(a);
@@ -243,7 +246,7 @@ export async function deliver(a: Account, gigId: string, records: { bookingId: s
     }
     let lineId: string | undefined;
     if (t.gig.kind === "own_course") {
-      // Fellow's Own Course: the Fellow's published share of the fees this session released.
+      // Kalamite's Own Course: the Kalamite's published share of the fees this session released.
       const pct = Number((await c.query("SELECT co.fellow_share_pct AS p FROM batches b JOIN courses co ON co.id = b.course_id WHERE b.id = $1", [t.gig.batch_id])).rows[0]?.p ?? 0);
       const gross = Math.round((released * pct) / 100);
       if (gross > 0) lineId = await addEarning(c, a.id, { kind: "own_course", description: `${t.gig.title} · ${pct}% of fees · ${new Date(t.gig.starts_at).toISOString().slice(0, 16)}`, gross, assignmentId: t.gig.assignment_id });
@@ -270,7 +273,7 @@ export async function askHelp(a: Account, gigId: string | null, kind: "tech" | "
     await c.query("INSERT INTO help_requests (id, fellow_id, assignment_id, kind) VALUES ($1,$2,$3,$4)", [rows[0].id, a.id, asg?.id ?? null, kind]);
     if (kind === "safety") {
       const rid = uuid();
-      await c.query("INSERT INTO safety_reports (id, reporter_account_id, page, category, details, respond_by) VALUES ($3,$1,$2,'safety','Fellow pressed the safety help button in Teach mode', now() + INTERVAL 1 HOUR)", [a.id, `/app/fellow/gigs/${gigId ?? ""}`, rid]);
+      await c.query("INSERT INTO safety_reports (id, reporter_account_id, page, category, details, respond_by) VALUES ($3,$1,$2,'safety','Kalamite pressed the safety help button in Teach mode', now() + INTERVAL 1 HOUR)", [a.id, `/app/fellow/gigs/${gigId ?? ""}`, rid]);
       await safetyReported(c, rid);
     }
     return rows[0].id as string;

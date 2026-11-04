@@ -1,5 +1,5 @@
 /**
- * Public Fellow profile: live Fellows only, no contact details. Kept as SQL in
+ * Public Kalamite profile: live Kalamites only, no contact details. Kept as SQL in
  * code (not a database view) so it needs no extra privileges on shared hosting.
  * Use as a derived table: `JOIN (${FELLOW_PROFILES}) fp ON fp.id = ...`.
  */

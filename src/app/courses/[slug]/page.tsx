@@ -29,7 +29,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
           <h1 className="display-lg mt-2">{c.title}</h1>
           <p className="lede mt-3">{c.outcome}</p>
           {c.format === "one_to_one" && <p className="mt-3 max-w-2xl rounded-lg bg-leafmist px-4 py-3 text-navy dark:bg-panel-2 dark:text-heading">One-to-one, online and recorded, with you in the loop: an email before and a written summary after every session, and you can join any session. <Link className="font-semibold underline" href="/one-to-one">How it works</Link></p>}
-          {c.author_fellow_id && <p className="mt-3 max-w-2xl text-sm text-muted">Written by the Kalam Fellow who teaches it, and reviewed by Robokalam before it was listed: safety, age fit and honest claims. Online, in a small group, and recorded like every class.</p>}
+          {c.author_fellow_id && <p className="mt-3 max-w-2xl text-sm text-muted">Written by the Kalamite who teaches it, and reviewed by Robokalam before it was listed: safety, age fit and honest claims. Online, in a small group, and recorded like every class.</p>}
           <dl className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {[["Batch", c.format === "one_to_one" ? "One learner" : `Up to ${c.batch_size_max}`], ["Classes", String(c.sessions)], ["Kit", c.kit ?? "None needed"]].map(([k, v]) => <div key={k} className="rounded-2xl bg-panel p-4"><dt className="text-sm text-muted">{k}</dt><dd className="font-semibold">{v}</dd></div>)}
             <div className="rounded-2xl bg-panel p-4"><dt className="text-sm text-muted">Fee</dt><dd className="font-semibold"><FeeLine fee={c.fee_paise} approved={c.fee_approved} sample={c.sample} /></dd></div>

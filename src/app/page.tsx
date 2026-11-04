@@ -1,7 +1,8 @@
-import { Hero } from "@/components/home/Hero";
+import { Hero, Doors } from "@/components/home/Hero";
+import { Solutions, WhySchools, Consult } from "@/components/home/Company";
 import {
-  TrustBar, WorldsBento, LearnerLadder, LabAtNight, FellowsBand, ImpactBand,
-  MadeByStudents, ParentTrust, ProjectStories, StudentVoices, Faq, DoorsAgain,
+  WorldsBento, LabAtNight, FellowsBand, ImpactBand,
+  MadeByStudents, ParentTrust, ProjectStories, StudentVoices, Faq,
 } from "@/components/home/Sections";
 import { BotLoader } from "@/components/home/BotLoader";
 import { KalamLineScope, LineNode } from "@/components/motion/KalamLine";
@@ -9,39 +10,45 @@ import { Section, SectionHead } from "@/components/Section";
 import { JsonLd, faqLd } from "@/lib/jsonld";
 import { faqs } from "@/content/site";
 
+/**
+ * Home: Robokalam first as an EdTech technology company for premium schools
+ * (solutions, the flagship lab, why schools choose us), then the doors for
+ * learners and college students.
+ */
 export default function Home() {
   return (
     <>
       <JsonLd data={faqLd(faqs)} />
       <Hero />
-      <TrustBar />
       <KalamLineScope>
+        <LineNode />
+        <Solutions />
+        <LineNode />
+        <LabAtNight />
+        <LineNode />
+        <WhySchools />
+        <LineNode />
+        <ImpactBand />
+        <Consult />
+        <LineNode />
+        <Doors />
         <LineNode />
         <Section id="try-the-bot" label="Try the Bot">
           <div className="wrap">
-            <SectionHead eyebrow="Try the Bot · no login, nothing saved" title="Snap blocks. Drive a robot. See the Python." lede="This is how every Robokalam learner starts: a real robot problem, solved with real code." />
+            <SectionHead eyebrow="See how students learn · no login, nothing saved" title="Snap blocks. Drive a robot. See the Python." lede="Every Robokalam learner starts like this: a real robot problem, solved with real code." />
             <div className="mt-10"><BotLoader /></div>
           </div>
         </Section>
         <LineNode />
         <WorldsBento />
-        <LineNode />
-        <LearnerLadder />
-        <LineNode />
-        <LabAtNight />
         <LineNode bot="wave" />
         <FellowsBand />
-        <LineNode />
-        <ImpactBand />
-        <LineNode />
         <MadeByStudents />
         <ParentTrust />
         <LineNode />
         <ProjectStories />
         <StudentVoices />
         <Faq />
-        <LineNode />
-        <DoorsAgain />
         <LineNode />
       </KalamLineScope>
     </>

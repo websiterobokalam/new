@@ -6,7 +6,7 @@ import { metrics, suggestTier } from "@/lib/fellows/tiers";
 import { JsonForm } from "@/components/app/JsonForm";
 import { StaffButton } from "@/components/app/StaffActions";
 
-export const metadata = { title: "Fellows" };
+export const metadata = { title: "Kalamites" };
 const REVIEWABLE = ["subject_test", "demo", "identity", "background", "references"] as const;
 
 export default async function OpsFellows() {
@@ -20,7 +20,7 @@ export default async function OpsFellows() {
   });
   return (
     <section className="py-10"><div className="wrap grid gap-6 [&>*]:min-w-0">
-      <header><h1 className="display-lg">Fellows</h1><p className="text-muted">Pilot: {PILOT.city} · {d.live} of {PILOT.maxLive} live. <a className="underline" href="/api/ops/compliance">Download gig-worker register (CSV)</a></p></header>
+      <header><h1 className="display-lg">Kalamites</h1><p className="text-muted">Pilot: {PILOT.city} · {d.live} of {PILOT.maxLive} live. <a className="underline" href="/api/ops/compliance">Download gig-worker register (CSV)</a></p></header>
       <ul className="grid gap-4">
         {d.fellows.map((f) => {
           const st = Object.fromEntries(d.steps.filter((s) => s.fellow_id === f.account_id).map((s) => [s.step, s]));
@@ -48,8 +48,8 @@ export default async function OpsFellows() {
                   <p>Delivered {f.m.delivered} · reliability {f.m.reliability === null ? "—" : `${Math.round(f.m.reliability * 100)}%`} · rating {f.m.rating ?? "—"} ({f.m.reviews}) · formula suggests <strong>{suggestTier(f.m)}</strong></p>
                   <details><summary className="cursor-pointer font-semibold text-link">Confirm tier, or open a case</summary>
                     <div className="mt-3 grid max-w-lg gap-6">
-                      <JsonForm compact url={`/api/ops/fellows/${f.account_id}/tier`} submit="Set tier" fields={[{ name: "tier", label: "Tier", type: "select", defaultValue: f.tier, options: [["apprentice", "Apprentice"], ["fellow", "Fellow"], ["senior", "Senior Fellow"], ["lead", "Lead Fellow"]] }, { name: "note", label: "Reason (shown in audit log)" }]} />
-                      <JsonForm compact url="/api/ops/cases" fixed={{ fellowId: f.account_id, childSafety: false }} submit="Open removal case (7 days' notice)" tone="danger" fields={[{ name: "reasons", label: "Written reasons (shared with the Fellow)", type: "textarea" }]} />
+                      <JsonForm compact url={`/api/ops/fellows/${f.account_id}/tier`} submit="Set level" fields={[{ name: "tier", label: "Level", type: "select", defaultValue: f.tier, options: [["apprentice", "Junior Kalamite"], ["fellow", "Kalamite"], ["senior", "Senior Kalamite"], ["lead", "Lead Kalamite"]] }, { name: "note", label: "Reason (shown in audit log)" }]} />
+                      <JsonForm compact url="/api/ops/cases" fixed={{ fellowId: f.account_id, childSafety: false }} submit="Open removal case (7 days' notice)" tone="danger" fields={[{ name: "reasons", label: "Written reasons (shared with the Kalamite)", type: "textarea" }]} />
                     </div>
                   </details>
                 </div>

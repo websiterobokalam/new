@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 /**
  * MySQL / MariaDB access (Hostinger). One connection user, so access control
  * lives here and in the query code: every query that touches family or
- * Fellow data filters by the signed-in account explicitly. Tests cover
+ * Kalamite data filters by the signed-in account explicitly. Tests cover
  * cross-account isolation.
  *
  * Each unit of work runs in a transaction. `@rk_role` and `@rk_account` are

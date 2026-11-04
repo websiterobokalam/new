@@ -10,7 +10,7 @@ export default async function ChecksPage() {
   return (
     <section className="py-10"><div className="wrap max-w-3xl grid gap-6">
       <header><p className="eyebrow">Step 3 · Identity, background and references</p><h1 className="display-lg mt-2">The checks that keep kids safe.</h1>
-        <p className="lede mt-2">Every Fellow passes these before any contact with a child. No exceptions.</p></header>
+        <p className="lede mt-2">Every Kalamite passes these before any contact with a child. No exceptions.</p></header>
       <div className="card grid gap-3 p-6">
         <h2 className="text-xl font-bold">Identity and background</h2>
         <p className="text-muted">Done through a licensed verification partner (DigiLocker where possible). We store only the result and the partner&apos;s reference, never copies of your documents. Our team will send you a secure link.</p>

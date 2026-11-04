@@ -10,13 +10,13 @@ import { JsonLd, organizationLd } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
-  title: { default: "Robokalam: Pick your door. Start building.", template: "%s | Robokalam" },
+  title: { default: "Robokalam: AI, software and labs for future-ready schools", template: "%s | Robokalam" },
   description:
-    "Robokalam, Literature of Technologies. Hands-on robotics, IoT, AI, coding, financial literacy and space education for learners from age 6, turnkey 21C labs for schools, and Kalam Fellows for college students who teach.",
+    "Robokalam, Literature of Technologies, is an EdTech technology company. The AADHYA AI learning platform, 21cschool ERP, turnkey 21C STEM & AI labs and curriculum for premium schools, plus live classes for learners from age 6 and Kalamites for college students who teach.",
   applicationName: "Robokalam",
   manifest: "/manifest.webmanifest",
   openGraph: { siteName: "Robokalam", type: "website", locale: "en_IN" },
-  icons: { icon: [{ url: "/icon.svg", type: "image/svg+xml" }, { url: "/icon-192.png", sizes: "192x192", type: "image/png" }], apple: "/icon-192.png" },
+  icons: { icon: [{ url: "/favicon-32.png", sizes: "32x32", type: "image/png" }, { url: "/icon-192.png", sizes: "192x192", type: "image/png" }], apple: "/icon-192.png" },
 };
 
 export const viewport: Viewport = {

@@ -72,7 +72,7 @@ export default function LabPage() {
         </div>
       </Section>
 
-      <Section label="Curriculum map">
+      <Section id="curriculum" label="Curriculum map" className="scroll-mt-20">
         <div className="wrap">
           <SectionHead eyebrow="Curriculum map" title="Class 1 to Class 12, one ladder."
             lede={<><Claim id="curriculum.nep-cbse" fallback="Curriculum mapping to NEP 2020 and CBSE is being verified." />{" "}<Claim id="curriculum.cbse-ct-ai" /></>} />

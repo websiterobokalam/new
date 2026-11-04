@@ -15,19 +15,19 @@ export const STEP_LABEL: Record<Step, string> = {
   academy: "Kalam Academy", terms: "Terms and code of conduct", shadow: "Shadow a class", co_teach: "Co-teach a class",
 };
 
-/** Pilot: one city, about 25 live Fellows. Both are settings, not code. */
+/** Pilot: one city, about 25 live Kalamites. Both are settings, not code. */
 export const PILOT = { city: process.env.PILOT_CITY ?? "Hyderabad", maxLive: Number(process.env.PILOT_MAX_LIVE ?? 25) };
 
 export class FellowError extends Error {
   constructor(public status: number, msg: string) { super(msg); }
 }
 
-export type Fellow = {
+export type Kalamite = {
   account_id: string; full_name: string; display_name: string; college: string; course: string; year: string; worlds: string[]; languages: string[];
   hours_per_week: number; city: string; status: string; tier: string; weekly_cap_hours: number; exam_mode_until: string | null; point_of_contact: string | null; went_live_at: string | null;
 };
 
-export async function getFellow(a: Account): Promise<{ fellow: Fellow; steps: Record<Step, { status: string; detail: Record<string, unknown> }> } | null> {
+export async function getFellow(a: Account): Promise<{ fellow: Kalamite; steps: Record<Step, { status: string; detail: Record<string, unknown> }> } | null> {
   return asAccount(a, async (c) => {
     const f = (await c.query("SELECT * FROM fellows WHERE account_id = $1", [a.id])).rows[0];
     if (!f) return null;
@@ -40,7 +40,7 @@ export async function getFellow(a: Account): Promise<{ fellow: Fellow; steps: Re
 
 export async function requireFellow(a: Account) {
   const f = await getFellow(a);
-  if (!f) throw new FellowError(404, "Apply to Kalam Fellows first");
+  if (!f) throw new FellowError(404, "Apply to Kalamites first");
   return f;
 }
 
@@ -57,7 +57,7 @@ export async function apply(a: Account, app: Application) {
     const acc = (await c.query("SELECT role, (SELECT count(*) FROM learners l WHERE l.guardian_account_id = a.id AND l.erased_at IS NULL) AS kids FROM accounts a WHERE id = $1", [a.id])).rows[0];
     if (acc.role !== "parent" && acc.role !== "fellow") throw new FellowError(409, "This number belongs to a staff account");
     if (acc.kids > 0) throw new FellowError(409, "This number manages a learner account. Please apply with your own number.");
-    // Cities that take Fellows: the pilot city and any city a person has opened (Phase 5).
+    // Cities that take Kalamites: the pilot city and any city a person has opened (Phase 5).
     const inPilot = takesFellows(await noteCity(c, app.city));
     await c.query("UPDATE accounts SET role = 'fellow', display_name = $2 WHERE id = $1", [a.id, displayName(app.fullName)]);
     await c.query(
@@ -122,17 +122,17 @@ export async function completeModule(a: Account, moduleId: string, answers: numb
   });
 }
 
-/** Step 7: accept the current terms and code of conduct (in the Fellow's chosen language). */
+/** Step 7: accept the current terms and code of conduct (in the Kalamite's chosen language). */
 export async function acceptTerms(a: Account, termIds: string[]) {
   await requireFellow(a);
   return system(async (c) => {
     const current = (await c.query(
-      // Latest effective version of each kind among those the Fellow was shown.
+      // Latest effective version of each kind among those the Kalamite was shown.
       `SELECT id, kind FROM (SELECT id, kind, ROW_NUMBER() OVER (PARTITION BY kind ORDER BY effective_at DESC) AS rn
          FROM terms_versions WHERE id IN ($1) AND effective_at <= now()) t WHERE rn = 1`,
       [termIds],
     )).rows;
-    if (current.length !== 2) throw new FellowError(422, "Please accept both the Fellow terms and the code of conduct");
+    if (current.length !== 2) throw new FellowError(422, "Please accept both the Kalamite terms and the code of conduct");
     for (const t of current) await insertOnce(c, "INSERT INTO terms_acceptances (fellow_id, terms_id) VALUES ($1,$2)", [a.id, t.id]);
     await setStep(c, a.id, "terms", "passed", { accepted: current.map((t) => t.id) });
   });
@@ -142,7 +142,7 @@ export async function acceptTerms(a: Account, termIds: string[]) {
 export async function reviewStep(staff: Account, fellowId: string, step: Step, outcome: "passed" | "failed", note: string, vendorRef?: string) {
   return system(async (c) => {
     const f = (await c.query("SELECT account_id FROM fellows WHERE account_id = $1", [fellowId])).rows[0];
-    if (!f) throw new FellowError(404, "Fellow not found");
+    if (!f) throw new FellowError(404, "Kalamite not found");
     await setStep(c, fellowId, step, outcome, { note, vendor_ref: vendorRef ?? null, reviewed_at: new Date().toISOString() }, staff.id);
     if (step === "demo" && outcome === "passed") {
       const rate = await rateFor(c, "demo");
@@ -161,15 +161,15 @@ export function readyToGoLive(steps: Record<Step, { status: string }>) {
 export async function goLive(staff: Account, fellowId: string) {
   return system(async (c) => {
     const f = (await c.query("SELECT status, city FROM fellows WHERE account_id = $1 FOR UPDATE", [fellowId])).rows[0];
-    if (!f) throw new FellowError(404, "Fellow not found");
+    if (!f) throw new FellowError(404, "Kalamite not found");
     const steps = (await c.query("SELECT step, status FROM vetting_steps WHERE fellow_id = $1", [fellowId])).rows;
     const missing = STEPS.filter((s) => steps.find((x) => x.step === s)?.status !== "passed");
     if (missing.length) throw new FellowError(409, `Not ready: ${missing.map((m) => STEP_LABEL[m]).join(", ")}`);
     // Each city has its own cap (the pilot city starts at PILOT_MAX_LIVE).
     const city = await cityFor(c, f.city);
-    if (!takesFellows(city)) throw new FellowError(409, `${f.city} isn't open for Fellows yet`);
+    if (!takesFellows(city)) throw new FellowError(409, `${f.city} isn't open for Kalamites yet`);
     const live = (await c.query("SELECT count(*) AS n FROM fellows WHERE status = 'live' AND LOWER(TRIM(city)) = $1", [city!.slug])).rows[0].n;
-    if (live >= city!.max_live) throw new FellowError(409, `${city!.name} is full (${city!.max_live} live Fellows)`);
+    if (live >= city!.max_live) throw new FellowError(409, `${city!.name} is full (${city!.max_live} live Kalamites)`);
     await c.query("UPDATE fellows SET status = 'live', went_live_at = now() WHERE account_id = $1", [fellowId]);
     await rewardReferral(c, fellowId);
     await fellowLive(c, fellowId);

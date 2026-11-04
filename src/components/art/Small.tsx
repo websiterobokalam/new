@@ -102,7 +102,7 @@ export function LabPreview() {
   );
 }
 
-/** Fellows hero: the earner app, gig board view. No amounts until rates are approved. */
+/** Kalamites hero: the earner app, gig board view. No amounts until rates are approved. */
 export function GigPhone() {
   const gigs = [
     ["Live Batch", "Online · Robotics", "Sat 10:00"],

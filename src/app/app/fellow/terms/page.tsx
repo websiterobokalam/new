@@ -3,7 +3,7 @@ import { fellowContext } from "@/lib/fellows/context";
 import { asAccount } from "@/lib/auth/session";
 import { JsonForm } from "@/components/app/JsonForm";
 
-export const metadata = { title: "Fellow terms" };
+export const metadata = { title: "Kalamite terms" };
 
 export default async function TermsPage({ searchParams }: { searchParams: Promise<{ lang?: string }> }) {
   const { account, steps } = await fellowContext("/app/fellow/terms");

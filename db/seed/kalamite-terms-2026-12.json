@@ -1,0 +1,289 @@
+{
+  "_status": "Kalamite versions (name change from Kalam Fellows). DRAFT for counsel review; Telugu and Hindi machine-drafted, need native review.",
+  "fellow_terms": {
+    "en": {
+      "title": "Kalamite terms (plain version)",
+      "sections": [
+        [
+          "What you are",
+          "You are an independent platform worker who teaches through Robokalam. This is flexible, part-time work, not employment, and it carries no promise of a minimum number of gigs or income."
+        ],
+        [
+          "How you are paid",
+          "Robokalam-curriculum gigs pay a fixed amount per session from the published rate card. You see the pay, the duration and the subject before you accept. Pay = sessions delivered × fixed rate − the deductions listed below."
+        ],
+        [
+          "Deductions",
+          "Only deductions required by law (such as TDS, where it applies) or listed on the rate card. Each one is shown before you accept a gig and on every statement."
+        ],
+        [
+          "Incentives",
+          "There are no incentives for selling or for converting families. Your pay never depends on a parent buying anything."
+        ],
+        [
+          "Paid training",
+          "Kalam Academy modules, recorded demos, shadow sessions and co-teaching sessions are paid. You will never be asked to teach a trial class for free."
+        ],
+        [
+          "Payouts",
+          "Weekly, to your bank account, with a per-session breakdown and a downloadable statement."
+        ],
+        [
+          "Saying no",
+          "You can decline any gig. Declining carries no penalty and does not affect your tier or what gigs you are shown."
+        ],
+        [
+          "Your studies come first",
+          "During term your weekly hours are capped. Exam Mode pauses all work with no effect on your tier."
+        ],
+        [
+          "How automated systems affect you",
+          "The gig board orders gigs by a published formula: subject match, then start time. Tiers use reliability, learner progress and verified parent feedback, with a formula shown in your app. A person, not a machine, decides any penalty."
+        ],
+        [
+          "Changes to these terms",
+          "We give you 14 days' notice before any change to these terms, the rate card or an automated system takes effect."
+        ],
+        [
+          "Removal",
+          "Before removing you we give written reasons, hold an enquiry where you can respond, and give 7 days' notice. The only exception is when a child's safety requires immediate action."
+        ],
+        [
+          "Disputes",
+          "Raise a dispute from your app at any time. It goes to a dispute committee and to your named point of contact."
+        ],
+        [
+          "Your data",
+          "We keep the data needed to pay you, meet the law (including any gig-worker registration and welfare-fee reporting) and keep children safe."
+        ]
+      ]
+    },
+    "te": {
+      "title": "కలామైట్ నిబంధనలు (సరళ రూపం)",
+      "sections": [
+        [
+          "మీరు ఎవరు",
+          "మీరు రోబోకలం ద్వారా బోధించే స్వతంత్ర ప్లాట్‌ఫామ్ కార్మికులు. ఇది సౌకర్యవంతమైన పార్ట్-టైమ్ పని, ఉద్యోగం కాదు. కనీస గిగ్‌లు లేదా ఆదాయం హామీ లేదు."
+        ],
+        [
+          "మీకు చెల్లింపు ఎలా",
+          "ప్రచురించిన రేట్ కార్డ్ ప్రకారం ప్రతి సెషన్‌కు స్థిర మొత్తం. అంగీకరించే ముందు చెల్లింపు, సమయం, విషయం చూపిస్తాము. చెల్లింపు = అందించిన సెషన్లు × స్థిర రేటు − క్రింది తగ్గింపులు."
+        ],
+        [
+          "తగ్గింపులు",
+          "చట్టం కోరేవి (TDS వంటివి) లేదా రేట్ కార్డ్‌లో ఉన్నవి మాత్రమే. ప్రతి ఒక్కటి గిగ్ అంగీకరించే ముందు మరియు ప్రతి స్టేట్‌మెంట్‌లో చూపిస్తాము."
+        ],
+        [
+          "ప్రోత్సాహకాలు",
+          "అమ్మకాలకు ప్రోత్సాహకాలు లేవు. మీ చెల్లింపు తల్లిదండ్రులు ఏదైనా కొనడంపై ఆధారపడదు."
+        ],
+        [
+          "చెల్లించే శిక్షణ",
+          "కలాం అకాడమీ, డెమో, షాడో మరియు కో-టీచింగ్ సెషన్లకు చెల్లిస్తాము. ఉచిత ట్రయల్ క్లాస్ ఎప్పుడూ అడగము."
+        ],
+        [
+          "చెల్లింపులు",
+          "వారానికొకసారి, మీ బ్యాంక్ ఖాతాకు, సెషన్ వారీ వివరాలతో."
+        ],
+        [
+          "వద్దు అనడం",
+          "ఏ గిగ్‌నైనా తిరస్కరించవచ్చు. దానికి శిక్ష లేదు, మీ టైర్‌పై ప్రభావం లేదు."
+        ],
+        [
+          "చదువు ముందు",
+          "టర్మ్ సమయంలో వారపు గంటలకు పరిమితి ఉంది. ఎగ్జామ్ మోడ్ టైర్‌పై ప్రభావం లేకుండా పనిని ఆపుతుంది."
+        ],
+        [
+          "ఆటోమేటెడ్ వ్యవస్థలు",
+          "గిగ్ బోర్డ్ ప్రచురించిన సూత్రం ప్రకారం క్రమం చేస్తుంది. ఏ శిక్షనైనా యంత్రం కాదు, వ్యక్తి నిర్ణయిస్తారు."
+        ],
+        [
+          "మార్పులు",
+          "నిబంధనలు, రేట్ కార్డ్ లేదా ఆటోమేటెడ్ వ్యవస్థల్లో మార్పుకు 14 రోజుల ముందస్తు నోటీసు ఇస్తాము."
+        ],
+        [
+          "తొలగింపు",
+          "తొలగించే ముందు రాతపూర్వక కారణాలు, విచారణ, 7 రోజుల నోటీసు ఇస్తాము. పిల్లల భద్రతకు తక్షణ చర్య అవసరమైనప్పుడు మాత్రమే మినహాయింపు."
+        ],
+        [
+          "వివాదాలు",
+          "యాప్ నుండి ఎప్పుడైనా వివాదం లేవనెత్తవచ్చు. అది వివాద కమిటీకి మరియు మీ సంప్రదింపు వ్యక్తికి వెళ్తుంది."
+        ],
+        [
+          "మీ డేటా",
+          "చెల్లింపు, చట్టపరమైన నివేదికలు మరియు పిల్లల భద్రతకు అవసరమైన డేటా మాత్రమే ఉంచుతాము."
+        ]
+      ]
+    },
+    "hi": {
+      "title": "कलामाइट शर्तें (सरल रूप)",
+      "sections": [
+        [
+          "आप कौन हैं",
+          "आप रोबोकलम के माध्यम से पढ़ाने वाले स्वतंत्र प्लेटफ़ॉर्म कर्मी हैं। यह लचीला, अंशकालिक काम है, नौकरी नहीं। न्यूनतम गिग या आय की कोई गारंटी नहीं है।"
+        ],
+        [
+          "भुगतान कैसे",
+          "प्रकाशित रेट कार्ड के अनुसार प्रति सत्र तय राशि। स्वीकार करने से पहले भुगतान, अवधि और विषय दिखाया जाता है। भुगतान = दिए गए सत्र × तय दर − नीचे दी गई कटौतियाँ।"
+        ],
+        [
+          "कटौतियाँ",
+          "केवल क़ानूनन ज़रूरी (जैसे लागू होने पर TDS) या रेट कार्ड में दी गई। हर कटौती गिग स्वीकार करने से पहले और हर स्टेटमेंट में दिखाई जाती है।"
+        ],
+        [
+          "प्रोत्साहन",
+          "बिक्री के लिए कोई प्रोत्साहन नहीं। आपका भुगतान कभी इस पर निर्भर नहीं कि माता-पिता कुछ ख़रीदें।"
+        ],
+        [
+          "भुगतान वाला प्रशिक्षण",
+          "कलाम अकादमी, डेमो, शैडो और को-टीचिंग सत्रों का भुगतान होता है। मुफ़्त ट्रायल क्लास कभी नहीं माँगी जाएगी।"
+        ],
+        [
+          "भुगतान",
+          "साप्ताहिक, आपके बैंक खाते में, हर सत्र के विवरण के साथ।"
+        ],
+        [
+          "मना करना",
+          "आप कोई भी गिग मना कर सकते हैं। इसका कोई दंड नहीं और आपके टियर पर कोई असर नहीं।"
+        ],
+        [
+          "पढ़ाई पहले",
+          "सत्र के दौरान साप्ताहिक घंटों की सीमा है। एग्ज़ाम मोड टियर पर असर डाले बिना काम रोक देता है।"
+        ],
+        [
+          "स्वचालित प्रणालियाँ",
+          "गिग बोर्ड प्रकाशित सूत्र से क्रम तय करता है। कोई भी दंड मशीन नहीं, व्यक्ति तय करता है।"
+        ],
+        [
+          "बदलाव",
+          "शर्तों, रेट कार्ड या स्वचालित प्रणाली में बदलाव से 14 दिन पहले सूचना दी जाएगी।"
+        ],
+        [
+          "हटाया जाना",
+          "हटाने से पहले लिखित कारण, जाँच और 7 दिन का नोटिस दिया जाएगा। केवल बच्चे की सुरक्षा के लिए तुरंत कार्रवाई ज़रूरी होने पर अपवाद।"
+        ],
+        [
+          "विवाद",
+          "ऐप से कभी भी विवाद उठाएँ। यह विवाद समिति और आपके संपर्क व्यक्ति तक जाता है।"
+        ],
+        [
+          "आपका डेटा",
+          "केवल भुगतान, क़ानूनी रिपोर्टिंग और बच्चों की सुरक्षा के लिए ज़रूरी डेटा रखा जाता है।"
+        ]
+      ]
+    }
+  },
+  "code_of_conduct": {
+    "en": {
+      "title": "Code of conduct for teaching children",
+      "sections": [
+        [
+          "Platform only",
+          "All contact with learners and parents stays on Robokalam. Never share or ask for phone numbers, social media, email or private chats."
+        ],
+        [
+          "Never alone off the platform",
+          "No home visits. In person, only at a partner school or centre with a responsible adult present. Never meet or contact a learner outside Robokalam."
+        ],
+        [
+          "One-to-one classes",
+          "One-to-one classes with under-18s happen only online on Robokalam, are recorded, and only when the parent has given specific consent. The parent gets a notice before and your written summary after every session, and may join at any time. If anything feels wrong, end the session and report it at once."
+        ],
+        [
+          "Recorded",
+          "Online classes are recorded on the platform. Never move a class to another app."
+        ],
+        [
+          "Minimum data",
+          "You see a learner's first name, age band and progress only. Never photograph, record or post learners."
+        ],
+        [
+          "Report",
+          "If you see or suspect harm to a child, use the help button and report to the Safeguarding Lead at once. The POCSO Act requires reporting suspected sexual offences against children."
+        ],
+        [
+          "Respect",
+          "No shouting, shaming, threats or favouritism. Praise effort and builds, not speed."
+        ],
+        [
+          "Safe builds",
+          "Follow kit safety rules. No live propellants without a qualified adult and permission. In Financial Literacy, teach money basics only, never stock tips, trading or crypto."
+        ]
+      ]
+    },
+    "te": {
+      "title": "పిల్లలకు బోధించేటప్పుడు ప్రవర్తనా నియమావళి",
+      "sections": [
+        [
+          "ప్లాట్‌ఫామ్‌లోనే",
+          "విద్యార్థులు, తల్లిదండ్రులతో సంప్రదింపులన్నీ రోబోకలంలోనే. ఫోన్ నంబర్లు, సోషల్ మీడియా, ఈమెయిల్ లేదా ప్రైవేట్ చాట్‌లు ఎప్పుడూ పంచుకోవద్దు, అడగవద్దు."
+        ],
+        [
+          "ప్లాట్‌ఫామ్ బయట ఎప్పుడూ ఒంటరిగా కాదు",
+          "ఇంటి సందర్శనలు లేవు. ప్రత్యక్షంగా అయితే, బాధ్యత గల పెద్దవారు ఉన్న భాగస్వామ్య పాఠశాల లేదా కేంద్రంలో మాత్రమే. రోబోకలాం బయట అభ్యాసకుడిని ఎప్పుడూ కలవవద్దు లేదా సంప్రదించవద్దు."
+        ],
+        [
+          "ఒకరికి ఒకరు తరగతులు",
+          "18 ఏళ్ల లోపు వారితో ఒకరికి ఒకరు తరగతులు రోబోకలాంలో ఆన్‌లైన్‌లో మాత్రమే జరుగుతాయి, రికార్డ్ చేయబడతాయి, తల్లిదండ్రులు ప్రత్యేకంగా సమ్మతి ఇచ్చినప్పుడు మాత్రమే. ప్రతి సెషన్‌కు ముందు తల్లిదండ్రులకు సమాచారం, తర్వాత మీ రాతపూర్వక సారాంశం వెళ్తాయి; వారు ఎప్పుడైనా చేరవచ్చు. ఏదైనా సరిగా లేదనిపిస్తే సెషన్ ముగించి వెంటనే నివేదించండి."
+        ],
+        [
+          "రికార్డింగ్",
+          "ఆన్‌లైన్ తరగతులు ప్లాట్‌ఫామ్‌లో రికార్డ్ అవుతాయి. తరగతిని వేరే యాప్‌కు మార్చవద్దు."
+        ],
+        [
+          "కనీస డేటా",
+          "విద్యార్థి మొదటి పేరు, వయస్సు వర్గం, పురోగతి మాత్రమే చూస్తారు. విద్యార్థులను ఫోటో తీయవద్దు, రికార్డ్ చేయవద్దు, పోస్ట్ చేయవద్దు."
+        ],
+        [
+          "నివేదించండి",
+          "పిల్లలకు హాని జరుగుతున్నట్లు చూసినా అనుమానించినా వెంటనే సేఫ్‌గార్డింగ్ లీడ్‌కు తెలియజేయండి. POCSO చట్టం ప్రకారం నివేదించడం తప్పనిసరి."
+        ],
+        [
+          "గౌరవం",
+          "అరవడం, అవమానించడం, బెదిరించడం, పక్షపాతం వద్దు. వేగాన్ని కాదు, ప్రయత్నాన్ని మెచ్చుకోండి."
+        ],
+        [
+          "సురక్షిత నిర్మాణాలు",
+          "కిట్ భద్రతా నియమాలు పాటించండి. ఫైనాన్షియల్ లిటరసీలో డబ్బు ప్రాథమికాలు మాత్రమే; స్టాక్ చిట్కాలు, ట్రేడింగ్, క్రిప్టో వద్దు."
+        ]
+      ]
+    },
+    "hi": {
+      "title": "बच्चों को पढ़ाने की आचार संहिता",
+      "sections": [
+        [
+          "केवल प्लेटफ़ॉर्म पर",
+          "विद्यार्थियों और माता-पिता से हर संपर्क रोबोकलम पर ही। कभी फ़ोन नंबर, सोशल मीडिया, ईमेल या निजी चैट साझा न करें, न माँगें।"
+        ],
+        [
+          "प्लेटफ़ॉर्म के बाहर कभी अकेले नहीं",
+          "घर पर कोई मुलाक़ात नहीं। आमने-सामने केवल किसी साझेदार स्कूल या केंद्र में, जहाँ कोई ज़िम्मेदार वयस्क मौजूद हो। रोबोकलाम के बाहर किसी शिक्षार्थी से कभी न मिलें, न संपर्क करें।"
+        ],
+        [
+          "वन-टू-वन कक्षाएँ",
+          "18 वर्ष से कम आयु वालों के साथ वन-टू-वन कक्षाएँ केवल रोबोकलाम पर ऑनलाइन होती हैं, रिकॉर्ड की जाती हैं, और केवल तब जब माता-पिता ने विशेष सहमति दी हो। हर सत्र से पहले माता-पिता को सूचना और बाद में आपका लिखित सारांश जाता है; वे कभी भी जुड़ सकते हैं। कुछ भी ठीक न लगे तो सत्र समाप्त करें और तुरंत रिपोर्ट करें।"
+        ],
+        [
+          "रिकॉर्डिंग",
+          "ऑनलाइन कक्षाएँ प्लेटफ़ॉर्म पर रिकॉर्ड होती हैं। कक्षा किसी दूसरे ऐप पर न ले जाएँ।"
+        ],
+        [
+          "न्यूनतम डेटा",
+          "आप केवल विद्यार्थी का पहला नाम, आयु वर्ग और प्रगति देखते हैं। विद्यार्थियों की फ़ोटो, रिकॉर्डिंग या पोस्ट कभी न करें।"
+        ],
+        [
+          "रिपोर्ट करें",
+          "बच्चे को नुकसान दिखे या शक हो तो तुरंत सेफ़गार्डिंग लीड को बताएँ। POCSO क़ानून के तहत रिपोर्ट करना अनिवार्य है।"
+        ],
+        [
+          "सम्मान",
+          "चिल्लाना, शर्मिंदा करना, धमकाना या पक्षपात नहीं। गति नहीं, प्रयास की सराहना करें।"
+        ],
+        [
+          "सुरक्षित निर्माण",
+          "किट सुरक्षा नियम मानें। फ़ाइनेंशियल लिटरेसी में केवल पैसे की मूल बातें; स्टॉक टिप्स, ट्रेडिंग या क्रिप्टो नहीं।"
+        ]
+      ]
+    }
+  }
+}

@@ -5,8 +5,9 @@ import { earnings } from "@/lib/fellows/earnings";
 import { asAccount } from "@/lib/auth/session";
 import { inr } from "@/lib/money";
 import { JsonForm } from "@/components/app/JsonForm";
+import { tierLabel } from "@/lib/fellows/gigs";
 
-export const metadata = { title: "Fellow home" };
+export const metadata = { title: "Kalamite home" };
 
 const STEP_HREF: Partial<Record<(typeof STEPS)[number], string>> = { subject_test: "/app/fellow/test", demo: "/app/fellow/demo", identity: "/app/fellow/checks", background: "/app/fellow/checks", references: "/app/fellow/checks", academy: "/app/fellow/academy", terms: "/app/fellow/terms", shadow: "/app/fellow/gigs", co_teach: "/app/fellow/gigs" };
 const BADGE: Record<string, string> = { passed: "bg-leafmist text-navy", submitted: "bg-panel text-heading", failed: "bg-[#fde8e7] text-[#8a1c13]", pending: "bg-surface text-muted border border-line" };
@@ -25,7 +26,7 @@ export default async function FellowHome() {
       <div className="wrap grid gap-8 [&>*]:min-w-0">
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="eyebrow">Kalam Fellow · {fellow.tier} · {fellow.status}</p>
+            <p className="eyebrow">{tierLabel(fellow.tier)} · {fellow.status}</p>
             <h1 className="display-lg mt-2">Hey {fellow.display_name.split(" ")[0]}.</h1>
           </div>
           {fellow.status === "live" && <Link href="/app/fellow/gigs" className="btn btn-primary">Open gig board</Link>}

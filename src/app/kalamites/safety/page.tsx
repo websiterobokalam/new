@@ -2,21 +2,21 @@ import type { Metadata } from "next";
 import { fellowRules } from "@/content/site";
 import { Claim } from "@/components/Claim";
 
-export const metadata: Metadata = { title: "Rules for teaching children", description: "The child-safety rules every Kalam Fellow follows." };
+export const metadata: Metadata = { title: "Rules for teaching children", description: "The child-safety rules every Kalamite follows." };
 
 const more = [
-  "Fellows see only what they need: a learner's first name, age band and progress.",
+  "Kalamites see only what they need: a learner's first name, age band and progress.",
   "Messages are checked: phone numbers, social handles and contact details are blocked and flagged.",
   "Every learner screen has a one-tap report button that goes to a named Safeguarding Lead.",
   "Kalam Academy includes a mandatory child-safety and POCSO course before any contact with a child.",
-  "Before removing a Fellow we give written reasons, an enquiry and 7 days' notice, except where a child's safety needs immediate action.",
+  "Before removing a Kalamite we give written reasons, an enquiry and 7 days' notice, except where a child's safety needs immediate action.",
 ];
 
 export default function SafetyPage() {
   return (
     <section className="py-12 sm:py-20">
       <div className="wrap max-w-3xl">
-        <p className="eyebrow">Kalam Fellows · child safety</p>
+        <p className="eyebrow">Kalamites · child safety</p>
         <h1 className="display-lg mt-3">Rules for teaching children.</h1>
         <p className="lede mt-3">These are not guidelines. They are conditions of teaching on Robokalam.</p>
         <ol className="mt-10 grid gap-3">

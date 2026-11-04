@@ -126,7 +126,7 @@ export function SchoolDemoForm({ plan, compact = false }: { plan?: Record<string
   );
 }
 
-/* ---------------- Educator: Fellow waitlist / application ---------------- */
+/* ---------------- Educator: Kalamite waitlist / application ---------------- */
 export function FellowApplyForm() {
   const s = useLeadSubmit();
   const [worlds, setWorlds] = useState<string[]>([]);
@@ -137,7 +137,7 @@ export function FellowApplyForm() {
 
   if (s.status === "done")
     return (
-      <Done title="You're on the Fellows waitlist" refId={s.ref}>
+      <Done title="You're on the Kalamites waitlist" refId={s.ref}>
         We open the pilot in one city first. When your batch opens, you will get a link to verify your phone, take the subject test and record a short demo. No fees, ever. Training hours are paid.
       </Done>
     );
@@ -171,10 +171,10 @@ export function FellowApplyForm() {
       <Field label="Hours a week you could teach" name="hours" type="number" inputMode="numeric" min={1} max={40} defaultValue={6} error={s.fields.hoursPerWeek} hint="During term we cap your hours to protect your studies." />
       <div className="grid gap-3 rounded-2xl bg-panel/60 p-4">
         <Check name="ageConfirmed" checked={age} onChange={setAge} error={s.fields.ageConfirmed}>I am 18 or older.</Check>
-        <Check name="contactOptIn" checked={optIn} onChange={setOptIn} error={s.fields.contactOptIn}>You may contact me about the Kalam Fellows pilot.</Check>
+        <Check name="contactOptIn" checked={optIn} onChange={setOptIn} error={s.fields.contactOptIn}>You may contact me about the Kalamites pilot.</Check>
       </div>
-      <p className="text-sm text-muted">Before you teach any child you will complete identity verification, a background check, references and Kalam Academy, including a child-safety and POCSO course. <Link className="text-link underline" href="/fellows/safety">Read the rules</Link>.</p>
-      <button className="btn btn-primary justify-self-start" disabled={s.status === "sending"}>{s.status === "sending" ? "Sending…" : "Join the Fellows waitlist"}</button>
+      <p className="text-sm text-muted">Before you teach any child you will complete identity verification, a background check, references and Kalam Academy, including a child-safety and POCSO course. <Link className="text-link underline" href="/kalamites/safety">Read the rules</Link>.</p>
+      <button className="btn btn-primary justify-self-start" disabled={s.status === "sending"}>{s.status === "sending" ? "Sending…" : "Join the Kalamites waitlist"}</button>
     </form>
   );
 }

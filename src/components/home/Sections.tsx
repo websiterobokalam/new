@@ -131,7 +131,7 @@ export function LabAtNight() {
   return (
     <section id="lab-at-night" aria-label="Lab at Night" className="relative overflow-hidden bg-night py-24 text-[#e3eff5] sm:py-32" data-anim-scope>
       <div data-power className="wrap">
-        <p className="eyebrow !text-[#7FD0F2]" data-stagger>Turnkey 21C STEM &amp; AI Lab</p>
+        <p className="eyebrow !text-[#7FD0F2]" data-stagger>Our flagship · the 21C STEM &amp; AI Lab</p>
         <h2 className="display-lg mt-3 max-w-3xl !text-white" data-stagger>
           Watch a school lab light up.{" "}
           <Claim id="lab.rollout" fallback={null} className="text-leaf" />
@@ -169,17 +169,17 @@ export function LabAtNight() {
   );
 }
 
-/* ---------- 7. Kalam Fellows band ---------- */
+/* ---------- 7. Kalamites band ---------- */
 export function FellowsBand() {
   return (
-    <Section id="fellows" label="Kalam Fellows" className="overflow-hidden">
+    <Section id="fellows" label="Kalamites" className="overflow-hidden">
       <div className="wrap">
         <div className="relative border-t-2 border-heading pt-10">
-          <p className="eyebrow" data-stagger>Kalam Fellows · for college students, 18+</p>
+          <p className="eyebrow" data-stagger>Kalamites · Kalam + dynamite · students 18+, from anywhere</p>
           <h2 className="display-lg mt-3 max-w-4xl" data-stagger>
             Teach what you love. Earn while you study.
           </h2>
-          <p className="lede mt-5 max-w-2xl" data-stagger>Pick gigs that fit your timetable. See the pay before you accept. Say no without penalty. Pause for exams. Build a teaching record you can show.</p>
+          <p className="lede mt-5 max-w-2xl" data-stagger>Everyone who builds Robokalam is a Kalamite. Join as a Junior Kalamite from wherever you are: pick gigs that fit your timetable, see the pay before you accept, say no without penalty, pause for exams, and build a record you can show.</p>
           <ul className="mt-8 flex gap-3 overflow-x-auto pb-2 [scrollbar-width:thin] snap-x" aria-label="Gig types" tabIndex={0}>
             {gigs.map((g) => (
               <li key={g.name} data-stagger className="min-w-[220px] snap-start rounded-2xl border border-line bg-panel/60 p-4">
@@ -190,8 +190,8 @@ export function FellowsBand() {
             ))}
           </ul>
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            <DoorLink href="/fellows" className="btn btn-primary !min-h-14 !px-8 text-lg" data-magnetic>Become a Fellow <span aria-hidden>→</span></DoorLink>
-            <Link href="/fellows/safety" className="text-sm font-semibold text-link underline-offset-4 hover:underline">Our rules for teaching children</Link>
+            <DoorLink href="/kalamites" className="btn btn-primary !min-h-14 !px-8 text-lg" data-magnetic>Become a Kalamite <span aria-hidden>→</span></DoorLink>
+            <Link href="/kalamites/safety" className="text-sm font-semibold text-link underline-offset-4 hover:underline">Our rules for teaching children</Link>
           </div>
         </div>
       </div>

@@ -8,7 +8,7 @@ export type FieldDef = {
   options?: [string, string][]; hint?: string; defaultValue?: string | number | boolean; optional?: boolean;
 };
 
-/** Small JSON form used across the Fellow app and ops screens. */
+/** Small JSON form used across the Kalamite app and ops screens. */
 export function JsonForm({ url, fields, submit, fixed = {}, redirect, done, tone = "primary", compact = false }: {
   url: string; fields: FieldDef[]; submit: string; fixed?: Record<string, unknown>; redirect?: string; done?: string; tone?: "primary" | "danger"; compact?: boolean;
 }) {

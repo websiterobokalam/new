@@ -6,7 +6,7 @@ import { sessionDelivered } from "@/lib/email/notify";
 
 /**
  * Record what happened in a session: attendance, plain feedback, next step,
- * and any project the learner built. Trainers and Fellows get their own
+ * and any project the learner built. Trainers and Kalamites get their own
  * screens in Phases 3 and 4; until then ops records it.
  */
 export const POST = handler(async (req, ctx) => {

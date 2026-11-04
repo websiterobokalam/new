@@ -55,7 +55,7 @@ export const EducatorLead = z.object({
   college: z.string().trim().min(2).max(120),
   course: z.string().trim().min(2).max(80),
   year: z.enum(["1", "2", "3", "4", "5", "PG", "Graduated"]),
-  ageConfirmed: z.literal(true, { message: "Kalam Fellows must be 18 or older" }),
+  ageConfirmed: z.literal(true, { message: "Kalamites must be 18 or older" }),
   worlds: z.array(worldsEnum).min(1, "Pick at least one world"),
   hoursPerWeek: z.coerce.number().int().min(1).max(40),
   city: z.string().trim().min(2).max(60),

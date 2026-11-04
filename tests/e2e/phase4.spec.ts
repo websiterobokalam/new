@@ -22,6 +22,7 @@ test("admin: lab health, coverage and contract window on the school home", async
 });
 
 test("admin adds a trainer and a class; the trainer signs in and sees their week", async ({ page, browser }) => {
+  test.setTimeout(60_000); // several browsers and sign-ins in one journey
   const s = await makeSchool();
   await loginSchool(page, s.adminPhone);
   const phone = randomPhone();
@@ -107,6 +108,7 @@ test("trainers only see their own school's classes", async ({ page }) => {
 });
 
 test("hardware ticket: the clock starts on raise, never resets, and the school confirms the fix", async ({ page, browser }) => {
+  test.setTimeout(60_000); // several browsers and sign-ins in one journey
   const s = await makeSchool();
   await loginSchool(page, s.trainerPhone);
   await page.goto("/app/school/tickets");
@@ -169,7 +171,8 @@ test("hardware ticket: an overdue ticket says so in words", async ({ page }) => 
   await expect(page.getByText("Needs attention")).toBeVisible();
 });
 
-test("Fellow booking: school asks, ops schedules a Campus Session, a vetted Fellow accepts, a trainer observes", async ({ page, browser }) => {
+test("Kalamite booking: school asks, ops schedules a Campus Session, a vetted Kalamite accepts, a trainer observes", async ({ page, browser }) => {
+  test.setTimeout(60_000); // several browsers and sign-ins in one journey
   const s = await makeSchool();
   await loginSchool(page, s.adminPhone);
   await page.goto("/app/school/fellows");
@@ -217,7 +220,7 @@ test("Fellow booking: school asks, ops schedules a Campus Session, a vetted Fell
   const [asg] = await ownerQuery("SELECT id FROM gig_assignments WHERE gig_id = $1 AND fellow_id = $2", [gig.id, fid]);
   expect(await ownerQuery("SELECT kind FROM quality_reviews WHERE assignment_id = $1", [asg.id])).toEqual([{ kind: "observation" }]);
 
-  // A trainer at another school can't score this Fellow.
+  // A trainer at another school can't score this Kalamite.
   const other = await makeSchool();
   const ot = await (await browser.newContext()).newPage();
   await loginSchool(ot, other.trainerPhone);

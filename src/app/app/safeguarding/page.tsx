@@ -17,9 +17,9 @@ export default async function Safeguarding() {
       <div className="wrap grid gap-6">
         <h1 className="display-lg">Safeguarding queue</h1>
         <p className="text-muted">On a credible safety concern: suspend access at once and follow the POCSO reporting duty.</p>
-        <details className="card p-5"><summary className="cursor-pointer font-semibold text-[#b42318]">Suspend a Fellow now (child safety)</summary>
+        <details className="card p-5"><summary className="cursor-pointer font-semibold text-[#b42318]">Suspend a Kalamite now (child safety)</summary>
           <div className="mt-3 max-w-lg"><JsonForm url="/api/ops/cases" fixed={{ childSafety: true }} tone="danger" submit="Suspend immediately and open case" fields={[
-            { name: "fellowId", label: "Fellow", type: "select", options: fellows.map((f): [string, string] => [f.account_id, `${f.full_name} · ${f.status}`]) },
+            { name: "fellowId", label: "Kalamite", type: "select", options: fellows.map((f): [string, string] => [f.account_id, `${f.full_name} · ${f.status}`]) },
             { name: "reasons", label: "Written reasons", type: "textarea" },
           ]} /></div>
         </details>

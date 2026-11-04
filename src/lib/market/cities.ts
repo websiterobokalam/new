@@ -3,7 +3,7 @@ import { HttpError } from "../api";
 import type { Account } from "../auth/session";
 import { requireMarketOpen } from "./gate";
 
-/** More cities and colleges (Phase 5). A city takes Fellows only once a person opens it. */
+/** More cities and colleges (Phase 5). A city takes Kalamites only once a person opens it. */
 
 export const citySlug = (name: string) => name.trim().toLowerCase().replace(/\s+/g, " ");
 
@@ -35,7 +35,7 @@ export async function openCity(ops: Account, name: string, maxLive: number, note
   await requireMarketOpen();
   return system(async (c) => {
     const city = await noteCity(c, name);
-    if (city!.status !== "waitlist") throw new HttpError(409, `${city!.name} already takes Fellows`);
+    if (city!.status !== "waitlist") throw new HttpError(409, `${city!.name} already takes Kalamites`);
     await c.query("UPDATE cities SET status = 'open', max_live = $2, opened_by = $3, opened_at = UTC_TIMESTAMP(3) WHERE slug = $1", [city!.slug, maxLive, ops.id]);
     const moved = await c.query("UPDATE fellows SET status = 'vetting' WHERE LOWER(TRIM(city)) = $1 AND status = 'waitlisted'", [city!.slug]);
     await audit(c, ops.id, "city_opened", "city", city!.slug, { maxLive, note, movedFromWaitlist: moved.affectedRows });

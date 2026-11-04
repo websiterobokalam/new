@@ -68,7 +68,7 @@ export const academy: Module[] = [
   },
   {
     id: "platform-rules",
-    title: "How Robokalam works for Fellows",
+    title: "How Robokalam works for Kalamites",
     minutes: 30,
     mandatory: true,
     passAll: false,

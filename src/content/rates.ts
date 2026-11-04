@@ -1,5 +1,5 @@
 /**
- * Fellow rate card. ALL VALUES PENDING ({{rate card}} in the brief).
+ * Kalamite rate card. ALL VALUES PENDING ({{rate card}} in the brief).
  * The earnings calculator shows the formula and the inputs, and only shows
  * rupee estimates once `approved` is true and every rate is filled in.
  */
