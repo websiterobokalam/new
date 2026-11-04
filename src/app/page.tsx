@@ -9,6 +9,9 @@ import { KalamLineScope, LineNode } from "@/components/motion/KalamLine";
 import { Section, SectionHead } from "@/components/Section";
 import { JsonLd, faqLd } from "@/lib/jsonld";
 import { faqs } from "@/content/site";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 /**
  * Home: Robokalam first as an EdTech technology company for premium schools

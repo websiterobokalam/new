@@ -8,7 +8,7 @@ const cols = [
   { title: "Learn", links: [["/learn", "Find a course"], ["/programs", "Ashaer tracks"], ["/bootcamps", "Bootcamps"], ["/internships", "Internships"], ["/kits", "ASHAER Box"], [EXTERNAL.learn.href, "Learning portal"], [EXTERNAL.shop.href, "Shop"]] },
   { title: "Schools", links: [["/21c-lab", "21C STEM & AI Lab"], ["/21c-lab/planner", "Lab Planner"], ["/impact", "Impact"], ["/partners", "Partners"], [EXTERNAL.school.href, "School portal"], [EXTERNAL.ashaerLabs.href, "ASHAER Labs"]] },
   { title: "Kalamites", links: [["/kalamites", "Kalamites"], ["/kalamites/apply", "Apply"], ["/kalamites/earnings", "How pay works"], ["/kalamites/safety", "Rules for teaching children"], ["/campus-ambassadors", "Campus Ambassadors"]] },
-  { title: "Robokalam", links: [["/about", "About"], ["/stories", "Stories"], ["/events", "Events"], ["/careers", "We're hiring"], ["/studio", "Studio"], ["/validate", "Validate a certificate"], ["/contact", "Contact"], ["/faq", "FAQ"]] },
+  { title: "Robokalam", links: [["/about", "About"], ["/blog", "Blog"], ["/events", "Events"], ["/careers", "We're hiring"], ["/studio", "Studio"], ["/validate", "Validate a certificate"], ["/contact", "Contact"], ["/faq", "FAQ"]] },
   { title: "Trust", links: [["/child-safety", "Child safety"], ["/one-to-one", "One-to-one classes"], ["/privacy", "Privacy"], ["/terms", "Terms"], ["/refunds", "Refunds"], ["/kalamite-terms", "Kalamite terms"]] },
 ];
 
@@ -47,6 +47,9 @@ export function Footer() {
             <ul className="mt-3 grid gap-1.5 text-sm">
               {CONTACT.offices.map((o) => <li key={o.city}><address className="not-italic">{o.line}</address></li>)}
             </ul>
+            <p className="mt-4 text-sm">
+              <Link href="/locations/hyderabad" className="hover:text-white">Robokalam Hyderabad</Link> · <Link href="/locations/warangal" className="hover:text-white">Robokalam Warangal</Link>
+            </p>
           </div>
           <div>
             <h2 className="font-mono text-xs uppercase tracking-[0.14em] !text-[#7FD0F2]">Get in touch</h2>

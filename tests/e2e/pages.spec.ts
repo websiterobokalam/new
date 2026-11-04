@@ -7,7 +7,7 @@ const PAGES: [string, RegExp][] = [
   ["/privacy", /Privacy notice/], ["/terms", /Terms and conditions/], ["/refunds", /Refund and cancellation/],
   ["/child-safety", /Child safety/], ["/careers", /future-ready schools/], ["/validate", /Validate a Robokalam certificate/],
   ["/kits", /ASHAER Box/], ["/programs", /first robot/], ["/bootcamps", /Learn today/], ["/internships", /real clients/],
-  ["/stories", /Robokalam Journal/], ["/events", /show what they built/], ["/partners", /Partner with Robokalam/],
+  ["/blog", /Build notes from Robokalam/], ["/blog/build-a-line-following-robot", /line-following robot/], ["/locations/hyderabad", /Robotics, coding and AI in Hyderabad/], ["/locations/warangal", /Robotics, coding and AI in Warangal/], ["/events", /show what they built/], ["/partners", /Partner with Robokalam/],
   ["/studio", /Software for education/], ["/impact", /measured honestly/], ["/programs/robo-ashaers", /Robo Ashaers/],
 ];
 
@@ -57,7 +57,7 @@ for (const theme of ["light", "dark"] as const) {
   test(`a11y ${theme} content pages`, async ({ page }) => {
     test.setTimeout(90_000);
     await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
-    for (const path of ["/about", "/contact", "/faq", "/privacy", "/kits", "/programs", "/programs/electro-ashaers", "/careers"]) {
+    for (const path of ["/about", "/contact", "/faq", "/privacy", "/kits", "/programs", "/programs/electro-ashaers", "/careers", "/blog", "/blog/build-a-line-following-robot", "/locations", "/locations/hyderabad", "/locations/warangal"]) {
       await page.goto(path);
       const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
       const issues = r.violations.map((v) => `${path} ${v.id}: ${v.nodes.slice(0, 3).map((n) => n.target.join(" ")).join(", ")}`);
@@ -65,3 +65,31 @@ for (const theme of ["light", "dark"] as const) {
     }
   });
 }
+
+test("blog: posts, RSS and article markup", async ({ request }) => {
+  const rss = await request.get("/blog/rss.xml");
+  expect(rss.headers()["content-type"]).toContain("rss");
+  expect(await rss.text()).toContain("/blog/robotics-classes-for-kids-in-hyderabad");
+  const html = await (await request.get("/blog/robotics-classes-for-kids-in-hyderabad")).text();
+  for (const s of ['"@type":"BlogPosting"', '"@type":"BreadcrumbList"', 'rel="canonical" href="https://robokalam.com/blog/robotics-classes-for-kids-in-hyderabad"', 'property="og:type" content="article"']) expect(html).toContain(s);
+  expect((await request.get("/stories", { maxRedirects: 0 })).headers().location).toMatch(/\/blog$/);
+});
+
+test("local SEO: Hyderabad and Warangal", async ({ request }) => {
+  const hyd = await (await request.get("/locations/hyderabad")).text();
+  for (const s of ['"LocalBusiness"', '"postalCode":"500081"', 'name="geo.placename" content="Hyderabad"', '"@type":"FAQPage"', "Gachibowli"]) expect(hyd).toContain(s);
+  const wgl = await (await request.get("/locations/warangal")).text();
+  for (const s of ['"EducationalOrganization"', 'content="Warangal"', "Hanamkonda", "Kazipet"]) expect(wgl).toContain(s);
+  // No Warangal office: its own markup must never invent an address.
+  const ld = [...wgl.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
+  const city = ld.find((x) => x.name === "Robokalam Warangal");
+  expect(city).toBeTruthy();
+  expect(city.address).toBeUndefined();
+  const map = await (await request.get("/sitemap.xml")).text();
+  for (const s of ["/locations/hyderabad", "/locations/warangal", "/blog/build-a-line-following-robot"]) expect(map).toContain(s);
+});
+
+test("footer has a separate Blog link", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("footer").getByRole("link", { name: "Blog", exact: true })).toHaveAttribute("href", "/blog");
+});

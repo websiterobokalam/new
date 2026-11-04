@@ -1,5 +1,5 @@
 import type { ContentPage } from "./types";
-import { CONTACT, EXTERNAL, SOCIAL } from "../company";
+import { CONTACT, EXTERNAL } from "../company";
 import { faqs } from "../site";
 
 /**
@@ -151,28 +151,6 @@ export const validate: ContentPage = {
       ],
       after: [`If the details don't match, or the ID isn't found, write to ${CONTACT.email} and we will check it for you.`],
     },
-  ],
-};
-
-export const stories: ContentPage = {
-  eyebrow: "Stories",
-  title: "The Robokalam Journal.",
-  lede: "Insights on robotics, AI and STEM education: project guides, competition tips and what's new in tech education, written for students, educators and makers.",
-  description: "The Robokalam Journal: articles and project guides on robotics, AI, electronics and STEM education.",
-  blocks: [
-    {
-      kind: "cards", heading: "What we write about", cols: 3,
-      items: [
-        { tag: "Robotics", title: "Robots in the classroom", body: "How programmable robots turn classrooms into innovation labs." },
-        { tag: "AI & ML", title: "AI for young engineers", body: "Neural networks, decision trees and computer vision, explained so a 12-year-old can experiment." },
-        { tag: "Electronics", title: "Your first board", body: "Arduino, Raspberry Pi and RK Brain, compared without the jargon." },
-        { tag: "Projects", title: "Step-by-step builds", body: "Parts list, wiring and code, from a line-following robot up." },
-        { tag: "Competitions", title: "Where to compete", body: "Robotics and coding competitions for school teams, and how to prepare." },
-        { tag: "STEM", title: "Why every school needs a lab", body: "Hands-on learning, and what it takes to run a robotics club well." },
-      ],
-    },
-    { kind: "note", text: "Learner project stories appear here only with the parent's written consent, and any numbers in them only once verified." },
-    { kind: "cta", title: "See what learners build", actions: [{ href: "/#stories", label: "Project stories", primary: true }, { href: SOCIAL[0].href, label: "Follow us on LinkedIn" }] },
   ],
 };
 

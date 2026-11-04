@@ -12,7 +12,8 @@ import { IsoLab } from "@/components/art/IsoLab";
 
 export const metadata: Metadata = {
   title: "Turnkey 21C STEM & AI Lab for schools",
-  description: "A lab that runs itself: room, kits, AADHYA platform, curriculum and teacher training, set up for your school. Book a Turnkey Demo.",
+  description: "Turnkey STEM, robotics and AI labs for schools in Hyderabad, Warangal and across India: room, kits, AADHYA platform, curriculum and teacher training. Book a Turnkey Demo.",
+  alternates: { canonical: "/21c-lab" },
 };
 
 const outcomes = [
