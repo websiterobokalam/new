@@ -57,6 +57,7 @@ for (const theme of ["light", "dark"] as const) {
   test(`a11y ${theme} content pages`, async ({ page }) => {
     test.setTimeout(90_000);
     await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+    if (theme === "dark") await page.addInitScript(() => { try { localStorage.setItem("rk-theme", "dark"); } catch {} });
     for (const path of ["/about", "/contact", "/faq", "/privacy", "/kits", "/programs", "/programs/electro-ashaers", "/careers", "/blog", "/blog/build-a-line-following-robot", "/locations", "/locations/hyderabad", "/locations/warangal"]) {
       await page.goto(path);
       const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
@@ -92,4 +93,20 @@ test("local SEO: Hyderabad and Warangal", async ({ request }) => {
 test("footer has a separate Blog link", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("footer").getByRole("link", { name: "Blog", exact: true })).toHaveAttribute("href", "/blog");
+});
+
+test("light theme by default, even when the device prefers dark; dark is opt-in from the footer", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator("header").getByRole("button", { name: /theme/i })).toHaveCount(0);
+  const sw = page.locator("footer").getByRole("switch", { name: "Dark theme" });
+  await expect(sw).toBeEnabled();
+  await sw.click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.locator("footer").getByRole("switch", { name: "Dark theme" }).click();
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
 });

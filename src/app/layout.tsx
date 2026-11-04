@@ -24,16 +24,13 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F2F6FF" },
-    { media: "(prefers-color-scheme: dark)", color: "#070B14" },
-  ],
+  themeColor: "#F2F6FF",
   width: "device-width",
   initialScale: 1,
 };
 
-/** Runs before paint: sets theme and marks JS so motion-hidden states apply. */
-const bootScript = `(function(){try{var d=document.documentElement;d.classList.remove('no-js');d.classList.add('js');var t=localStorage.getItem('rk-theme');if(t==='light'||t==='dark'){d.setAttribute('data-theme',t)}else if(matchMedia('(prefers-color-scheme: dark)').matches){d.setAttribute('data-theme','dark')}}catch(e){}})();`;
+/** Runs before paint: light theme unless the visitor chose dark in the footer; marks JS so motion-hidden states apply. */
+const bootScript = `(function(){try{var d=document.documentElement;d.classList.remove('no-js');d.classList.add('js');d.setAttribute('data-theme','light');if(localStorage.getItem('rk-theme')==='dark'){d.setAttribute('data-theme','dark')}}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

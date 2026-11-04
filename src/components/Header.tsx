@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Wordmark } from "./Logo";
-import { ThemeToggle } from "./ThemeToggle";
 import { RegionPicker } from "./RegionPicker";
 import { AccountLink } from "./AccountLink";
 import { SmartLink } from "./SmartLink";
@@ -42,7 +41,6 @@ export function Header() {
         </nav>
         <div className="flex items-center gap-1.5">
           <RegionPicker />
-          <ThemeToggle />
           <AccountLink />
           <details className="relative lg:hidden">
             <summary className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-line bg-surface" aria-label="Menu">

@@ -1,31 +1,30 @@
 "use client";
 import { useEffect, useState } from "react";
 
+/** Light is the default. This small switch in the footer lets a visitor opt in to dark, remembered on this device. */
 export function ThemeToggle() {
-  const [dark, setDark] = useState<boolean | null>(null);
-  useEffect(() => setDark(document.documentElement.getAttribute("data-theme") === "dark"), []);
+  const [dark, setDark] = useState(false);
+  const [ready, setReady] = useState(false);
+  useEffect(() => { setDark(document.documentElement.getAttribute("data-theme") === "dark"); setReady(true); }, []);
   function toggle() {
     const next = !dark;
     setDark(next);
-    const t = next ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", t);
-    try { localStorage.setItem("rk-theme", t); } catch {}
+    document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
+    try { if (next) localStorage.setItem("rk-theme", "dark"); else localStorage.removeItem("rk-theme"); } catch {}
   }
   return (
     <button
       type="button"
+      role="switch"
+      aria-checked={dark}
       onClick={toggle}
-      className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-heading"
-      aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
-      aria-pressed={dark ?? undefined}
+      disabled={!ready}
+      className="inline-flex min-h-10 items-center gap-2 rounded-full border border-white/15 px-3 text-xs text-[#c9dbe5] hover:border-[#7FD0F2] hover:text-white"
     >
-      <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
-        {dark ? (
-          <g stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></g>
-        ) : (
-          <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-        )}
-      </svg>
+      <span aria-hidden className={`relative h-4 w-7 rounded-full transition-colors ${dark ? "bg-[#00CBD6]" : "bg-white/20"}`}>
+        <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-[left] ${dark ? "left-3.5" : "left-0.5"}`} />
+      </span>
+      Dark theme
     </button>
   );
 }

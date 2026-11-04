@@ -3,6 +3,7 @@ import { Wordmark } from "./Logo";
 import { SITE } from "@/lib/site";
 import { CONTACT, EXTERNAL, SOCIAL } from "@/content/company";
 import { SmartLink } from "./SmartLink";
+import { ThemeToggle } from "./ThemeToggle";
 
 const cols = [
   { title: "Learn", links: [["/learn", "Find a course"], ["/programs", "Ashaer tracks"], ["/bootcamps", "Bootcamps"], ["/internships", "Internships"], ["/kits", "ASHAER Box"], [EXTERNAL.learn.href, "Learning portal"], [EXTERNAL.shop.href, "Shop"]] },
@@ -69,7 +70,7 @@ export function Footer() {
           </nav>
         </div>
         <div className="mt-10 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-[#8aa5b5] sm:flex-row sm:justify-between">
-          <p>© {new Date().getFullYear()} {SITE.legalName}</p>
+          <div className="flex flex-wrap items-center gap-4"><p>© {new Date().getFullYear()} {SITE.legalName}</p><ThemeToggle /></div>
           <p>Safeguarding and grievances: <a href={`mailto:${CONTACT.email}`} className="text-[#c9dbe5] hover:text-white">{CONTACT.email}</a> · <Link href="/child-safety#report" className="text-[#c9dbe5] hover:text-white">Report a concern</Link></p>
         </div>
       </div>

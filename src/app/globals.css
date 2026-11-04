@@ -91,25 +91,7 @@
   color-scheme: dark;
 }
 
-/* Before the theme script runs (or with JS off), honour the OS preference. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #070B14;
-    --surface: #0E1626;
-    --panel: #0F1E30;
-    --panel-2: #0B1A26;
-    --fg: #E6EDF5;
-    --muted: #A9B6C6;
-    --line: #1E2C3F;
-    --heading: #FFFFFF;
-    --btn: #00CBD6;
-    --btn-fg: #04202F;
-    --link: #00CBD6;
-    --glass: rgb(14 22 38 / 0.7);
-    --glass-line: rgb(255 255 255 / 0.12);
-    color-scheme: dark;
-  }
-}
+/* Light is the default for everyone. Dark applies only when a visitor turns it on (footer switch). */
 
 @keyframes float {
   0%, 100% { transform: translateY(0) }
