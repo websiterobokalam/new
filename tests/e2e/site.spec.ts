@@ -72,16 +72,18 @@ test("lab planner returns a plan", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Download as PDF" })).toBeVisible();
 });
 
-test("fellow application: phone first, then profile with an 18+ gate", async ({ page }) => {
+test("fellow application: sign in first (email, or mobile), then profile with an 18+ gate", async ({ page }) => {
   await page.goto("/kalamites/apply");
+  await expect(page.getByLabel("Your email")).toBeVisible();
+  await page.getByRole("button", { name: "Use mobile number instead" }).click();
   await expect(page.getByLabel("Your mobile number")).toBeVisible();
   await expect(page.getByText("No fees, ever.")).toBeVisible();
 });
 
 test("login: the school door explains that staff are added by their school", async ({ page }) => {
   await page.goto("/login/school");
-  await expect(page.getByText("Your school admin adds you first.")).toBeVisible();
-  await expect(page.getByLabel("Staff mobile number")).toBeVisible();
+  await expect(page.getByText(/Your school admin \(or Robokalam\) adds you first/)).toBeVisible();
+  await expect(page.getByLabel("Staff email")).toBeVisible();
 });
 
 test("legacy URL 301s to the new page", async ({ request }) => {

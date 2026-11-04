@@ -37,6 +37,11 @@ function provider(): OtpProvider {
 }
 
 export class OtpNotConfigured extends Error {}
+
+/** True when sign-in by SMS can send a code (MSG91, or the test/dev providers). */
+export function smsLoginAvailable() {
+  try { provider(); return true; } catch { return false; }
+}
 export class OtpRateLimited extends Error {}
 
 export async function sendOtp(phone: string) {

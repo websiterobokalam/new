@@ -8,7 +8,7 @@ export const GET = handler(async () => {
     const q = async (sql: string, p: unknown[] = []) => (await c.query(sql, p)).rows;
     return {
       exportedAt: new Date().toISOString(),
-      account: (await q("SELECT phone_e164, language, region, adult_declared_at, created_at FROM accounts WHERE id = $1", [a.id]))[0],
+      account: (await q("SELECT phone_e164, login_email, email, language, region, adult_declared_at, created_at FROM accounts WHERE id = $1", [a.id]))[0],
       learners: await q("SELECT id, first_name, age_band, interests, portfolio_public, created_at FROM learners WHERE guardian_account_id = $1 AND erased_at IS NULL", [a.id]),
       consentHistory: await q("SELECT learner_id, purpose, granted, notice_id, method, created_at FROM consent_events WHERE guardian_account_id = $1 ORDER BY id", [a.id]),
       bookings: await q("SELECT id, batch_id, learner_id, status, feedback, next_step, created_at FROM bookings WHERE guardian_account_id = $1", [a.id]),

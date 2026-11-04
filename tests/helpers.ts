@@ -23,6 +23,7 @@ export const randomPhone = () => "9" + String(Math.floor(Math.random() * 1e9)).p
 
 export async function login(page: Page, phone = randomPhone(), next = "/app") {
   await page.goto(`/login/learner?next=${encodeURIComponent(next)}`);
+  await page.getByRole("button", { name: "Use mobile number instead" }).click();
   await page.getByLabel("Parent's mobile number").fill(phone);
   await page.getByRole("button", { name: "Send OTP" }).click();
   await page.getByLabel("6-digit code").fill("123456");
@@ -31,6 +32,23 @@ export async function login(page: Page, phone = randomPhone(), next = "/app") {
   await expect(page).toHaveURL(new RegExp(next.replace(/\//g, "\\/") + "$"));
   return phone;
 }
+
+export const randomEmail = (tag = "user") => `${tag}.${randomUUID().slice(0, 8)}@example.test`;
+
+/** Sign in with an email code at any door (the default). Test servers accept 123456. */
+export async function loginByEmail(page: Page, email = randomEmail(), opts: { door?: "learner" | "school" | "educator"; next?: string; adult?: boolean; landing?: RegExp } = {}) {
+  const door = opts.door ?? "learner";
+  await page.goto(`/login/${door}${opts.next ? `?next=${encodeURIComponent(opts.next)}` : ""}`);
+  await page.getByLabel(door === "learner" ? "Parent's email" : door === "school" ? "Staff email" : "Your email").fill(email);
+  await page.getByRole("button", { name: "Email me a code" }).click();
+  await page.getByLabel("6-digit code").fill("123456");
+  if (door === "learner" && opts.adult !== false) await page.getByText("I am 18 or older, and I am the parent").click();
+  await page.getByRole("button", { name: "Verify and continue" }).click();
+  if (opts.landing) await expect(page).toHaveURL(opts.landing);
+  return email;
+}
+
+export const loginSchoolByEmail = (page: Page, email: string, landing = /\/app\/(school|trainer)$/) => loginByEmail(page, email, { door: "school", landing });
 
 /** Add a child through the real consent form. */
 export async function addLearner(page: Page, name: string, age = "9-11") {
@@ -47,6 +65,7 @@ export async function addLearner(page: Page, name: string, age = "9-11") {
 export async function applyAsFellow(page: Page, opts: { city?: string; name?: string; worlds?: string[]; ref?: string } = {}) {
   const phone = randomPhone();
   await page.goto(opts.ref ? `/kalamites/apply?ref=${opts.ref}` : "/kalamites/apply");
+  await page.getByRole("button", { name: "Use mobile number instead" }).click();
   await page.getByLabel("Your mobile number").fill(phone);
   await page.getByRole("button", { name: "Send code" }).click();
   await page.getByLabel("6-digit code").fill("123456");
@@ -87,6 +106,7 @@ export async function staffPage(browser: import("@playwright/test").Browser, rol
 /** Sign in at the school door (staff only). */
 export async function loginSchool(page: Page, phone: string, landing = /\/app\/(school|trainer)$/) {
   await page.goto("/login/school");
+  await page.getByRole("button", { name: "Use mobile number instead" }).click();
   await page.getByLabel("Staff mobile number").fill(phone);
   await page.getByRole("button", { name: "Send OTP" }).click();
   await page.getByLabel("6-digit code").fill("123456");

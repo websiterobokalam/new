@@ -22,7 +22,9 @@ export async function housekeeping(now = new Date()) {
       await c.query(`UPDATE bookings SET status = 'cancelled' WHERE status = 'pending_payment' AND id IN (${marks})`, stale);
       await c.query("INSERT INTO audit_log (action, entity, entity_id, meta) VALUES ('holds_expired','booking','batch',$1)", [{ bookings: stale.length, orders }]);
     }
-    const otps = (await c.query("DELETE FROM otp_challenges WHERE created_at < $1", [new Date(now.getTime() - 86_400_000)])).affectedRows;
+    const dayAgo = new Date(now.getTime() - 86_400_000);
+    const otps = (await c.query("DELETE FROM otp_challenges WHERE created_at < $1", [dayAgo])).affectedRows
+      + (await c.query("DELETE FROM email_otp_challenges WHERE created_at < $1", [dayAgo])).affectedRows;
     const old = new Date(now.getTime() - 30 * 86_400_000);
     const sessions = (await c.query("DELETE FROM sessions WHERE expires_at < $1 OR revoked_at < $1", [old])).affectedRows;
     return { expiredHolds: stale.length, failedOrders: orders, deletedOtps: otps, deletedSessions: sessions };

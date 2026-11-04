@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { login, addLearner, applyAsFellow, passSteps, ALL_STEPS, ownerQuery, newId, emailsTo, verifyEmail, accountId, staffPage, randomPhone } from "../helpers";
+import { login, addLearner, applyAsFellow, passSteps, ALL_STEPS, ownerQuery, newId, emailsTo, verifyEmail, accountId, staffPage, randomPhone, loginSchoolByEmail } from "../helpers";
 
 const sent = (rows: { status: string }[]) => rows.filter((r) => r.status === "sent").length;
 
@@ -163,17 +163,19 @@ test("no email goes to an unconfirmed address, except the confirmation link", as
   expect(templates).toEqual(["verify_email"]);
 });
 
-test("school staff added with an email get a confirmation link", async ({ browser }) => {
+test("a school admin added by email is told how to sign in, and signs in with an email code", async ({ browser, page }) => {
   const ops = await staffPage(browser, "ops");
   const email = `admin.${newId().slice(0, 6)}@example.test`;
+  const school = `Email School ${newId().slice(0, 5)}`;
   await ops.goto("/app/ops/schools");
-  await ops.getByLabel("School name").fill(`Email School ${newId().slice(0, 5)}`);
+  await ops.getByLabel("School name").fill(school);
   await ops.getByLabel("School admin's name").fill("Priya Admin");
-  await ops.getByLabel("School admin's mobile number").fill(randomPhone());
-  await ops.getByLabel("School admin's email (optional)").fill(email);
+  await ops.getByLabel("School admin's email").fill(email);
   await ops.getByRole("button", { name: "Add school" }).click();
   await expect(ops.getByText("School added. Their admin can sign in now.")).toBeVisible();
-  await expect.poll(async () => sent(await emailsTo({ to: email }, "verify_email"))).toBe(1);
+  await expect.poll(async () => sent(await emailsTo({ to: email }, "login_created"))).toBe(1);
+  await loginSchoolByEmail(page, email, /\/app\/school$/);
+  await expect(page.getByText(school)).toBeVisible();
 });
 
 test("parents see one-to-one explained plainly, with the full terms one tap away", async ({ page }) => {

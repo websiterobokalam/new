@@ -2,7 +2,7 @@ import { z } from "zod";
 import { phone } from "@/lib/leads";
 import { body, fail, handler, limit, ok } from "@/lib/api";
 import { verifyOtp } from "@/lib/auth/otp";
-import { startSession, setSessionCookie } from "@/lib/auth/session";
+import { startSession, setSessionCookie, LoginRefused } from "@/lib/auth/session";
 import { system } from "@/lib/db";
 
 const msg = { expired: "That code has expired. Ask for a new one.", wrong: "That code is not right. Check and try again.", locked: "Too many wrong tries. Ask for a new code." };
@@ -20,7 +20,12 @@ export const POST = handler(async (req) => {
     )).rows[0]);
     if (!staff) return fail(403, "This number isn't on a school's staff list. Ask your school admin to add you.", { notStaff: true });
   }
-  const { token, account } = await startSession(b.phone, { adultDeclared: b.adultDeclared, language: b.language, region: b.region });
-  await setSessionCookie(token);
-  return ok({ role: account.role });
+  try {
+    const { token, account } = await startSession(b.phone, { adultDeclared: b.adultDeclared, language: b.language, region: b.region });
+    await setSessionCookie(token);
+    return ok({ role: account.role });
+  } catch (e) {
+    if (e instanceof LoginRefused) return fail(403, e.message);
+    throw e;
+  }
 });

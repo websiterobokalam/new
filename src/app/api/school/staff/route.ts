@@ -1,12 +1,10 @@
 import { z } from "zod";
-import { body, handler, ok } from "@/lib/api";
-import { requireAccount } from "@/lib/api";
-import { phone } from "@/lib/leads";
+import { body, handler, ok, requireAccount } from "@/lib/api";
+import { optionalEmail, optionalPhone, needsEmailOrPhone, EMAIL_OR_PHONE } from "@/lib/auth/fields";
 import { addStaff } from "@/lib/schools/core";
 
 export const POST = handler(async (req) => {
   const a = await requireAccount();
-  const b = await body(req, z.object({ phone, name: z.string().trim().min(2).max(80), role: z.enum(["trainer", "school_admin"]), email: z.string().trim().toLowerCase().email("Enter a valid email").max(160).optional().or(z.literal("").transform(() => undefined)) }));
+  const b = await body(req, z.object({ email: optionalEmail, phone: optionalPhone, name: z.string().trim().min(2).max(80), role: z.enum(["trainer", "school_admin"]) }).refine(needsEmailOrPhone, EMAIL_OR_PHONE));
   return ok({ id: await addStaff(a, b) });
 });
-

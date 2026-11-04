@@ -14,7 +14,7 @@ type Batch = { id: string; starts_at: string; duration_min: number; language: st
 
 const LANG: Record<string, string> = { en: "English", te: "Telugu", hi: "Hindi" };
 
-export function BuildSessionFlow({ notice, signedIn, preset }: { notice: Notice; signedIn: boolean; preset: { ageBand?: string; interest?: string } }) {
+export function BuildSessionFlow({ notice, signedIn, preset, smsEnabled = true }: { notice: Notice; signedIn: boolean; preset: { ageBand?: string; interest?: string }; smsEnabled?: boolean }) {
   const [step, setStep] = useState<"interest" | "login" | "learner" | "slot" | "done">("interest");
   const [age, setAge] = useState(preset.ageBand ?? "9-11");
   const [interest, setInterest] = useState(preset.interest ?? "robotics");
@@ -70,7 +70,7 @@ export function BuildSessionFlow({ notice, signedIn, preset }: { notice: Notice;
         <div className="grid gap-3">
           <h2 className="display-md">Confirm your phone</h2>
           <p className="text-muted">We use it to keep your child&apos;s account yours. No calls unless you ask.</p>
-          <OtpFlow onDone={() => { setAuthed(true); setStep("learner"); }} />
+          <OtpFlow door="learner" smsEnabled={smsEnabled} onDone={() => { setAuthed(true); setStep("learner"); }} />
         </div>
       )}
 

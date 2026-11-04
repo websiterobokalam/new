@@ -19,6 +19,14 @@ const FOOTER: Record<Category, string> = {
 const rows = (r: [string, string | null | undefined][]) => ({ rows: r.filter(([, v]) => v != null && v !== "") as [string, string][] });
 
 export const TEMPLATES = {
+  login_code: { category: "transactional", render: (p) => ({
+    subject: `${p.code} is your Robokalam sign-in code`, heading: "Your sign-in code", preheader: `Use ${p.code} to sign in. It expires in 10 minutes.`,
+    blocks: [{ p: "Use this code to sign in to Robokalam:" }, { p: p.code }, { note: "It works once and expires in 10 minutes. Robokalam will never ask you for this code by phone or chat. If you didn't try to sign in, ignore this email; nobody can sign in without the code." }],
+  }) },
+  login_created: { category: "transactional", render: (p) => ({
+    subject: "Your Robokalam login is ready", heading: "Your Robokalam login is ready",
+    blocks: [{ p: `Hi ${p.name}, ${p.by} has created a Robokalam login for you${p.role ? ` as ${p.role}` : ""}.` }, { p: `Sign in with this email address. We'll send you a one-time code each time, so there's no password to remember.` }, { cta: { label: "Sign in", href: p.link } }, { note: "If you weren't expecting this, reply to this email and we'll remove the login." }],
+  }) },
   verify_email: { category: "transactional", render: (p) => ({
     subject: "Confirm your email for Robokalam", heading: "Confirm your email",
     blocks: [{ p: `Hi ${p.name}, please confirm this is your email so we can send class confirmations, receipts and updates.` }, { cta: { label: "Confirm my email", href: p.link } }, { note: "The link works for 48 hours. If you didn't ask for this, ignore this email." }],

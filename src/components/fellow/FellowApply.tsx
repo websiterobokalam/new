@@ -5,7 +5,7 @@ import { OtpFlow } from "../app/OtpFlow";
 import { Check, Chips, Field, FormError, WORLD_OPTIONS } from "../forms/ui";
 import { post } from "../app/client";
 
-export function FellowApply({ signedIn, pilotCity, openCities = [pilotCity], colleges = [], referral }: { signedIn: boolean; pilotCity: string; openCities?: string[]; colleges?: string[]; referral?: string }) {
+export function FellowApply({ signedIn, pilotCity, openCities = [pilotCity], colleges = [], referral, smsEnabled = true }: { signedIn: boolean; pilotCity: string; openCities?: string[]; colleges?: string[]; referral?: string; smsEnabled?: boolean }) {
   const router = useRouter();
   const [authed, setAuthed] = useState(signedIn);
   const [worlds, setWorlds] = useState<string[]>([]);
@@ -19,7 +19,7 @@ export function FellowApply({ signedIn, pilotCity, openCities = [pilotCity], col
     <div className="card grid gap-3 p-5 sm:p-8">
       <h2 className="display-md">Verify your phone</h2>
       <p className="text-muted">Your own number. We use it to log you in and pay you.</p>
-      <OtpFlow askAdult={false} cta="Send code" phoneLabel="Your mobile number" onDone={() => setAuthed(true)} />
+      <OtpFlow askAdult={false} door="educator" smsEnabled={smsEnabled} cta="Send code" phoneLabel="Your mobile number" emailLabel="Your email" onDone={() => setAuthed(true)} />
     </div>
   );
 
