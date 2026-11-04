@@ -17,6 +17,7 @@ export function GigActions({ gigId, canAccept, reason, myStatus }: { gigId: stri
   if (myStatus === "accepted") return (
     <div className="flex flex-wrap items-center gap-2">
       <a href={`/app/fellow/gigs/${gigId}`} className="btn btn-primary !min-h-10 text-sm">Teach mode</a>
+      <a href={`/api/fellow/gigs/${gigId}/calendar`} download className="text-sm font-semibold text-link underline">Add to calendar</a>
       <button type="button" className="btn btn-ghost !min-h-10 text-sm" disabled={busy} onClick={() => act("withdraw")}>Withdraw</button>
       {err && <span role="alert" className="text-sm">{err}</span>}
     </div>

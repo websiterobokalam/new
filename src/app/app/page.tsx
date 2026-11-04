@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CalendarSubscribe } from "@/components/app/CalendarSubscribe";
 import { redirect } from "next/navigation";
 import { emailState } from "@/lib/email/verify";
 import { appContext, fmtDate } from "@/lib/app";
@@ -91,7 +92,10 @@ export default async function FamilyHome() {
                   <div>
                     <p className="font-semibold text-heading">{b.title} · {b.first_name}</p>
                     <p className="text-sm text-muted">{fmtDate(b.starts_at, locale)} · {b.mode === "online" ? "Online" : b.location}{b.educator_label ? <> · {b.fellow_id ? <Link className="underline" href={`/educators/${b.fellow_id}`}>{b.educator_label}</Link> : b.educator_label}</> : ""}</p>
-                    {b.fellow_id && <MessageEducator bookingId={b.id} />}
+                    <div className="mt-1 flex flex-wrap items-center gap-3">
+                      {b.status === "confirmed" && <a className="text-sm font-semibold text-link underline" href={`/api/app/bookings/${b.id}/calendar`} download>Add to calendar<span className="sr-only">: {b.title}</span></a>}
+                      {b.fellow_id && <MessageEducator bookingId={b.id} />}
+                    </div>
                   </div>
                   <span className="rounded-full bg-panel px-3 py-1 text-xs font-semibold">{t[b.status as "confirmed"]}</span>
                 </li>
@@ -116,6 +120,7 @@ export default async function FamilyHome() {
           </section>
         )}
 
+        <CalendarSubscribe accountId={account.id} what="classes" />
         <section className="card p-6">
           <h2 className="text-xl font-bold">Messages</h2>
           <p className="mt-1 text-muted">Message your child&apos;s educator from an upcoming class. Messages stay inside Robokalam and contact details are always blocked. <Link className="underline" href="/app/messages">Open messages</Link></p>

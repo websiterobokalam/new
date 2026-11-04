@@ -66,7 +66,8 @@ export const TEMPLATES = {
   booking_confirmed: { category: "transactional", render: (p) => ({
     subject: `Booked: ${p.course} for ${p.child}`, heading: `${p.child} is booked in`,
     blocks: [rows([["Class", p.course], ["When", p.when], ["Where", p.where], ["Educator", p.educator], ["Fee", p.fee]]), ...(p.mission ? [{ p: `Before the class: ${p.mission}` } as Block] : []),
-      { p: "Online classes are recorded on the platform for safety. All contact stays on Robokalam." }, { cta: { label: "See it in your family home", href: "/app" } }],
+      { p: "Online classes are recorded on the platform for safety. All contact stays on Robokalam." }, { cta: { label: "See it in your family home", href: "/app" } },
+      ...(p.calendar ? [{ note: `Add it to your calendar: ${p.calendar}` } as Block] : [])],
   }) },
   payment_receipt: { category: "transactional", render: (p) => ({
     subject: `Payment received: ${p.amount}`, heading: "Payment received",

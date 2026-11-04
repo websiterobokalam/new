@@ -102,6 +102,8 @@ try {
     // Every account needs a way in: a mobile number or a login email.
     await c.query("ALTER TABLE accounts ADD CONSTRAINT accounts_identity CHECK (phone_e164 IS NOT NULL OR login_email IS NOT NULL)");
   }
+  // Private calendar feeds: a salt per account so a leaked feed link can be reset.
+  if (!(await hasColumn("accounts", "calendar_salt"))) await c.query("ALTER TABLE accounts ADD COLUMN calendar_salt VARCHAR(16) NULL");
   let skipped = 0;
   for (const [name, sql] of hardening) {
     const [[{ n }]] = await c.query("SELECT COUNT(*) AS n FROM information_schema.triggers WHERE trigger_schema = DATABASE() AND trigger_name = ?", [name]);
