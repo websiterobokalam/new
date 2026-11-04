@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Wordmark } from "./Logo";
 import { SITE } from "@/lib/site";
-import { CONTACT, EXTERNAL, SOCIAL } from "@/content/company";
+import { CONTACT, EXTERNAL, SOCIAL, PEOPLE } from "@/content/company";
 import { SmartLink } from "./SmartLink";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -71,7 +71,11 @@ export function Footer() {
         </div>
         <div className="mt-10 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-[#8aa5b5] sm:flex-row sm:justify-between">
           <div className="flex flex-wrap items-center gap-4"><p>© {new Date().getFullYear()} {SITE.legalName}</p><ThemeToggle /></div>
-          <p>Safeguarding and grievances: <a href={`mailto:${CONTACT.email}`} className="text-[#c9dbe5] hover:text-white">{CONTACT.email}</a> · <Link href="/child-safety#report" className="text-[#c9dbe5] hover:text-white">Report a concern</Link></p>
+          <p>
+            Safeguarding Lead: <a href={`mailto:${PEOPLE.safeguardingLead?.email ?? CONTACT.email}`} className="text-[#c9dbe5] hover:text-white">{PEOPLE.safeguardingLead?.name ?? CONTACT.email}</a>
+            {" · "}Grievance Officer: <a href={`mailto:${PEOPLE.grievanceOfficer?.email ?? CONTACT.email}`} className="text-[#c9dbe5] hover:text-white">{PEOPLE.grievanceOfficer?.name ?? CONTACT.email}</a>
+            {" · "}<Link href="/child-safety#report" className="text-[#c9dbe5] hover:text-white">Report a concern</Link>
+          </p>
         </div>
       </div>
     </footer>

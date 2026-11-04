@@ -101,7 +101,9 @@ export async function markPaid(c: Tx, providerOrderId: string, paymentId: string
   await c.query("UPDATE counters SET value = value + 1 WHERE name = 'invoice'");
   const seq = Number((await c.query("SELECT value AS n FROM counters WHERE name = 'invoice'")).rows[0].n);
   await c.query("UPDATE orders SET status = 'paid', provider_payment_id = $2, paid_at = UTC_TIMESTAMP(3), invoice_no = $3 WHERE id = $1", [o.id, paymentId, invoiceNo(seq)]);
-  await c.query("UPDATE bookings SET status = 'confirmed' WHERE id = $1 AND status = 'pending_payment'", [o.booking_id]);
+  const confirmed = await c.query("UPDATE bookings SET status = 'confirmed' WHERE id = $1 AND status = 'pending_payment'", [o.booking_id]);
+  // Paid after the hold was tidied away: keep the money safe and flag it for a person.
+  if (!confirmed.affectedRows) await c.query("INSERT INTO audit_log (action, entity, entity_id, meta) VALUES ('late_payment_review','order',$1,$2)", [o.id, { bookingId: o.booking_id }]);
   const { paymentCaptured } = await import("../ledger");
   await paymentCaptured(c, o.id, o.amount_paise, o.gst_paise);
   await c.query("INSERT INTO audit_log (action, entity, entity_id, meta) VALUES ('payment_captured','order',$1,$2)", [o.id, { paymentId }]);
