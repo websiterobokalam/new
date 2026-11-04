@@ -11,6 +11,7 @@ test("Free Build Session: age, OTP, consent, slot, booked", async ({ page }) => 
   await page.locator("label.chip", { hasText: "IoT" }).click();
   await page.getByRole("button", { name: "Continue" }).click();
   const parentPhone = randomPhone();
+  await page.getByRole("button", { name: "Use mobile number instead" }).click();
   await page.getByLabel("Parent's mobile number").fill(parentPhone);
   await page.getByRole("button", { name: "Send code" }).click();
   await page.getByLabel("6-digit code").fill("123456");

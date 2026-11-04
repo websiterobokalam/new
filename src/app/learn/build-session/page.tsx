@@ -1,3 +1,4 @@
+import { smsLoginAvailable } from "@/lib/auth/otp";
 import type { Metadata } from "next";
 import { BuildSessionFlow } from "@/components/app/BuildSessionFlow";
 import { anon } from "@/lib/db";
@@ -21,7 +22,7 @@ export default async function BuildSessionPage({ searchParams }: { searchParams:
           <p className="eyebrow">Free Build Session</p>
           <h1 className="display-lg mt-3">One session. One finished build.</h1>
           <p className="lede mt-3">Four short steps. No payment, no pressure.</p>
-          <div className="mt-8"><BuildSessionFlow notice={notice} signedIn={!!account} preset={{ ageBand: sp.age, interest: sp.interest }} /></div>
+          <div className="mt-8"><BuildSessionFlow notice={notice} signedIn={!!account} smsEnabled={smsLoginAvailable()} preset={{ ageBand: sp.age, interest: sp.interest }} /></div>
         </div>
       </section>
     );

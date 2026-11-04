@@ -4,6 +4,7 @@ import { ownerQuery, randomPhone, loginSchool, makeSchool, startedSession, staff
 test("school door: only staff added by a school can sign in, and no account is created", async ({ page }) => {
   const phone = randomPhone();
   await page.goto("/login/school");
+  await page.getByRole("button", { name: "Use mobile number instead" }).click();
   await page.getByLabel("Staff mobile number").fill(phone);
   await page.getByRole("button", { name: "Send OTP" }).click();
   await page.getByLabel("6-digit code").fill("123456");

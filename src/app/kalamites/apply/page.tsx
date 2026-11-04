@@ -1,3 +1,4 @@
+import { smsLoginAvailable } from "@/lib/auth/otp";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { FellowApply } from "@/components/fellow/FellowApply";
@@ -23,7 +24,7 @@ export default async function ApplyPage({ searchParams }: { searchParams: Promis
         <p className="eyebrow">Kalamites · {cities.length > 1 ? `open in ${cities.join(", ")}` : `${cities[0]} pilot`}</p>
         <h1 className="display-lg mt-3">Become a Kalamite.</h1>
         <p className="lede mt-3">Two minutes now. Then a subject test, a short recorded demo, safety checks and paid Kalam Academy training. No fees, ever.</p>
-        <div className="mt-10"><FellowApply signedIn={!!a} pilotCity={cities[0]} openCities={cities} colleges={d.colleges} referral={ref && /^[A-Za-z0-9]{4,12}$/.test(ref) ? ref : undefined} /></div>
+        <div className="mt-10"><FellowApply signedIn={!!a} smsEnabled={smsLoginAvailable()} pilotCity={cities[0]} openCities={cities} colleges={d.colleges} referral={ref && /^[A-Za-z0-9]{4,12}$/.test(ref) ? ref : undefined} /></div>
       </div>
     </section>
   );

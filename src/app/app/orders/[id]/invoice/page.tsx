@@ -1,3 +1,4 @@
+import { maskContact } from "@/lib/auth/mask";
 import { notFound } from "next/navigation";
 import { appContext } from "@/lib/app";
 import { asAccount } from "@/lib/auth/session";
@@ -26,7 +27,7 @@ export default async function Invoice({ params }: { params: Promise<{ id: string
             <div className="text-right text-sm"><p className="font-semibold">{SITE.legalName}</p><p className="text-muted">GSTIN: {process.env.SUPPLIER_GSTIN ?? "pending"}</p><p className="text-muted">{process.env.SUPPLIER_ADDRESS ?? "Registered address pending"}</p></div>
           </header>
           <dl className="mt-4 grid grid-cols-2 gap-2 text-sm">
-            <dt className="text-muted">Billed to</dt><dd>{account.phone.slice(0, 3)}•••••{account.phone.slice(-3)}</dd>
+            <dt className="text-muted">Billed to</dt><dd>{maskContact(account.phone ?? account.email)}</dd>
             <dt className="text-muted">Date</dt><dd>{new Date(o.paid_at).toLocaleDateString("en-IN", { dateStyle: "long" })}</dd>
             <dt className="text-muted">Payment ref</dt><dd className="font-mono">{o.provider_payment_id}</dd>
           </dl>

@@ -59,8 +59,8 @@ export default async function OpsSchools() {
             { name: "aadhyaTenant", label: "AADHYA tenant ID (optional)", optional: true },
             { name: "erpRef", label: "21cschool school ID (optional)", optional: true },
             { name: "adminName", label: "School admin's name" },
-            { name: "adminPhone", label: "School admin's mobile number" },
-            { name: "adminEmail", label: "School admin's email (optional)", type: "email", optional: true },
+            { name: "adminEmail", label: "School admin's email", type: "email", hint: "They sign in with a one-time code sent here" },
+            { name: "adminPhone", label: "School admin's mobile number (optional)", optional: true },
           ]} />
         </section>
         <section className="card p-6" aria-labelledby="lab-h">

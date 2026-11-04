@@ -5,7 +5,7 @@ import { weekStartIST } from "../fellows/pay";
 import { createGig } from "../fellows/gigs";
 import { PILOT } from "../fellows/core";
 import { schoolRequestChanged, staffAdded, ticketChanged } from "../email/notify";
-import { sendVerification } from "../email/verify";
+import { provisionLogin, loginCreatedEmail } from "../auth/accounts";
 
 /**
  * Schools, staff, timetable, hardware tickets and Kalamite requests.
@@ -43,7 +43,7 @@ const schoolAudit = (c: Tx, actor: string, action: string, entity: string, id: s
 
 /* ------------------------------ Ops setup ------------------------------ */
 
-export async function createSchool(ops: Account, i: { name: string; city: string; board?: string; slaHours: number; aadhyaTenant?: string; erpRef?: string; adminPhone: string; adminName: string; adminEmail?: string }) {
+export async function createSchool(ops: Account, i: { name: string; city: string; board?: string; slaHours: number; aadhyaTenant?: string; erpRef?: string; adminPhone?: string; adminName: string; adminEmail?: string }) {
   return system(async (c) => {
     const id = uuid();
     await c.query("INSERT INTO schools (id, name, city, board, sla_hours, aadhya_tenant, erp_school_ref, created_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
@@ -77,33 +77,34 @@ export async function addAsset(ops: Account, labId: string, i: { kind: string; l
 
 /* ------------------------------ Staff ------------------------------ */
 
-async function addStaffIn(c: Tx, actorId: string, schoolId: string, i: { phone: string; name: string; role: Staff["role"]; email?: string }) {
-  const existing = (await c.query("SELECT id, role FROM accounts WHERE phone_e164 = $1", [i.phone])).rows[0];
-  let accountId: string;
-  if (existing) {
+async function addStaffIn(c: Tx, actorId: string, schoolId: string, i: { phone?: string; name: string; role: Staff["role"]; email?: string }) {
+  const { id: accountId, created } = await provisionLogin(c, { email: i.email, phone: i.phone, name: i.name, role: i.role, createdBy: actorId }, async (existing) => {
     const staffRow = (await c.query("SELECT school_id, removed_at FROM school_staff WHERE account_id = $1", [existing.id])).rows[0];
-    const reusable = (existing.role === "trainer" || existing.role === "school_admin") && (!staffRow || staffRow.removed_at);
-    if (!reusable) {
-      throw new HttpError(409, staffRow && !staffRow.removed_at
-        ? "This number is already on a school's staff list."
-        : "This number already has a different Robokalam account (for example a parent or Kalamite). Use another number for school work.");
-    }
-    accountId = existing.id;
-    await c.query("UPDATE accounts SET role = $2, display_name = $3 WHERE id = $1", [accountId, i.role, i.name]);
-    await c.query("DELETE FROM school_staff WHERE account_id = $1", [accountId]);
-  } else {
-    accountId = uuid();
-    await c.query("INSERT INTO accounts (id, phone_e164, role, display_name, adult_declared_at) VALUES ($1,$2,$3,$4, UTC_TIMESTAMP(3))", [accountId, i.phone, i.role, i.name]);
-  }
+    if (staffRow && !staffRow.removed_at) throw new HttpError(409, `This ${i.email ? "email" : "number"} is already on a school's staff list.`);
+    return existing.role === "trainer" || existing.role === "school_admin";
+  });
+  if (!created) await c.query("DELETE FROM school_staff WHERE account_id = $1", [accountId]);
   await c.query("INSERT INTO school_staff (account_id, school_id, role, display_name, added_by) VALUES ($1,$2,$3,$4,$5)", [accountId, schoolId, i.role, i.name, actorId]);
   await schoolAudit(c, actorId, "staff_added", "account", accountId, schoolId, { role: i.role });
-  // New staff confirm their email by link; staff whose email is already confirmed get a welcome now.
-  if (i.email) await sendVerification(c, accountId, i.email, i.name);
+  const school = (await c.query("SELECT name FROM schools WHERE id = $1", [schoolId])).rows[0]?.name ?? "your school";
+  if (i.email) {
+    // They sign in with a code sent to this email, which also confirms it.
+    await loginCreatedEmail(c, accountId, i.email, { name: i.name, role: i.role, by: school });
+  }
   await staffAdded(c, accountId);
   return accountId;
 }
 
-export async function addStaff(admin: Account, i: { phone: string; name: string; role: Staff["role"]; email?: string }) {
+/** Robokalam ops add someone to any school's staff (for example the first admin, or a replacement). */
+export async function addStaffAsOps(ops: Account, schoolId: string, i: { phone?: string; name: string; role: Staff["role"]; email?: string }) {
+  return system(async (c) => {
+    const s = (await c.query("SELECT 1 FROM schools WHERE id = $1 AND status <> 'ended'", [schoolId])).rows[0];
+    if (!s) throw new HttpError(404, "School not found");
+    return addStaffIn(c, ops.id, schoolId, i);
+  });
+}
+
+export async function addStaff(admin: Account, i: { phone?: string; name: string; role: Staff["role"]; email?: string }) {
   const s = await requireStaff(admin, "school_admin");
   return system((c) => addStaffIn(c, admin.id, s.schoolId, i));
 }

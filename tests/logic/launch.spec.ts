@@ -33,7 +33,6 @@ test("each launch blocker is caught", () => {
   const cases: [string, Record<string, string | undefined>][] = [
     ["test_providers_off", { ALLOW_TEST_PROVIDERS: "1" }],
     ["test_providers_off", { OTP_PROVIDER: "test" }],
-    ["otp", { OTP_PROVIDER: "test" }],
     ["payments", { RAZORPAY_KEY_ID: "rzp_test_abc" }],
     ["session_secret", { SESSION_SECRET: "short" }],
     ["gstin", { SUPPLIER_GSTIN: "NOT-A-GSTIN" }],
@@ -62,6 +61,13 @@ test("company name and approvals are confirmed by default; unnamed people are on
   expect(s.blockers.map((b) => b.id)).toEqual([]);
   expect(s.warnings.map((w) => w.id).sort()).toEqual(["grievance_named", "safeguarding_named"]);
   expect(checks.find((c) => c.id === "legal_name")?.detail).toBe("Robokalam Technologies Private Limited");
+});
+
+test("SMS sign-in is optional; email sign-in is required", () => {
+  const noSms = summarise(envChecks({ ...READY, OTP_PROVIDER: undefined, MSG91_AUTH_KEY: undefined }, NOW));
+  expect(noSms.blockers).toEqual([]);
+  expect(noSms.warnings.map((w) => w.id)).toEqual(["otp"]);
+  expect(summarise(envChecks({ ...READY, EMAIL_TRANSPORT: undefined }, NOW)).blockers.map((b) => b.id)).toContain("email");
 });
 
 test("only robokalam.com in production, outside review mode, counts as the live site", () => {

@@ -94,6 +94,14 @@ try {
     // One-to-one gigs are online only.
     await c.query("ALTER TABLE gigs ADD CONSTRAINT gigs_one_to_one CHECK (kind <> 'one_to_one' OR mode = 'online')");
   }
+  // Email sign-in (guarded): mobile becomes optional; a login email, admin-created and disabled logins.
+  const [[phoneCol]] = await c.query("SELECT IS_NULLABLE AS n FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'accounts' AND column_name = 'phone_e164'");
+  if (phoneCol.n === "NO") await c.query("ALTER TABLE accounts MODIFY phone_e164 VARCHAR(16) NULL");
+  if (!(await hasColumn("accounts", "login_email"))) {
+    await c.query("ALTER TABLE accounts ADD COLUMN login_email VARCHAR(160) NULL, ADD COLUMN disabled_at DATETIME(3) NULL, ADD COLUMN created_by CHAR(36) NULL, ADD UNIQUE KEY accounts_login_email (login_email)");
+    // Every account needs a way in: a mobile number or a login email.
+    await c.query("ALTER TABLE accounts ADD CONSTRAINT accounts_identity CHECK (phone_e164 IS NOT NULL OR login_email IS NOT NULL)");
+  }
   let skipped = 0;
   for (const [name, sql] of hardening) {
     const [[{ n }]] = await c.query("SELECT COUNT(*) AS n FROM information_schema.triggers WHERE trigger_schema = DATABASE() AND trigger_name = ?", [name]);

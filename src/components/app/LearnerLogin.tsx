@@ -7,8 +7,8 @@ function safeNext(n: string | null) {
   return n && /^\/app(\/[\w\-/]*)?$/.test(n) ? n : "/app";
 }
 
-export function LearnerLogin() {
+export function LearnerLogin({ smsEnabled }: { smsEnabled: boolean }) {
   const router = useRouter();
   const sp = useSearchParams();
-  return <OtpFlow cta="Send OTP" onDone={() => { router.push(safeNext(sp.get("next"))); router.refresh(); }} />;
+  return <OtpFlow cta="Send OTP" door="learner" smsEnabled={smsEnabled} onDone={() => { router.push(safeNext(sp.get("next"))); router.refresh(); }} />;
 }
