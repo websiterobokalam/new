@@ -26,7 +26,7 @@ export function BuildSessionForm() {
       onSubmit={(e) => {
         e.preventDefault();
         const f = new FormData(e.currentTarget);
-        s.submit({ door: "learner", parentName: f.get("parentName"), phone: f.get("phone"), childAgeBand: age, interest, mode, language: f.get("language"), region: regionFromCookie(), contactOptIn: optIn, followUpOptIn: follow, website: f.get("website") });
+        s.submit({ door: "learner", parentName: f.get("parentName"), phone: f.get("phone"), email: f.get("email") ?? "", childAgeBand: age, interest, mode, language: f.get("language"), region: regionFromCookie(), contactOptIn: optIn, followUpOptIn: follow, website: f.get("website") });
       }}
     >
       <Honeypot />
@@ -39,6 +39,7 @@ export function BuildSessionForm() {
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Parent's name" name="parentName" autoComplete="name" required error={s.fields.parentName} />
         <Field label="Parent's mobile" name="phone" type="tel" inputMode="tel" autoComplete="tel" required error={s.fields.phone} hint="We confirm by OTP before the session." />
+        <Field label="Parent's email (optional)" name="email" type="email" autoComplete="email" error={s.fields.email} hint="For a confirmation email. Never your child's email." />
       </div>
       <Select label="Preferred language" name="language" options={["English", "Telugu", "Hindi"]} />
       <div className="grid gap-3 rounded-2xl bg-panel/60 p-4">

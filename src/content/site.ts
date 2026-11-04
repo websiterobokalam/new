@@ -125,7 +125,7 @@ export const fellowSteps = [
 
 export const fellowRules = [
   "Fellows are 18+ and fully vetted before any contact with a child.",
-  "No home visits. No private 1:1 with anyone under 18.",
+  "No home visits, ever. One-to-one with under-18s only online on Robokalam, recorded, with the parent's consent and a notice to them before and after every session.",
   "All contact stays on the platform. No personal numbers, social media or private chats.",
   "Every online class is recorded. Parents can see your profile and class schedule.",
   "In-person gigs only at a partner school or centre, with a responsible adult present.",
@@ -139,6 +139,7 @@ export const parentTrust = [
   { title: "Self-serve refunds", detail: "Published refund terms and a refund button in your account." },
   { title: "Your child's data", detail: "Parental consent first. Portfolios private by default. Delete data any time." },
   { title: "One-tap report", detail: "Every learner screen has a report button that goes to a named Safeguarding Lead." },
+  { title: "One-to-one, with you in the loop", detail: "Only online and recorded, only with your specific consent. You get an email before and a written summary after every session, and you can join any time." },
 ];
 
 export const faqs = [
@@ -152,7 +153,7 @@ export const faqs = [
   },
   {
     q: "Are classes one to one?",
-    a: "No. To keep children safe, there are no private 1:1 classes with under-18s. Live batches are small groups and are recorded on the platform.",
+    a: "Most classes are small groups. We also offer one-to-one classes online, with you in the loop: they need your specific consent and a confirmed email, every session is recorded, you get a notice before and a written summary after each one, and you can join any session. There are never home visits.",
   },
   {
     q: "Do you offer loans or long plans?",

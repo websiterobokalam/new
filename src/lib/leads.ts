@@ -19,6 +19,8 @@ export const LearnerLead = z.object({
   door: z.literal("learner"),
   parentName: name,
   phone,
+  /** Optional: for a confirmation email. Never the child's. */
+  email: email.optional().or(z.literal("").transform(() => undefined)),
   /** Age band only, never date of birth. */
   childAgeBand: z.enum(["6-8", "9-11", "12-14", "15-17", "18+"]),
   interest: worldsEnum,

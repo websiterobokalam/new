@@ -20,6 +20,17 @@ export default async function TeachMode({ params }: { params: Promise<{ id: stri
         <h1 className="display-lg mt-2">{g.title}</h1>
         <p className="lede mt-2">{new Date(g.starts_at).toLocaleString("en-IN", { dateStyle: "full", timeStyle: "short", timeZone: "Asia/Kolkata" })} · {g.duration_min} min · {g.mode === "online" ? "Online (recorded on the platform)" : `${g.location} · responsible adult: ${g.responsible_adult}`} · {inr(g.pay_paise)}</p>
       </header>
+      {g.kind === "one_to_one" && (
+        <div className="card border-heading p-5" role="note">
+          <h2 className="text-lg font-bold">One-to-one session: the parent is in the loop</h2>
+          <ul className="mt-2 list-inside list-disc grid gap-1">
+            <li>The parent got a notice before this session and may join or watch at any time.</li>
+            <li>Keep it on Robokalam, recorded, with your camera on you and the build. No other apps, no personal contact.</li>
+            <li>Write a short summary for the parent when you record the session. It&apos;s emailed to them.</li>
+            <li>If anything feels wrong, end the session and press Safety below.</li>
+          </ul>
+        </div>
+      )}
       <div className="card p-5"><h2 className="text-lg font-bold">One-tap help</h2><p className="mb-3 text-sm text-muted">Reaches your point of contact. Safety goes straight to the Safeguarding Lead.</p><HelpButtons gigId={g.id} /></div>
       <div className="grid gap-4 md:grid-cols-2">
         <div className="card p-5"><h2 className="text-lg font-bold">Lesson plan</h2><p className="mt-2 whitespace-pre-line text-muted">{g.lesson_plan ?? "Open with the build, demo it, let everyone try, debug together, show and tell, then one plain next step."}</p></div>

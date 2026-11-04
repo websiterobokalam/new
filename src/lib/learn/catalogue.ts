@@ -2,7 +2,7 @@ import { anon } from "../db";
 import { FELLOW_PROFILES } from "@/lib/fellows/profiles";
 
 export type CourseCard = {
-  id: string; slug: string; title: string; world: string; programme: string | null; age_min: number; age_max: number | null; outcome: string;
+  id: string; slug: string; title: string; world: string; programme: string | null; format: string; age_min: number; age_max: number | null; outcome: string;
   batch_size_max: number; sessions: number; kit: string | null; fee_paise: number | null; fee_approved: boolean; sample: boolean;
   next_start: string | null; languages: string[]; modes: string[]; educator: string | null;
 };
@@ -23,7 +23,7 @@ export async function listCourses(f: Filters): Promise<CourseCard[]> {
   if (f.time && TIME[f.time]) { p.push(TIME[f.time][0]); bw.push(`HOUR(CONVERT_TZ(b.starts_at, '+00:00', '+05:30')) >= $${p.length}`); p.push(TIME[f.time][1]); bw.push(`HOUR(CONVERT_TZ(b.starts_at, '+00:00', '+05:30')) < $${p.length}`); }
   const batchFilter = f.lang || f.mode || f.time ? `AND EXISTS (SELECT 1 FROM batches b WHERE ${bw.join(" AND ")})` : "";
   return anon(async (c) => ((await c.query(
-    `SELECT c.id, c.slug, c.title, c.world, c.programme, c.age_min, c.age_max, c.outcome, c.batch_size_max, c.sessions, c.kit, c.fee_paise, c.fee_approved, c.sample,
+    `SELECT c.id, c.slug, c.title, c.world, c.programme, c.format, c.age_min, c.age_max, c.outcome, c.batch_size_max, c.sessions, c.kit, c.fee_paise, c.fee_approved, c.sample,
        (SELECT min(b.starts_at) FROM batches b WHERE ${bw.join(" AND ")}) AS next_start,
        (SELECT GROUP_CONCAT(DISTINCT b.language) FROM batches b WHERE b.course_id = c.id AND b.starts_at > now()) AS languages,
        (SELECT GROUP_CONCAT(DISTINCT b.mode) FROM batches b WHERE b.course_id = c.id AND b.starts_at > now()) AS modes,

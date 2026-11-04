@@ -1,4 +1,6 @@
 import { system, uuid, type Tx } from "../db";
+import { oneToOneConsented, oneToOneTeacherCheck } from "../learn/oneToOne";
+import { earningAdded, gigAccepted, safetyReported, sessionDelivered } from "../email/notify";
 import { asAccount, type Account } from "../auth/session";
 import { FellowError, requireFellow, STEPS, type Fellow, type Step } from "./core";
 import { addEarning, deductionsFor, rateFor, weekStartIST, type DeductionLine } from "./pay";
@@ -8,7 +10,8 @@ export const TIERS = ["apprentice", "fellow", "senior", "lead"] as const;
 const tierRank = (t: string) => TIERS.indexOf(t as (typeof TIERS)[number]);
 
 /** Before any contact with a child, every check except shadow/co-teach must be passed. */
-const PRE_CONTACT: Step[] = STEPS.filter((s) => s !== "shadow" && s !== "co_teach");
+/** Steps before any contact with a child. A function, not a constant: STEPS lives in a module that imports this one. */
+const preContact = (): Step[] => STEPS.filter((s) => s !== "shadow" && s !== "co_teach");
 
 export type Gig = {
   id: string; kind: string; title: string; world: string; language: string; starts_at: string; duration_min: number; mode: string; location: string | null;
@@ -55,9 +58,13 @@ function onboardingKind(kind: string) {
 async function acceptability(c: Tx, f: Fellow, steps: Record<Step, { status: string }>, g: Gig): Promise<string | null> {
   if (f.exam_mode_until && new Date(f.exam_mode_until) >= new Date(new Date().toDateString())) return "Exam Mode is on";
   if (onboardingKind(g.kind)) {
-    if (!PRE_CONTACT.every((s) => steps[s].status === "passed")) return "Finish your checks, Academy and terms first";
+    if (!preContact().every((s) => steps[s].status === "passed")) return "Finish your checks, Academy and terms first";
     if (g.kind === "co_teach" && steps.shadow.status !== "passed") return "Shadow a class first";
   } else if (f.status !== "live") return "Available once you go live";
+  if (g.kind === "one_to_one") {
+    const why = await oneToOneTeacherCheck(c, f.account_id);
+    if (why) return why;
+  }
   const used = await weekMinutes(c, f.account_id, new Date(g.starts_at));
   if (used + g.duration_min > f.weekly_cap_hours * 60) return `Over your ${f.weekly_cap_hours}-hour weekly cap`;
   const clash = await c.query(
@@ -123,6 +130,7 @@ export async function respond(a: Account, gigId: string, action: "accept" | "dec
     if (taken >= g.seats) await c.query("UPDATE gigs SET status = 'filled' WHERE id = $1", [gigId]);
     if (g.batch_id && ["live_batch", "build_session", "campus_session"].includes(g.kind)) await c.query("UPDATE batches SET educator_fellow_id = $2 WHERE id = $1", [g.batch_id, a.id]);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id) VALUES ($1,'gig_accepted','gig',$2)", [a.id, gigId]);
+    await gigAccepted(c, gigId, a.id);
     return { status: "accepted" };
   });
 }
@@ -196,6 +204,18 @@ export async function deliver(a: Account, gigId: string, records: { bookingId: s
   if (new Date(t.gig.starts_at).getTime() > Date.now() + 15 * 60_000) throw new FellowError(409, "You can record the session once it has started");
   const allowed = new Set(t.roster.map((r) => r.booking_id));
   if (records.some((r) => !allowed.has(r.bookingId))) throw new FellowError(403, "That learner is not in this class");
+  if (t.gig.kind === "one_to_one") {
+    // The parent gets a written summary after every one-to-one session, and can stop them at any time.
+    if (records.some((r) => (r.feedback ?? "").trim().length < 20)) throw new FellowError(422, "Write a short summary for the parent (one line or more) before recording a one-to-one session");
+    const stopped = await system(async (c) => {
+      for (const r of records) {
+        const l = (await c.query("SELECT learner_id FROM bookings WHERE id = $1", [r.bookingId])).rows[0];
+        if (l && !(await oneToOneConsented(c, l.learner_id))) return true;
+      }
+      return false;
+    });
+    if (stopped) throw new FellowError(409, "The parent has withdrawn consent for one-to-one classes. Don't hold this session; Robokalam will contact the family.");
+  }
   return system(async (c) => {
     for (const r of records) {
       const bk = (await c.query("SELECT learner_id FROM bookings WHERE id = $1 AND status IN ('confirmed','attended','no_show') FOR UPDATE", [r.bookingId])).rows[0];
@@ -221,13 +241,14 @@ export async function deliver(a: Account, gigId: string, records: { bookingId: s
         if (share > 0) { await post(c, "escrow_release", `${t.gig.assignment_id}:${o.id}`, [["learner_escrow", share], ["platform_revenue", -share]]); released += share; }
       }
     }
+    let lineId: string | undefined;
     if (t.gig.kind === "own_course") {
       // Fellow's Own Course: the Fellow's published share of the fees this session released.
       const pct = Number((await c.query("SELECT co.fellow_share_pct AS p FROM batches b JOIN courses co ON co.id = b.course_id WHERE b.id = $1", [t.gig.batch_id])).rows[0]?.p ?? 0);
       const gross = Math.round((released * pct) / 100);
-      if (gross > 0) await addEarning(c, a.id, { kind: "own_course", description: `${t.gig.title} · ${pct}% of fees · ${new Date(t.gig.starts_at).toISOString().slice(0, 16)}`, gross, assignmentId: t.gig.assignment_id });
+      if (gross > 0) lineId = await addEarning(c, a.id, { kind: "own_course", description: `${t.gig.title} · ${pct}% of fees · ${new Date(t.gig.starts_at).toISOString().slice(0, 16)}`, gross, assignmentId: t.gig.assignment_id });
     } else {
-      await addEarning(c, a.id, { kind: t.gig.kind === "shadow" ? "shadow" : t.gig.kind === "co_teach" ? "co_teach" : "session", description: `${t.gig.title} · ${new Date(t.gig.starts_at).toISOString().slice(0, 16)}`, gross: t.gig.pay_paise, assignmentId: t.gig.assignment_id });
+      lineId = await addEarning(c, a.id, { kind: t.gig.kind === "shadow" ? "shadow" : t.gig.kind === "co_teach" ? "co_teach" : "session", description: `${t.gig.title} · ${new Date(t.gig.starts_at).toISOString().slice(0, 16)}`, gross: t.gig.pay_paise, assignmentId: t.gig.assignment_id });
     }
     if (t.gig.kind === "shadow" || t.gig.kind === "co_teach") {
       await c.query("UPDATE vetting_steps SET status = 'passed', detail = JSON_MERGE_PATCH(detail, $3), updated_at = now() WHERE fellow_id = $1 AND step = $2", [a.id, t.gig.kind, { gig: gigId }]);
@@ -235,6 +256,9 @@ export async function deliver(a: Account, gigId: string, records: { bookingId: s
     const still = (await c.query("SELECT COUNT(*) AS n FROM gig_assignments WHERE gig_id = $1 AND status = 'accepted'", [gigId])).rows[0].n;
     if (!still) await c.query("UPDATE gigs SET status = 'completed' WHERE id = $1", [gigId]);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,'session_delivered','gig',$2,$3)", [a.id, gigId, { learners: records.length }]);
+    const projectTitles = Object.fromEntries(t.projects.map((p: { id: string; title: string }) => [p.id, p.title]));
+    await sessionDelivered(c, gigId, records.map((r) => ({ bookingId: r.bookingId, attended: r.attended, built: r.builtProject ? projectTitles[r.builtProject] ?? null : null, feedback: r.feedback ?? null })));
+    if (lineId) await earningAdded(c, a.id, lineId);
   });
 }
 
@@ -245,7 +269,9 @@ export async function askHelp(a: Account, gigId: string | null, kind: "tech" | "
     const rows = [{ id: uuid() }];
     await c.query("INSERT INTO help_requests (id, fellow_id, assignment_id, kind) VALUES ($1,$2,$3,$4)", [rows[0].id, a.id, asg?.id ?? null, kind]);
     if (kind === "safety") {
-      await c.query("INSERT INTO safety_reports (id, reporter_account_id, page, category, details, respond_by) VALUES ($3,$1,$2,'safety','Fellow pressed the safety help button in Teach mode', now() + INTERVAL 1 HOUR)", [a.id, `/app/fellow/gigs/${gigId ?? ""}`, uuid()]);
+      const rid = uuid();
+      await c.query("INSERT INTO safety_reports (id, reporter_account_id, page, category, details, respond_by) VALUES ($3,$1,$2,'safety','Fellow pressed the safety help button in Teach mode', now() + INTERVAL 1 HOUR)", [a.id, `/app/fellow/gigs/${gigId ?? ""}`, rid]);
+      await safetyReported(c, rid);
     }
     return rows[0].id as string;
   });

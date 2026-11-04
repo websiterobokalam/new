@@ -1,6 +1,6 @@
 import type { Tx } from "../db";
 
-export const PURPOSES = ["account", "live_classes", "class_recording", "ai_helper", "portfolio_sharing", "whatsapp", "follow_up"] as const;
+export const PURPOSES = ["account", "live_classes", "class_recording", "ai_helper", "portfolio_sharing", "whatsapp", "follow_up", "one_to_one"] as const;
 export type Purpose = (typeof PURPOSES)[number];
 /** Needed to join any live class. Recording is required because it is a child-safety rule. */
 export const REQUIRED: Purpose[] = ["account", "live_classes", "class_recording"];
@@ -9,7 +9,7 @@ export type NoticeItem = { purpose: Purpose; required: boolean; what: string; wh
 export type Notice = { id: string; language: string; title: string; sha256: string; approved: boolean; body: { items: NoticeItem[]; rights: string; grievance: string } };
 
 export async function getNotice(c: Tx, lang: string): Promise<Notice> {
-  const { rows } = await c.query("SELECT id, language, title, sha256, approved, body FROM consent_notices WHERE language IN ($1) ORDER BY (language = $2) DESC, published_at DESC LIMIT 1", [[lang, "en"], lang]);
+  const { rows } = await c.query("SELECT id, language, title, sha256, approved, body FROM consent_notices WHERE language IN ($1) ORDER BY (language = $2) DESC, published_at DESC, id DESC LIMIT 1", [[lang, "en"], lang]);
   if (!rows[0]) throw new Error("No consent notice published");
   return rows[0];
 }

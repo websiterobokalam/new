@@ -157,3 +157,27 @@ export async function teachingHistory(fellowId: string, opts: { sessions?: numbe
   }
   if (opts.tier) await ownerQuery("UPDATE fellows SET tier = $2 WHERE account_id = $1", [fellowId, opts.tier]);
 }
+
+/** Emails queued for an address or account, optionally for one template. */
+export async function emailsTo(where: { to?: string; accountId?: string }, template?: string) {
+  return ownerQuery<{ template: string; status: string; category: string; payload: any; subject: string | null; body_text: string | null; to_email: string }>(
+    `SELECT template, status, category, payload, subject, body_text, to_email FROM email_outbox WHERE ${where.to ? "to_email = $1" : "account_id = $1"} ${template ? "AND template = $2" : ""} ORDER BY created_at`,
+    template ? [where.to ?? where.accountId, template] : [where.to ?? where.accountId]);
+}
+
+/** Add an email in Email settings and confirm it through the real link. */
+export async function verifyEmail(page: Page, email = `parent.${randomUUID().slice(0, 8)}@example.test`) {
+  await page.goto("/app/email");
+  await page.getByLabel("Email address").fill(email);
+  await page.getByRole("button", { name: /Add email|Save and send/ }).click();
+  await expect(page.getByText("Check your inbox for a confirmation link.")).toBeVisible();
+  let link = "";
+  await expect.poll(async () => {
+    const rows = await ownerQuery<{ payload: { link: string } }>("SELECT payload FROM email_outbox WHERE to_email = $1 AND template = 'verify_email' ORDER BY created_at DESC LIMIT 1", [email]);
+    link = rows[0]?.payload.link ?? "";
+    return link;
+  }).not.toBe("");
+  await page.goto(new URL(link).pathname + new URL(link).search);
+  await expect(page.getByText("Thanks, your email is confirmed.")).toBeVisible();
+  return email;
+}

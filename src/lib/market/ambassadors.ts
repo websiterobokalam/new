@@ -5,6 +5,7 @@ import type { Account } from "../auth/session";
 import { requireFellow } from "../fellows/core";
 import { addEarning } from "../fellows/pay";
 import { requireMarketOpen } from "./gate";
+import { ambassadorChanged } from "../email/notify";
 
 /**
  * Campus Ambassadors: live Fellows who help classmates at their college apply.
@@ -44,6 +45,7 @@ export async function applyAmbassador(a: Account, collegeId: string, pitch: stri
     const wrote = await insertOnce(c, "INSERT INTO ambassadors (fellow_id, college_id, code, pitch) VALUES ($1,$2,$3,$4)", [a.id, collegeId, code, pitch]);
     if (!wrote) throw new HttpError(409, "You have already applied");
     await audit(c, a.id, "ambassador_applied", "ambassador", a.id);
+    await ambassadorChanged(c, a.id);
   });
 }
 
@@ -55,6 +57,7 @@ export async function decideAmbassador(ops: Account, fellowId: string, to: "acti
     const r = await c.query("UPDATE ambassadors SET status = $2, decided_by = $3, decided_at = UTC_TIMESTAMP(3), decision_note = $4 WHERE fellow_id = $1", [fellowId, to, ops.id, note]);
     if (!r.affectedRows) throw new HttpError(404, "Not found");
     await audit(c, ops.id, `ambassador_${to}`, "ambassador", fellowId);
+    await ambassadorChanged(c, fellowId);
   });
 }
 

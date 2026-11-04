@@ -39,7 +39,7 @@ test("Free Build Session: age, OTP, consent, slot, booked", async ({ page }) => 
 
 test("consent: API refuses a learner without required consents", async ({ page }) => {
   await login(page);
-  const notice = (await ownerQuery<{ id: string }>("SELECT id FROM consent_notices WHERE language = 'en'"))[0];
+  const notice = (await ownerQuery<{ id: string }>("SELECT id FROM consent_notices WHERE language = 'en' ORDER BY published_at DESC, id DESC"))[0];
   const r = await page.request.post("/api/app/learners", { data: { firstName: "Kiran", ageBand: "9-11", interests: [], noticeId: notice.id, consents: { account: true, live_classes: true, class_recording: false }, guardianDeclared: true } });
   expect(r.status()).toBe(422);
 });

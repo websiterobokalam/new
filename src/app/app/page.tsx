@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { emailState } from "@/lib/email/verify";
 import { appContext, fmtDate } from "@/lib/app";
 import { asAccount } from "@/lib/auth/session";
 import { loadJourney, plainProgress } from "@/lib/learn/journey";
@@ -34,10 +35,17 @@ export default async function FamilyHome() {
     )).rows;
     return { learners: withProgress, upcoming, past };
   });
+  const email = await emailState(account.id);
 
   return (
     <section className="py-10">
       <div className="wrap grid gap-10 [&>*]:min-w-0">
+        {!email.email_verified_at && (
+          <p className="card flex flex-wrap items-center justify-between gap-3 p-4" role="note">
+            <span>{email.email ? "Please confirm your email: we sent you a link." : "Add your email to get booking confirmations, receipts and a summary after each class."}</span>
+            <Link href="/app/email" className="font-semibold text-link underline">{email.email ? "Email settings" : "Add email"}</Link>
+          </p>
+        )}
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="eyebrow">{t.app_home}</p>

@@ -10,7 +10,7 @@ import { AwaitingContent } from "../AwaitingContent";
 export function TrustBar() {
   const proof = ["lab.instructor", "lab.roadmap", "lab.hardware-sla", "curriculum.nep-cbse"].map(approvedClaim).filter(Boolean);
   // Commitments are policies we control, not claims about results.
-  const commitments = ["Hands-on from age 6", "Vetted educators only", "Fees shown before you pay", "No home visits. No 1:1 with under-18s"];
+  const commitments = ["Hands-on from age 6", "Vetted educators only", "Fees shown before you pay", "No home visits. One-to-one only online, with parents in the loop"];
   const items = [...proof.map((c) => claimText(c!)), ...commitments];
   return (
     <div className="bg-panel/60">
@@ -239,7 +239,7 @@ export function ParentTrust() {
             </li>
           ))}
         </ul>
-        <p className="mt-8"><Link href="/child-safety" className="font-semibold text-link underline-offset-4 hover:underline">Read our child-safety policy →</Link></p>
+        <p className="mt-8 flex flex-wrap gap-x-6 gap-y-2"><Link href="/child-safety" className="font-semibold text-link underline-offset-4 hover:underline">Read our child-safety policy →</Link><Link href="/one-to-one" className="font-semibold text-link underline-offset-4 hover:underline">How one-to-one classes work →</Link></p>
       </div>
     </Section>
   );

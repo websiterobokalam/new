@@ -3,6 +3,7 @@ import { asAccount, type Account } from "../auth/session";
 import { gateway } from "../payments";
 import { refundPaid } from "../ledger";
 import { gstSplit } from "../money";
+import { refundChanged } from "../email/notify";
 
 /**
  * Refund policy. DRAFT RULES pending your published refund policy. Until it is
@@ -53,6 +54,7 @@ export async function requestRefund(account: Account, orderId: string, reason: s
       [id, orderId, account.id, reason, d.amountPaise, d],
     ).catch((e) => { if (e.code === "23505") throw new RefundError("A refund request is already open for this order"); throw e; });
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,'refund_requested','refund',$2,$3)", [account.id, id, d]);
+    await refundChanged(c, id);
     return id;
   });
 
@@ -79,5 +81,6 @@ export async function payRefund(refundId: string) {
     if (full) await c.query("UPDATE bookings SET status = 'refunded' WHERE id = (SELECT booking_id FROM orders WHERE id = $1)", [r.order_id]);
     await refundPaid(c, refundId, r.amount_paise, gst);
     await c.query("INSERT INTO audit_log (action, entity, entity_id, meta) VALUES ('refund_paid','refund',$1,$2)", [refundId, { providerRefund }]);
+    await refundChanged(c, refundId);
   });
 }

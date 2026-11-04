@@ -5,6 +5,8 @@ import { uuid } from "@/lib/db";
 import { getNotice, recordConsents, REQUIRED, PURPOSES } from "@/lib/learn/consent";
 import { hashIp } from "@/lib/providers";
 import { clientIp } from "@/lib/rateLimit";
+import { consentRecorded } from "@/lib/email/notify";
+import { requireVerifiedEmailForOneToOne } from "@/lib/learn/oneToOne";
 
 const Body = z.object({
   firstName: z.string().trim().min(1, "Enter a first name").max(40).regex(/^[\p{L}\p{M} .'-]+$/u, "Letters only, please"),
@@ -23,10 +25,12 @@ export const POST = handler(async (req) => {
   const id = await asAccount(a, async (c) => {
     const notice = await getNotice(c, a.language);
     if (notice.id !== b.noticeId) throw new HttpError(409, "The notice was updated. Please read it again.");
+    if (b.consents.one_to_one) await requireVerifiedEmailForOneToOne(c, a.id);
     const rows = [{ id: uuid() }];
     await c.query("INSERT INTO learners (id, guardian_account_id, first_name, age_band, interests) VALUES ($1,$2,$3,$4,$5)", [rows[0].id, a.id, b.firstName, b.ageBand, b.interests]);
     await recordConsents(c, a.id, rows[0].id, notice, b.consents, { ipHash: hashIp(clientIp(req)), userAgent: req.headers.get("user-agent") ?? "", declaredAt: new Date().toISOString() });
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id) VALUES ($1,'learner_created','learner',$2)", [a.id, rows[0].id]);
+    await consentRecorded(c, rows[0].id, notice.id, b.consents);
     return rows[0].id as string;
   });
   return ok({ learnerId: id });

@@ -19,15 +19,17 @@ function loadRazorpay() {
   });
 }
 
-export function Checkout({ batchId, learners, payLabel }: { batchId: string; learners: L[]; payLabel: string }) {
+export function Checkout({ batchId, learners, payLabel, oneToOne, notReadyLabel = "consent needed" }: { batchId: string; learners: L[]; payLabel: string; oneToOne?: string[]; notReadyLabel?: string }) {
   const router = useRouter();
   const [learnerId, setLearnerId] = useState(learners.find((l) => l.ready && l.fits)?.id);
   const [err, setErr] = useState<string>();
   const [busy, setBusy] = useState(false);
+  const [acks, setAcks] = useState<boolean[]>(oneToOne?.map(() => false) ?? []);
+  const acked = acks.every(Boolean);
 
   async function go() {
     setBusy(true); setErr(undefined);
-    const r = await post<{ status: string; checkout?: Co }>("/api/app/bookings", { learnerId, batchId });
+    const r = await post<{ status: string; checkout?: Co }>("/api/app/bookings", { learnerId, batchId, oneToOneAck: oneToOne ? acked : undefined });
     if (!r.ok) { setBusy(false); return setErr(r.error); }
     if (r.status === "confirmed" || !r.checkout) return router.push("/app");
     const co = r.checkout;
@@ -52,12 +54,23 @@ export function Checkout({ batchId, learners, payLabel }: { batchId: string; lea
         {learners.map((l) => (
           <label key={l.id} className="chip !justify-start">
             <input type="radio" className="sr-only" name="learner" checked={learnerId === l.id} disabled={!l.ready || !l.fits} onChange={() => setLearnerId(l.id)} />
-            {l.first_name} · {l.age_band}{!l.fits ? " · different age group" : !l.ready ? " · consent needed" : ""}
+            {l.first_name} · {l.age_band}{!l.fits ? " · different age group" : !l.ready ? ` · ${notReadyLabel}` : ""}
           </label>
         ))}
       </fieldset>
+      {oneToOne && (
+        <fieldset className="grid gap-2">
+          <legend className="mb-1 font-semibold text-heading">Before you book a one-to-one class, please confirm</legend>
+          {oneToOne.map((t, i) => (
+            <label key={i} className="flex items-start gap-3">
+              <input type="checkbox" className="mt-1 h-5 w-5 shrink-0 accent-[var(--color-navy)]" checked={acks[i]} onChange={(e) => setAcks((a) => a.map((v, j) => (j === i ? e.target.checked : v)))} />
+              <span>{t}</span>
+            </label>
+          ))}
+        </fieldset>
+      )}
       <FormError msg={err} />
-      <button className="btn btn-primary justify-self-start" disabled={!learnerId || busy} onClick={go}>{busy ? "…" : payLabel}</button>
+      <button className="btn btn-primary justify-self-start" disabled={!learnerId || busy || (!!oneToOne && !acked)} onClick={go}>{busy ? "…" : payLabel}</button>
     </div>
   );
 }

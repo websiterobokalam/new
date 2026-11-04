@@ -33,7 +33,7 @@ export const academy: Module[] = [
     mandatory: true,
     passAll: true,
     points: [
-      "Anyone under 18 is a child. You are never alone with a child: no home visits, no private 1:1s.",
+      "Anyone under 18 is a child. You are never alone with a child off the platform: no home visits, ever. One-to-one classes happen only online on Robokalam, recorded, with the parent informed and free to join.",
       "All contact stays on Robokalam. Never share or ask for phone numbers, social media, email or private chats.",
       "Online classes are recorded. Never move a class to another app.",
       "In person: only at a partner school or centre with the named responsible adult present.",

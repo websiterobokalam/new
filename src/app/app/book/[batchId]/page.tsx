@@ -6,6 +6,7 @@ import { currentConsents, hasRequired } from "@/lib/learn/consent";
 import { ageFits } from "@/lib/learn/booking";
 import { gstSplit, inr } from "@/lib/money";
 import { Checkout } from "@/components/app/Checkout";
+import { ONE_TO_ONE_ACK, oneToOneConsented } from "@/lib/learn/oneToOne";
 
 export const metadata = { title: "Book a class" };
 
@@ -15,11 +16,16 @@ export default async function BookPage({ params }: { params: Promise<{ batchId: 
   if (!/^[0-9a-f-]{36}$/.test(batchId)) notFound();
   const { account, locale, t } = await appContext(`/app/book/${batchId}`);
   const d = await asAccount(account, async (c) => {
-    const b = (await c.query("SELECT b.id, b.starts_at, b.mode, b.location, b.language, c.title, c.slug, c.sessions, c.age_min, c.age_max, c.fee_paise, c.fee_approved, c.sample, c.kit FROM batches b JOIN courses c ON c.id = b.course_id WHERE b.id = $1", [batchId])).rows[0];
+    const b = (await c.query("SELECT b.id, b.starts_at, b.mode, b.location, b.language, c.title, c.slug, c.sessions, c.age_min, c.age_max, c.fee_paise, c.fee_approved, c.sample, c.kit, c.format FROM batches b JOIN courses c ON c.id = b.course_id WHERE b.id = $1", [batchId])).rows[0];
     if (!b) return null;
     const ls = (await c.query("SELECT id, first_name, age_band FROM learners WHERE guardian_account_id = $1 AND erased_at IS NULL ORDER BY created_at", [account.id])).rows;
-    const learners = await Promise.all(ls.map(async (l) => ({ ...l, ready: hasRequired(await currentConsents(c, l.id)), fits: ageFits(l.age_band, b.age_min, b.age_max) })));
-    return { b, learners };
+    const oto = b.format === "one_to_one";
+    const learners = await Promise.all(ls.map(async (l) => {
+      const ready = hasRequired(await currentConsents(c, l.id)) && (!oto || await oneToOneConsented(c, l.id));
+      return { ...l, ready, fits: ageFits(l.age_band, b.age_min, b.age_max) };
+    }));
+    const emailOk = !!(await c.query("SELECT email_verified_at FROM accounts WHERE id = $1", [account.id])).rows[0]?.email_verified_at;
+    return { b, learners, oto, emailOk };
   });
   if (!d) notFound();
   const { b } = d;
@@ -47,10 +53,17 @@ export default async function BookPage({ params }: { params: Promise<{ batchId: 
           )}
           <p className="mt-3 text-sm text-muted">No loans, no financing, no multi-year plans. <Link className="underline" href="/app/orders">Refund terms</Link></p>
         </div>
+        {d.oto && (
+          <section className="card border-heading p-6" aria-labelledby="oto-h">
+            <h2 id="oto-h" className="text-xl font-bold">One-to-one, with you in the loop</h2>
+            <p className="mt-2">This is a one-to-one online class. It needs one-to-one consent for your child (Consent centre) and a confirmed email, so every session notice reaches you. <Link className="text-link underline" href="/one-to-one">How one-to-one classes work</Link></p>
+            {!d.emailOk && <p className="mt-3 rounded-lg bg-[#fff1d6] px-3 py-2 font-semibold text-[#7a4a00]">Add and confirm your email first. <Link className="underline" href="/app/email">Email settings</Link></p>}
+          </section>
+        )}
         {published && (d.learners.length === 0 ? (
           <p>Add a learner first. <Link className="text-link underline" href="/app/learners/new">{t.add_learner}</Link></p>
         ) : (
-          <Checkout batchId={b.id} learners={d.learners} payLabel={fee ? `${t.pay_now} ${inr(fee)}` : t.continue} />
+          <Checkout batchId={b.id} learners={d.learners} payLabel={fee ? `${t.pay_now} ${inr(fee)}` : t.continue} oneToOne={d.oto ? [...ONE_TO_ONE_ACK] : undefined} notReadyLabel={d.oto ? "turn on one-to-one in the Consent centre" : undefined} />
         ))}
       </div>
     </section>

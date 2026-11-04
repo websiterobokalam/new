@@ -51,6 +51,8 @@ export function ConsentForm({ notice, preset, onDone }: { notice: Notice; preset
               </div>
               {it.required ? (
                 <span className="justify-self-start rounded-full bg-panel px-3 py-1 text-xs font-semibold text-heading">Required for classes</span>
+              ) : it.purpose === "one_to_one" ? (
+                <span className="justify-self-start text-sm text-muted sm:max-w-48">Off for now. Turn it on later in the Consent centre, once your email is confirmed.</span>
               ) : (
                 <label className="flex items-center gap-2 justify-self-start text-sm font-semibold">
                   <input type="checkbox" className="h-5 w-5 accent-[var(--color-navy)]" checked={!!optional[it.purpose]} onChange={(e) => setOptional({ ...optional, [it.purpose]: e.target.checked })} />
