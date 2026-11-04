@@ -23,7 +23,7 @@ test("unapproved claims never reach the HTML", async ({ request }) => {
 test("door click navigates to the door page", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("link", { name: "Become a Kalamite" }).first().click();
-  await expect(page).toHaveURL(/\/fellows$/);
+  await expect(page).toHaveURL(/\/kalamites$/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Teach what you love");
 });
 
@@ -95,5 +95,13 @@ test("no horizontal scroll on key pages", async ({ page }) => {
     await page.goto(p);
     const over = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     expect(over, p).toBeLessThanOrEqual(0);
+  }
+});
+
+test("old Fellows links redirect to Kalamites", async ({ request }) => {
+  for (const [from, to] of [["/fellows", "/kalamites"], ["/fellows/apply", "/kalamites/apply"], ["/fellow-terms", "/kalamite-terms"]]) {
+    const r = await request.get(from, { maxRedirects: 0 });
+    expect(r.status(), from).toBe(301);
+    expect(r.headers()["location"], from).toContain(to);
   }
 });
