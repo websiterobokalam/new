@@ -309,9 +309,6 @@
 .print-only { display: none; }
 
 /* Footer signature: text outline draws, then fills */
-.sign-text { stroke-dasharray: 900; stroke-dashoffset: 900; fill-opacity: 0; transition: stroke-dashoffset 2.4s var(--ease-out-soft) 0.6s, fill-opacity 0.8s ease 2.6s; fill: #e3eff5; }
-[data-on="true"] .sign-text, .no-js .sign-text { stroke-dashoffset: 0; fill-opacity: 1; }
-@media (prefers-reduced-motion: reduce) { .sign-text { stroke-dashoffset: 0; fill-opacity: 1; } }
 
 /* Three doors: branches draw after the pen, then light on hover/focus */
 .doors .branch, .doors .branch-trunk { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: .45; animation: pen 1.1s var(--ease-out-soft) 1.3s forwards; transition: opacity .3s, stroke-width .3s; }
@@ -332,3 +329,27 @@
 /* Telugu and Hindi: no letter-spacing or forced uppercase mono on labels (breaks conjuncts) */
 :lang(te) .eyebrow, :lang(hi) .eyebrow { font-family: var(--font-sans); letter-spacing: 0; text-transform: none; font-size: 0.85rem; }
 
+
+/* ---------- Footer wordmark: bold, animated ---------- */
+.rk-sign { display: flex; flex-wrap: nowrap; font-family: var(--font-brand), "Times New Roman", serif; font-weight: 700; line-height: 1; letter-spacing: 0.02em; font-size: clamp(2.6rem, 11.5vw, 9.5rem); }
+.rk-letter {
+  display: inline-block; background: linear-gradient(90deg, #0098D6, #00CBD6, #FFD31D, #00CBD6, #0098D6); background-size: 400% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 8px 24px rgb(0 152 214 / 0.35));
+  animation: rk-wave 6s linear infinite; animation-delay: calc(var(--i) * -0.35s);
+  transition: transform 0.35s var(--ease-out-soft);
+}
+.rk-letter:hover { transform: translateY(-10px) rotate(-4deg); }
+/* Letters spring into place when the footer comes into view (only with JS; visible without it). */
+.js [data-power] .rk-letter { opacity: 0; transform: translateY(60%) rotate(-14deg) scale(0.8); transition: opacity 0.5s, transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1); transition-delay: calc(var(--i) * 70ms); }
+.js [data-power][data-on="true"] .rk-letter { opacity: 1; transform: none; }
+.js [data-power][data-on="true"] .rk-letter:hover { transform: translateY(-10px) rotate(-4deg); transition-delay: 0s; }
+.rk-fuse { position: relative; height: 4px; margin-top: 1rem; max-width: 100%; border-radius: 999px; background: linear-gradient(90deg, #0098D6, #00CBD6 70%, transparent); opacity: 0.85; }
+.rk-spark { position: absolute; top: 50%; left: 0; width: 14px; height: 14px; margin-top: -7px; border-radius: 999px; background: #FFD31D; box-shadow: 0 0 0 4px rgb(255 211 29 / 0.25), 0 0 24px 6px rgb(255 211 29 / 0.7); animation: rk-spark 4.5s ease-in-out infinite; }
+@keyframes rk-wave { from { background-position: 0% 50%; } to { background-position: 400% 50%; } }
+@keyframes rk-spark { 0% { left: 0; opacity: 0; } 10% { opacity: 1; } 85% { opacity: 1; } 100% { left: calc(100% - 14px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .rk-letter, .rk-spark { animation: none; }
+  .js [data-power] .rk-letter { opacity: 1; transform: none; transition: none; }
+  .rk-spark { display: none; }
+}

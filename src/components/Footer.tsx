@@ -14,17 +14,14 @@ export function Footer() {
   return (
     <footer className="relative overflow-hidden bg-night text-[#c9dbe5]" data-noprint>
       <div className="wrap py-16">
-        {/* The Kalam Line ends by signing the name */}
-        <div data-power className="mb-12" aria-hidden>
-          <svg viewBox="0 0 900 140" className="h-auto w-full max-w-3xl draw-on-power">
-            <defs>
-              <linearGradient id="sig-g" x1="0" x2="1">
-                <stop offset="0" stopColor="#0098D6" /><stop offset=".5" stopColor="#00CBD6" /><stop offset="1" stopColor="#00B16A" />
-              </linearGradient>
-            </defs>
-            <path data-draw pathLength={1} d="M6 70 C 40 70, 60 20, 90 60" fill="none" stroke="url(#sig-g)" strokeWidth="3" strokeLinecap="round" />
-            <text x="100" y="100" className="sign-text" fontFamily="var(--font-brand)" fontWeight="700" fontSize="84" fill="none" stroke="url(#sig-g)" strokeWidth="2">ROBOKALAM</text>
-          </svg>
+        {/* The Kalam Line ends with the name: bold letters that spring in, a rolling colour wave, and a spark. */}
+        <div data-power className="mb-14">
+          <p className="rk-sign" role="img" aria-label="Robokalam">
+            {"ROBOKALAM".split("").map((ch, i) => (
+              <span key={i} aria-hidden className="rk-letter" style={{ ["--i" as string]: i }}>{ch}</span>
+            ))}
+          </p>
+          <div aria-hidden className="rk-fuse"><span className="rk-spark" /></div>
         </div>
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
           <div className="col-span-2 flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-white/10 pb-8 sm:col-span-3 lg:col-span-5">

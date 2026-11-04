@@ -18,7 +18,7 @@ export function organizationLd() {
     legalName: SITE.legalName,
     slogan: SITE.tagline,
     url: SITE.url,
-    logo: `${SITE.url}/icon.svg`,
+    logo: `${SITE.url}/brand/robokalam-logo.png`,
   };
 }
 

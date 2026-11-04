@@ -164,7 +164,8 @@ test("teach mode: minimal roster, attendance and builds, pay line, escrow releas
   await parent.getByLabel("5 of 5").check({ force: true });
   await parent.getByPlaceholder("Optional comment").fill("Patient and clear.");
   await parent.getByRole("button", { name: "Submit review" }).click();
-  await expect(parent.getByText("Your review is verified")).toBeVisible();
+  // The confirmation can unmount when the page refreshes; check the saved review instead.
+  await expect.poll(async () => (await ownerQuery("SELECT COUNT(*) AS n FROM reviews WHERE fellow_id = $1 AND body = 'Patient and clear.'", [fid]))[0].n).toBe(1);
   await parent.goto(`/educators/${fid}`);
   await expect(parent.getByText("Patient and clear.")).toBeVisible();
   await expect(parent.getByText("✓ Background checked")).toBeVisible();

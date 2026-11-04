@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   applicationName: "Robokalam",
   manifest: "/manifest.webmanifest",
   openGraph: { siteName: "Robokalam", type: "website", locale: "en_IN" },
-  icons: { icon: [{ url: "/icon.svg", type: "image/svg+xml" }, { url: "/icon-192.png", sizes: "192x192", type: "image/png" }], apple: "/icon-192.png" },
+  icons: { icon: [{ url: "/favicon-32.png", sizes: "32x32", type: "image/png" }, { url: "/icon-192.png", sizes: "192x192", type: "image/png" }], apple: "/icon-192.png" },
 };
 
 export const viewport: Viewport = {
