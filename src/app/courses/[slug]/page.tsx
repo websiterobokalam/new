@@ -28,6 +28,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
           <p className="eyebrow">Age {c.age_min}{c.age_max ? `–${c.age_max}` : "+"}{c.programme ? ` · ${c.programme}` : ""}</p>
           <h1 className="display-lg mt-2">{c.title}</h1>
           <p className="lede mt-3">{c.outcome}</p>
+          {c.author_fellow_id && <p className="mt-3 max-w-2xl text-sm text-muted">Written by the Kalam Fellow who teaches it, and reviewed by Robokalam before it was listed: safety, age fit and honest claims. Online, in a small group, and recorded like every class.</p>}
           <dl className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {[["Batch", `Up to ${c.batch_size_max}`], ["Classes", String(c.sessions)], ["Kit", c.kit ?? "None needed"]].map(([k, v]) => <div key={k} className="rounded-2xl bg-panel p-4"><dt className="text-sm text-muted">{k}</dt><dd className="font-semibold">{v}</dd></div>)}
             <div className="rounded-2xl bg-panel p-4"><dt className="text-sm text-muted">Fee</dt><dd className="font-semibold"><FeeLine fee={c.fee_paise} approved={c.fee_approved} sample={c.sample} /></dd></div>

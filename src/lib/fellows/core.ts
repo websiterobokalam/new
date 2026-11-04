@@ -4,6 +4,9 @@ import { academy, gradeModule, mandatoryModules } from "@/content/fellows/academ
 import { gradeSubject, subjectTests } from "@/content/fellows/subject-tests";
 import { addEarning, rateFor } from "./pay";
 
+import { noteCity, cityFor, takesFellows } from "../market/cities";
+import { recordReferral, rewardReferral } from "../market/ambassadors";
+
 export const STEPS = ["subject_test", "demo", "identity", "background", "references", "academy", "terms", "shadow", "co_teach"] as const;
 export type Step = (typeof STEPS)[number];
 export const STEP_LABEL: Record<Step, string> = {
@@ -45,7 +48,7 @@ const displayName = (full: string) => {
   return parts.length > 1 ? `${parts[0]} ${parts[parts.length - 1][0].toUpperCase()}.` : parts[0];
 };
 
-export type Application = { fullName: string; college: string; course: string; year: string; collegeEmail?: string; worlds: string[]; languages: string[]; hoursPerWeek: number; city: string };
+export type Application = { fullName: string; college: string; course: string; year: string; collegeEmail?: string; worlds: string[]; languages: string[]; hoursPerWeek: number; city: string; ref?: string };
 
 /** Step 1-2 of the journey: phone OTP is done; record the profile, worlds and hours. */
 export async function apply(a: Account, app: Application) {
@@ -53,7 +56,8 @@ export async function apply(a: Account, app: Application) {
     const acc = (await c.query("SELECT role, (SELECT count(*) FROM learners l WHERE l.guardian_account_id = a.id AND l.erased_at IS NULL) AS kids FROM accounts a WHERE id = $1", [a.id])).rows[0];
     if (acc.role !== "parent" && acc.role !== "fellow") throw new FellowError(409, "This number belongs to a staff account");
     if (acc.kids > 0) throw new FellowError(409, "This number manages a learner account. Please apply with your own number.");
-    const inPilot = app.city.trim().toLowerCase() === PILOT.city.toLowerCase();
+    // Cities that take Fellows: the pilot city and any city a person has opened (Phase 5).
+    const inPilot = takesFellows(await noteCity(c, app.city));
     await c.query("UPDATE accounts SET role = 'fellow', display_name = $2 WHERE id = $1", [a.id, displayName(app.fullName)]);
     await c.query(
       `INSERT INTO fellows (account_id, full_name, display_name, college, course, year, college_email, worlds, languages, hours_per_week, city, status, age_confirmed_at)
@@ -62,6 +66,7 @@ export async function apply(a: Account, app: Application) {
          languages = VALUES(languages), hours_per_week = VALUES(hours_per_week)`,
       [a.id, app.fullName.trim(), displayName(app.fullName), app.college.trim(), app.course.trim(), app.year, app.collegeEmail || null, app.worlds, app.languages, app.hoursPerWeek, app.city.trim(), inPilot ? "vetting" : "waitlisted"],
     );
+    await recordReferral(c, a.id, app.ref);
     for (const s of STEPS) await insertOnce(c, "INSERT INTO vetting_steps (fellow_id, step, detail) VALUES ($1,$2,'{}')", [a.id, s]);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id, meta) VALUES ($1,'fellow_applied','fellow',$2,$3)", [a.id, a.id, { city: app.city, inPilot }]);
     return { status: inPilot ? "vetting" : "waitlisted" };
@@ -157,9 +162,13 @@ export async function goLive(staff: Account, fellowId: string) {
     const steps = (await c.query("SELECT step, status FROM vetting_steps WHERE fellow_id = $1", [fellowId])).rows;
     const missing = STEPS.filter((s) => steps.find((x) => x.step === s)?.status !== "passed");
     if (missing.length) throw new FellowError(409, `Not ready: ${missing.map((m) => STEP_LABEL[m]).join(", ")}`);
-    const live = (await c.query("SELECT count(*) AS n FROM fellows WHERE status = 'live'")).rows[0].n;
-    if (live >= PILOT.maxLive) throw new FellowError(409, `The pilot is full (${PILOT.maxLive} live Fellows)`);
+    // Each city has its own cap (the pilot city starts at PILOT_MAX_LIVE).
+    const city = await cityFor(c, f.city);
+    if (!takesFellows(city)) throw new FellowError(409, `${f.city} isn't open for Fellows yet`);
+    const live = (await c.query("SELECT count(*) AS n FROM fellows WHERE status = 'live' AND LOWER(TRIM(city)) = $1", [city!.slug])).rows[0].n;
+    if (live >= city!.max_live) throw new FellowError(409, `${city!.name} is full (${city!.max_live} live Fellows)`);
     await c.query("UPDATE fellows SET status = 'live', went_live_at = now() WHERE account_id = $1", [fellowId]);
+    await rewardReferral(c, fellowId);
     await c.query("INSERT INTO audit_log (actor_account_id, action, entity, entity_id) VALUES ($1,'fellow_live','fellow',$2)", [staff.id, fellowId]);
   });
 }

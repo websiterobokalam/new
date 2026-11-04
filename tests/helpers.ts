@@ -44,9 +44,9 @@ export async function addLearner(page: Page, name: string, age = "9-11") {
 }
 
 /** Apply as a Fellow through the real flow. Returns the phone (without +91). */
-export async function applyAsFellow(page: Page, opts: { city?: string; name?: string; worlds?: string[] } = {}) {
+export async function applyAsFellow(page: Page, opts: { city?: string; name?: string; worlds?: string[]; ref?: string } = {}) {
   const phone = randomPhone();
-  await page.goto("/fellows/apply");
+  await page.goto(opts.ref ? `/fellows/apply?ref=${opts.ref}` : "/fellows/apply");
   await page.getByLabel("Your mobile number").fill(phone);
   await page.getByRole("button", { name: "Send code" }).click();
   await page.getByLabel("6-digit code").fill("123456");
@@ -116,4 +116,44 @@ export async function startedSession(classId: string) {
   const id = newId();
   await ownerQuery("INSERT INTO class_sessions (id, class_id, starts_at) VALUES ($1,$2, UTC_TIMESTAMP(3) - INTERVAL 10 MINUTE)", [id, classId]);
   return id;
+}
+
+/** A sample batch to hang test bookings on. */
+export async function anyBatch() {
+  return (await ownerQuery<{ id: string }>("SELECT b.id FROM batches b JOIN courses c ON c.id = b.course_id WHERE c.sample LIMIT 1"))[0].id;
+}
+
+/** A parent, a child and an attended booking on a batch. Returns ids. */
+export async function attendedBooking(batchId: string, opts: { paid?: number; status?: string } = {}) {
+  const parent = newId(), learner = newId(), booking = newId();
+  await ownerQuery("INSERT INTO accounts (id, phone_e164, adult_declared_at) VALUES ($1,$2, now())", [parent, "+91" + randomPhone()]);
+  await ownerQuery("INSERT INTO learners (id, guardian_account_id, first_name, age_band, interests) VALUES ($1,$2,$3,'9-11','[]')", [learner, parent, `Kid${learner.slice(0, 4)}`]);
+  await ownerQuery("INSERT INTO bookings (id, batch_id, learner_id, guardian_account_id, status) VALUES ($1,$2,$3,$4,$5)", [booking, batchId, learner, parent, opts.status ?? "attended"]);
+  if (opts.paid) {
+    await ownerQuery("INSERT INTO orders (id, booking_id, account_id, amount_paise, gst_paise, status, provider, paid_at) VALUES ($1,$2,$3,$4,$5,'paid','mock', now())",
+      [newId(), booking, parent, opts.paid, Math.round(opts.paid - opts.paid / 1.18)]);
+  }
+  return { parent, learner, booking };
+}
+
+/**
+ * Give a live Fellow a teaching record: delivered sessions, observations and
+ * verified 5-star reviews, so they clear the Phase 5 bars.
+ */
+export async function teachingHistory(fellowId: string, opts: { sessions?: number; observation?: number; reviews?: number; tier?: string } = {}) {
+  const batch = await anyBatch();
+  for (let i = 0; i < (opts.sessions ?? 10); i++) {
+    const gig = newId(), asg = newId();
+    await ownerQuery("INSERT INTO gigs (id, kind, title, world, starts_at, duration_min, mode, city, pay_paise, status) VALUES ($1,'doubt_desk',$2,'coding', now() - INTERVAL $3 DAY, 30, 'online', 'Hyderabad', 30000, 'completed')", [gig, `History ${gig.slice(0, 6)}`, i + 1]);
+    await ownerQuery("INSERT INTO gig_assignments (id, gig_id, fellow_id, status, delivered_at) VALUES ($1,$2,$3,'delivered', now() - INTERVAL $4 DAY)", [asg, gig, fellowId, i + 1]);
+    if (i < 2 && opts.observation) {
+      const v = opts.observation;
+      await ownerQuery("INSERT INTO quality_reviews (id, assignment_id, reviewer_account_id, kind, rubric) VALUES ($1,$2,$3,'observation',$4)", [newId(), asg, fellowId, { prep: v, clarity: v, engagement: v, safety: v, outcome: v }]);
+    }
+  }
+  for (let i = 0; i < (opts.reviews ?? 0); i++) {
+    const b = await attendedBooking(batch);
+    await ownerQuery("INSERT INTO reviews (id, booking_id, fellow_id, guardian_account_id, rating) VALUES ($1,$2,$3,$4,5)", [newId(), b.booking, fellowId, b.parent]);
+  }
+  if (opts.tier) await ownerQuery("UPDATE fellows SET tier = $2 WHERE account_id = $1", [fellowId, opts.tier]);
 }

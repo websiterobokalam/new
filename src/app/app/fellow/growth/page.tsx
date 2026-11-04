@@ -2,6 +2,8 @@ import { fellowContext } from "@/lib/fellows/context";
 import { asAccount } from "@/lib/auth/session";
 import { metrics, suggestTier, TIER_RULES } from "@/lib/fellows/tiers";
 import { SITE } from "@/lib/site";
+import { system } from "@/lib/db";
+import { AutomatedNotices } from "@/components/fellow/AutomatedNotices";
 
 export const metadata = { title: "Growth" };
 
@@ -35,6 +37,25 @@ export default async function Growth() {
         <p className="mt-2">This letter confirms that <strong>{fellow.full_name}</strong> of {fellow.college} has delivered <strong>{hours.toFixed(1)} verified teaching hours</strong> with {SITE.legalName} as a Kalam Fellow, as of {new Date().toLocaleDateString("en-IN", { dateStyle: "long" })}.</p>
         <p className="mt-2 text-sm text-muted">Signed letters and the Kalam Fellow teaching certificate become verifiable at /validate once that service is connected. Fellows with strong records get first look at Robokalam internships and jobs.</p>
       </section>
+      <FlagsAboutMe fellowId={fellow.account_id} />
+      <AutomatedNotices ids={["session-signals"]} />
     </div></section>
+  );
+}
+
+/** Transparency: every flag about this Fellow, and what a person decided. */
+async function FlagsAboutMe({ fellowId }: { fellowId: string }) {
+  const flags = await system(async (c) => (await c.query(
+    "SELECT code, message, status, decision_note, created_at FROM quality_flags WHERE subject_type = 'fellow' AND fellow_id = $1 ORDER BY created_at DESC LIMIT 20", [fellowId])).rows);
+  return (
+    <section className="card p-6" aria-labelledby="flags-h">
+      <h2 id="flags-h" className="text-xl font-bold">Quality signals about you</h2>
+      {flags.length === 0 ? <p className="mt-2 text-muted">None. Nothing for you to do.</p> : (
+        <ul className="mt-3 grid gap-2">
+          {flags.map((f) => <li key={f.code} className="border-t border-line pt-2">{f.message} <span className="text-sm text-muted">({f.status === "open" ? "your point of contact will talk it through with you" : `${f.status === "dismissed" ? "cleared" : "discussed"}: ${f.decision_note}`})</span></li>)}
+        </ul>
+      )}
+      <p className="mt-3 text-sm text-muted">Signals never change your tier, pay or gigs by themselves. A person decides, with written reasons you can see here and dispute.</p>
+    </section>
   );
 }

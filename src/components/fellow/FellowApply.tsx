@@ -5,7 +5,7 @@ import { OtpFlow } from "../app/OtpFlow";
 import { Check, Chips, Field, FormError, WORLD_OPTIONS } from "../forms/ui";
 import { post } from "../app/client";
 
-export function FellowApply({ signedIn, pilotCity }: { signedIn: boolean; pilotCity: string }) {
+export function FellowApply({ signedIn, pilotCity, openCities = [pilotCity], colleges = [], referral }: { signedIn: boolean; pilotCity: string; openCities?: string[]; colleges?: string[]; referral?: string }) {
   const router = useRouter();
   const [authed, setAuthed] = useState(signedIn);
   const [worlds, setWorlds] = useState<string[]>([]);
@@ -30,7 +30,7 @@ export function FellowApply({ signedIn, pilotCity }: { signedIn: boolean; pilotC
       setBusy(true);
       const r = await post<{ status: string }>("/api/fellow/apply", {
         fullName: f.get("fullName"), college: f.get("college"), course: f.get("course"), year, collegeEmail: f.get("collegeEmail"),
-        worlds, languages: langs, hoursPerWeek: f.get("hours"), city: f.get("city"), ageConfirmed: age,
+        worlds, languages: langs, hoursPerWeek: f.get("hours"), city: f.get("city"), ageConfirmed: age, ref: referral ?? "",
       });
       setBusy(false);
       if (!r.ok) return setErr({ msg: r.error, fields: r.fields });
@@ -38,8 +38,9 @@ export function FellowApply({ signedIn, pilotCity }: { signedIn: boolean; pilotC
     }}>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Full name (as on your ID)" name="fullName" autoComplete="name" error={err.fields?.fullName} />
-        <Field label="City" name="city" defaultValue={pilotCity} error={err.fields?.city} hint={`The pilot runs in ${pilotCity} first. Elsewhere, you join the waitlist.`} />
-        <Field label="College" name="college" error={err.fields?.college} />
+        <Field label="City" name="city" defaultValue={pilotCity} error={err.fields?.city} hint={openCities.length > 1 ? `Open now in ${openCities.join(", ")}. Elsewhere, you join the waitlist.` : `The pilot runs in ${pilotCity} first. Elsewhere, you join the waitlist.`} />
+        <Field label="College" name="college" list={colleges.length ? "college-list" : undefined} error={err.fields?.college} />
+        {colleges.length > 0 && <datalist id="college-list">{colleges.map((c) => <option key={c} value={c} />)}</datalist>}
         <Field label="Course or branch" name="course" error={err.fields?.course} />
         <Field label="College email (optional, speeds up checks)" name="collegeEmail" type="email" error={err.fields?.collegeEmail} />
         <Field label="Hours a week you could teach" name="hours" type="number" inputMode="numeric" defaultValue={6} error={err.fields?.hoursPerWeek} />

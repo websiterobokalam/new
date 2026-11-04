@@ -50,8 +50,9 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {courses.map((c) => (
               <li key={c.id} className="card flex flex-col p-6">
-                <p className="font-mono text-xs uppercase tracking-wider text-link">Age {c.age_min}{c.age_max ? `–${c.age_max}` : "+"} · {worlds.find((w) => w.id === c.world)?.name}</p>
+                <p className="text-sm font-semibold text-link">Age {c.age_min}{c.age_max ? `–${c.age_max}` : "+"} · {worlds.find((w) => w.id === c.world)?.name}</p>
                 <h2 className="mt-1 text-xl font-bold">{c.title}</h2>
+                {c.programme === "Fellow's Own Course" && <p className="mt-1 text-sm font-semibold text-heading">Fellow&apos;s Own Course · reviewed by Robokalam</p>}
                 <p className="mt-2 text-muted">{c.outcome}</p>
                 <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
                   <div><dt className="text-muted">Batch</dt><dd className="font-semibold">Up to {c.batch_size_max}</dd></div>

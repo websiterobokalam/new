@@ -3,7 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { login, addLearner, applyAsFellow, passSteps, ALL_STEPS, staffPage, makeSchool, startedSession, loginSchool, ownerQuery, newId } from "../helpers";
 
 for (const theme of ["light", "dark"] as const) {
-  for (const path of ["/", "/learn", "/21c-lab", "/21c-lab/planner", "/fellows", "/fellows/apply", "/login/learner"]) {
+  for (const path of ["/", "/learn", "/21c-lab", "/21c-lab/planner", "/fellows", "/fellows/apply", "/login/learner", "/campus-ambassadors"]) {
     test(`a11y ${theme} ${path}`, async ({ page }) => {
       await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
       await page.goto(path);
@@ -88,5 +88,33 @@ for (const theme of ["light", "dark"] as const) {
     await check(t, ["/app/trainer", `/app/trainer/sessions/${sessionId}`]);
     const ops = await staffPage(browser, "ops");
     await check(ops, ["/app/ops/schools", "/app/ops/tickets"]);
+  });
+}
+
+
+for (const theme of ["light", "dark"] as const) {
+  test(`a11y ${theme} Phase 5: Fellow course and ambassador screens, ops marketplace screens`, async ({ page, browser }) => {
+    test.setTimeout(60_000);
+    const check = async (p: import("@playwright/test").Page, paths: string[]) => {
+      await p.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+      for (const path of paths) {
+        await p.goto(path);
+        const r = await new AxeBuilder({ page: p }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+        const issues = r.violations.map((v) => `${path} ${v.id}: ${v.nodes.slice(0, 3).map((n) => n.target.join(" ")).join(", ")}`);
+        expect(issues, issues.join("\n")).toEqual([]);
+      }
+    };
+    const phone = await applyAsFellow(page);
+    await passSteps(phone, ALL_STEPS, true);
+    await page.goto("/app/fellow/courses");
+    const form = page.locator("form", { has: page.getByRole("button", { name: "Save draft" }) }).last();
+    await form.getByLabel("Course title").fill("Accessible robots");
+    await form.getByLabel("What every learner will have built by the end").fill("Every learner builds a robot that avoids walls on its own.");
+    await form.getByLabel(/Syllabus: one line per session/).fill("Sensors | A distance sensor\nAvoid | A rover that avoids walls");
+    await form.getByRole("button", { name: "Save draft" }).click();
+    await expect(page.locator('[data-draft="Accessible robots"]')).toBeVisible();
+    await check(page, ["/app/fellow/courses", "/app/fellow/ambassador", "/app/fellow/growth"]);
+    const ops = await staffPage(browser, "ops");
+    await check(ops, ["/app/ops/marketplace", "/app/ops/courses", "/app/ops/quality", "/app/ops/ambassadors"]);
   });
 }
