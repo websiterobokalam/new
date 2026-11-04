@@ -30,7 +30,7 @@ The product is built. Phase 6 makes sure robokalam.com cannot go live half-confi
      UPDATE accounts SET role = 'ops' WHERE phone_e164 = '+91…';
      UPDATE accounts SET role = 'safeguarding' WHERE phone_e164 = '+91…';
      ```
-3. **Legal.** Once counsel approves the privacy, terms, refund and child-safety pages, set `LEGAL_PAGES_APPROVED=1` and `REFUND_POLICY_APPROVED=1`.
+3. **Legal.** Already approved, see below. Set `LEGAL_PAGES_APPROVED=0` or `REFUND_POLICY_APPROVED=0` only to reopen an item.
 4. **Backup.** Download today's database backup from hPanel, then run:
 
    ```bash
@@ -55,10 +55,21 @@ Emergency only: `LAUNCH_PREFLIGHT=warn` lets the live site start with blockers. 
 - **Unpaid holds are tidied after 24 hours, not 30 minutes.** A hold already stops counting against capacity after 30 minutes, so this is housekeeping only. The day's margin covers slow UPI confirmations.
 - **No invented promises.** The privacy page names the Grievance Officer but sets no response time; that is for counsel to state. The child-safety page shows the response time only from `SAFEGUARDING_RESPONSE_HOURS`.
 
+## Decided by Robokalam (4 November 2026)
+
+- **Company name:** Robokalam Technologies Private Limited. It's the default for invoices, the footer, legal pages and structured data; `LEGAL_NAME` overrides it.
+- **Approved:**
+  - the privacy, terms, refund and child-safety pages
+  - the refund policy
+  - the parent consent notice (English, Telugu, Hindi)
+  - the Kalamite terms and code of conduct
+
+  Draft labels are gone. Approved refunds follow the published rules and are paid automatically. `LEGAL_PAGES_APPROVED=0` or `REFUND_POLICY_APPROVED=0` puts an item back into draft.
+- **Safeguarding Lead and Grievance Officer:** published as roles of Robokalam Technologies Private Limited at info@robokalam.com. Naming individuals is a recommended item on the Launch page; set `SAFEGUARDING_LEAD_NAME` / `GRIEVANCE_OFFICER_NAME` and their emails when appointed.
+
 ## Still needed from Robokalam
 
-- The legal company name: AWAGOJARES SOLUTIONS PRIVATE LIMITED or Robokalam Technologies Private Limited.
-- The Safeguarding Lead and Grievance Officer names and emails.
-- Counsel's sign-off on the legal pages.
-- Razorpay live keys, MSG91 template, SMTP mailbox, GSTIN and registered address.
-- Evidence for any Claims Register numbers you want shown.
+- Razorpay live keys and webhook secret, the MSG91 DLT template, the SMTP mailbox, and the GSTIN and registered address for invoices.
+- `NEXT_PUBLIC_SITE_URL`, `SESSION_SECRET` and `CRON_SECRET` on Hostinger.
+- One backup restore check (`BACKUP_VERIFIED_AT`).
+- Evidence for any Claims Register numbers you want shown. These stay hidden until approved with evidence.

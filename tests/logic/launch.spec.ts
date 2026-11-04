@@ -37,9 +37,10 @@ test("each launch blocker is caught", () => {
     ["payments", { RAZORPAY_KEY_ID: "rzp_test_abc" }],
     ["session_secret", { SESSION_SECRET: "short" }],
     ["gstin", { SUPPLIER_GSTIN: "NOT-A-GSTIN" }],
-    ["legal_name", { LEGAL_NAME: undefined }],
-    ["legal_approved", { LEGAL_PAGES_APPROVED: undefined }],
-    ["safeguarding_lead", { SAFEGUARDING_LEAD_NAME: "" }],
+    ["legal_name", { LEGAL_NAME: "" }],
+    ["legal_approved", { LEGAL_PAGES_APPROVED: "0" }],
+    ["refund_policy", { REFUND_POLICY_APPROVED: "0" }],
+    ["safeguarding_lead", { SAFEGUARDING_EMAIL: "not-an-email" }],
     ["grievance_officer", { GRIEVANCE_OFFICER_EMAIL: "not-an-email" }],
     ["email", { EMAIL_TRANSPORT: "test" }],
     ["backup_verified", { BACKUP_VERIFIED_AT: "2026-01-01" }],
@@ -51,6 +52,16 @@ test("each launch blocker is caught", () => {
     expect(s.blockers.map((b) => b.id), `${id} ${JSON.stringify(change)}`).toContain(id);
     expect(s.ready).toBe(false);
   }
+});
+
+test("company name and approvals are confirmed by default; unnamed people are only a recommendation", () => {
+  const bare = { ...READY };
+  for (const k of ["LEGAL_NAME", "LEGAL_PAGES_APPROVED", "REFUND_POLICY_APPROVED", "SAFEGUARDING_LEAD_NAME", "GRIEVANCE_OFFICER_NAME", "GRIEVANCE_OFFICER_EMAIL"]) delete bare[k];
+  const checks = envChecks(bare, NOW);
+  const s = summarise(checks);
+  expect(s.blockers.map((b) => b.id)).toEqual([]);
+  expect(s.warnings.map((w) => w.id).sort()).toEqual(["grievance_named", "safeguarding_named"]);
+  expect(checks.find((c) => c.id === "legal_name")?.detail).toBe("Robokalam Technologies Private Limited");
 });
 
 test("only robokalam.com in production, outside review mode, counts as the live site", () => {

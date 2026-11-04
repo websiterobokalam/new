@@ -1,3 +1,4 @@
+import { LEGAL_APPROVED } from "@/content/company";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { anon } from "@/lib/db";
@@ -17,7 +18,7 @@ export default async function FellowTerms({ searchParams }: { searchParams: Prom
     <section className="py-12 sm:py-20"><div className="wrap grid max-w-3xl gap-6">
       <header><p className="eyebrow">Kalamites</p><h1 className="display-lg mt-3">Kalamite terms</h1>
         <p className="lede mt-3">Plain terms, published in full. Any change gives Kalamites 14 days&apos; notice.</p>
-        <p className="mt-2 text-sm text-muted">Draft pending legal review.</p></header>
+        <p className="mt-2 text-sm text-muted">{LEGAL_APPROVED ? "Approved by Robokalam Technologies Private Limited." : "Draft pending legal review."}</p></header>
       <nav aria-label="Language" className="flex gap-2">{[["en", "English"], ["te", "తెలుగు"], ["hi", "हिन्दी"]].map(([v, l]) => <Link key={v} href={`?lang=${v}`} lang={v} className="chip" aria-current={v === lang ? "true" : undefined}>{l}</Link>)}</nav>
       {docs.map((d) => (
         <article key={d.id} className="card p-6" lang={lang}>

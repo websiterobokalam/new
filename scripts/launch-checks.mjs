@@ -5,6 +5,7 @@
 // A blocker stops the live site from starting (see scripts/preflight.mjs).
 
 const LIVE_HOSTS = ["robokalam.com", "www.robokalam.com"];
+export const COMPANY = "Robokalam Technologies Private Limited";
 const GSTIN = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DAY = 86_400_000;
@@ -46,12 +47,16 @@ export function envChecks(env = process.env, now = new Date()) {
   add("supplier_address", "Invoices", "Registered address on invoices", (env.SUPPLIER_ADDRESS ?? "").length >= 15, set(env.SUPPLIER_ADDRESS) ? "Set" : "Not set", "Set SUPPLIER_ADDRESS to the registered office address.");
   add("sac", "Invoices", "SAC code for education services", set(env.SAC_CODE), set(env.SAC_CODE) ? env.SAC_CODE : "Not set", "Set SAC_CODE (confirm with your accountant).", "warn");
 
-  add("legal_name", "Legal", "Legal company name confirmed", set(env.LEGAL_NAME), set(env.LEGAL_NAME) ? env.LEGAL_NAME : "Not set: pages show the placeholder name", "Set LEGAL_NAME to the registered company name, then rebuild.");
-  add("legal_approved", "Legal", "Privacy, terms and child-safety pages approved by counsel", env.LEGAL_PAGES_APPROVED === "1", env.LEGAL_PAGES_APPROVED === "1" ? "Approved" : "Pages still say draft", "After counsel signs off, set LEGAL_PAGES_APPROVED=1 and rebuild.");
-  add("refund_policy", "Legal", "Refund policy approved", env.REFUND_POLICY_APPROVED === "1", env.REFUND_POLICY_APPROVED === "1" ? "Approved" : "Draft: every request goes to a person", "Set REFUND_POLICY_APPROVED=1 once the policy is approved.");
-  add("grievance_officer", "Legal", "Grievance Officer named", set(env.GRIEVANCE_OFFICER_NAME) && EMAIL.test(env.GRIEVANCE_OFFICER_EMAIL ?? ""), set(env.GRIEVANCE_OFFICER_NAME) ? env.GRIEVANCE_OFFICER_NAME : "Not named", "Set GRIEVANCE_OFFICER_NAME and GRIEVANCE_OFFICER_EMAIL, then rebuild.");
+  // Confirmed and approved by Robokalam on 4 November 2026. Setting a value to "0" (or a blank LEGAL_NAME) reopens the item.
+  const legalName = env.LEGAL_NAME === undefined ? COMPANY : env.LEGAL_NAME.trim();
+  add("legal_name", "Legal", "Legal company name confirmed", !!legalName, legalName || "LEGAL_NAME is blank", `Set LEGAL_NAME (default: ${COMPANY}), then rebuild.`);
+  add("legal_approved", "Legal", "Privacy, terms and child-safety pages approved", env.LEGAL_PAGES_APPROVED !== "0", env.LEGAL_PAGES_APPROVED !== "0" ? `Approved by ${COMPANY}` : "Set back to draft", "Remove LEGAL_PAGES_APPROVED=0 and rebuild.");
+  add("refund_policy", "Legal", "Refund policy approved", env.REFUND_POLICY_APPROVED !== "0", env.REFUND_POLICY_APPROVED !== "0" ? "Approved: refunds follow the published rules automatically" : "Set back to draft: every request goes to a person", "Remove REFUND_POLICY_APPROVED=0.");
+  add("grievance_officer", "Legal", "Grievance Officer contact published", !set(env.GRIEVANCE_OFFICER_EMAIL) || EMAIL.test(env.GRIEVANCE_OFFICER_EMAIL), set(env.GRIEVANCE_OFFICER_NAME) ? env.GRIEVANCE_OFFICER_NAME : `Grievance Officer, ${COMPANY} (info@robokalam.com)`, "Fix GRIEVANCE_OFFICER_EMAIL.");
+  add("grievance_named", "Legal", "Grievance Officer named as a person", set(env.GRIEVANCE_OFFICER_NAME), set(env.GRIEVANCE_OFFICER_NAME) ? env.GRIEVANCE_OFFICER_NAME : "Published under the company name", "When you appoint someone, set GRIEVANCE_OFFICER_NAME and GRIEVANCE_OFFICER_EMAIL, then rebuild.", "warn");
 
-  add("safeguarding_lead", "Child safety", "Safeguarding Lead named", set(env.SAFEGUARDING_LEAD_NAME) && EMAIL.test(env.SAFEGUARDING_EMAIL ?? ""), set(env.SAFEGUARDING_LEAD_NAME) ? env.SAFEGUARDING_LEAD_NAME : "Not named", "Set SAFEGUARDING_LEAD_NAME and SAFEGUARDING_EMAIL, then rebuild.");
+  add("safeguarding_lead", "Child safety", "Safeguarding contact published", !set(env.SAFEGUARDING_EMAIL) || EMAIL.test(env.SAFEGUARDING_EMAIL), set(env.SAFEGUARDING_LEAD_NAME) ? env.SAFEGUARDING_LEAD_NAME : `Safeguarding Lead, ${COMPANY} (${env.SAFEGUARDING_EMAIL || "info@robokalam.com"})`, "Fix SAFEGUARDING_EMAIL.");
+  add("safeguarding_named", "Child safety", "Safeguarding Lead named as a person", set(env.SAFEGUARDING_LEAD_NAME), set(env.SAFEGUARDING_LEAD_NAME) ? env.SAFEGUARDING_LEAD_NAME : "Published under the company name", "When you appoint someone, set SAFEGUARDING_LEAD_NAME and SAFEGUARDING_EMAIL, then rebuild.", "warn");
   add("safeguarding_hours", "Child safety", "Safeguarding response time set", Number(env.SAFEGUARDING_RESPONSE_HOURS) > 0 && Number(env.SAFEGUARDING_RESPONSE_HOURS) <= 24, set(env.SAFEGUARDING_RESPONSE_HOURS) ? `${env.SAFEGUARDING_RESPONSE_HOURS} hours` : "Not set", "Set SAFEGUARDING_RESPONSE_HOURS (24 or less).");
 
   add("email", "Email", "Email sending (SMTP)", (env.EMAIL_TRANSPORT ?? "").toLowerCase() === "smtp" && set(env.SMTP_HOST) && set(env.SMTP_USER) && set(env.SMTP_PASS) && EMAIL.test(env.MAIL_FROM?.match(/<([^>]+)>/)?.[1] ?? env.MAIL_FROM ?? ""), env.EMAIL_TRANSPORT ? `EMAIL_TRANSPORT=${env.EMAIL_TRANSPORT}` : "Not set: emails wait in the queue", "Set EMAIL_TRANSPORT=smtp, SMTP_HOST, SMTP_USER, SMTP_PASS and MAIL_FROM.");

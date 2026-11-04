@@ -11,7 +11,8 @@ import { refundChanged } from "../email/notify";
  * review and nothing is auto-decided against the parent.
  */
 export const refundPolicy = {
-  approved: () => process.env.REFUND_POLICY_APPROVED === "1",
+  /** Approved by Robokalam on 4 November 2026. REFUND_POLICY_APPROVED=0 sends every request to a person again. */
+  approved: () => process.env.REFUND_POLICY_APPROVED !== "0",
   fullRefundHoursBeforeStart: 24,
   afterStart: "pro_rata_undelivered_sessions" as const,
 };

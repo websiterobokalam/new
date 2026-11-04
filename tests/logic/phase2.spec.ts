@@ -8,7 +8,10 @@ test("refund policy: full refund 24h+ before start, pro rata after", () => {
   const now = new Date("2026-11-10T10:00:00Z");
   expect(evaluate({ amount_paise: 400000 }, new Date("2026-11-12T10:00:00Z"), 8, 0, now)).toMatchObject({ rule: "full_before_start", amountPaise: 400000 });
   expect(evaluate({ amount_paise: 400000 }, new Date("2026-11-09T10:00:00Z"), 8, 2, now)).toMatchObject({ rule: "pro_rata", amountPaise: 300000 });
-  expect(evaluate({ amount_paise: 400000 }, new Date("2026-11-09T10:00:00Z"), 8, 2, now).auto).toBe(false); // policy not approved
+  expect(evaluate({ amount_paise: 400000 }, new Date("2026-11-09T10:00:00Z"), 8, 2, now).auto).toBe(true); // policy approved (4 Nov 2026)
+  process.env.REFUND_POLICY_APPROVED = "0";
+  expect(evaluate({ amount_paise: 400000 }, new Date("2026-11-09T10:00:00Z"), 8, 2, now).auto).toBe(false); // set back to draft: a person decides
+  delete process.env.REFUND_POLICY_APPROVED;
 });
 
 test("GST split is exact and inclusive", () => {
