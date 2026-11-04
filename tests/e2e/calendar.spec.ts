@@ -3,7 +3,7 @@ import { login, addLearner, ownerQuery, newId } from "../helpers";
 
 test("families add a class to their calendar, or subscribe to a private feed they can reset", async ({ page, request }) => {
   const courseId = newId(), batchId = newId(), tag = newId().slice(0, 6);
-  await ownerQuery("INSERT INTO courses (id, slug, title, world, age_min, age_max, outcome, batch_size_max, sessions, fee_paise, fee_approved, published, kind) VALUES ($1,$2,$3,'robotics',6,16,'Build',8,1,0,TRUE,TRUE,'course')", [courseId, `cal-${tag}`, `Calendar Class ${tag}`]);
+  await ownerQuery("INSERT INTO courses (id, slug, title, world, age_min, age_max, outcome, batch_size_max, sessions, fee_paise, fee_approved, published, kind) VALUES ($1,$2,$3,'space',6,16,'Build',8,1,0,TRUE,TRUE,'course')", [courseId, `cal-${tag}`, `Calendar Class ${tag}`]);
   await ownerQuery("INSERT INTO batches (id, course_id, starts_at, duration_min, capacity, language, mode) VALUES ($1,$2, UTC_TIMESTAMP(3) + INTERVAL 2 DAY, 45, 8, 'en', 'online')", [batchId, courseId]);
   await login(page);
   const learnerId = await addLearner(page, "Meera", "9-11");

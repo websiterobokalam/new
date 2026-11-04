@@ -5,7 +5,7 @@ import { login, loginByEmail, addLearner, ownerQuery, newId, staffPage, applyAsF
 async function oneSessionCourse() {
   const courseId = newId(), batchId = newId(), tag = newId().slice(0, 6);
   await ownerQuery(
-    "INSERT INTO courses (id, slug, title, world, age_min, age_max, outcome, batch_size_max, sessions, fee_paise, fee_approved, published, kind) VALUES ($1,$2,$3,'robotics',6,16,'Build a line follower',8,1,0,TRUE,TRUE,'course')",
+    "INSERT INTO courses (id, slug, title, world, age_min, age_max, outcome, batch_size_max, sessions, fee_paise, fee_approved, published, kind) VALUES ($1,$2,$3,'space',6,16,'Build a line follower',8,1,0,TRUE,TRUE,'course')",
     [courseId, `cert-${tag}`, `Line Follower Workshop ${tag}`]);
   await ownerQuery("INSERT INTO batches (id, course_id, starts_at, duration_min, capacity, language, mode) VALUES ($1,$2, UTC_TIMESTAMP(3) + INTERVAL 1 DAY, 60, 8, 'en', 'online')", [batchId, courseId]);
   return { batchId, title: `Line Follower Workshop ${tag}` };
