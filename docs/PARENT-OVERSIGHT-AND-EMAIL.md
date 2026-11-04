@@ -77,7 +77,7 @@ Status: built and tested. Stopped for review. Not merged. The spec this was buil
 - **Ops → Email:** the sending status, recent emails with addresses masked, failures, and "Send again".
 
 ## Tests
-29 new test runs, counting mobile and desktop separately. The full suite passes.
+25 new test runs, counting mobile and desktop separately (the one-to-one journey runs once, on desktop). The full suite passed twice in a row: 218 passed, 7 skipped by design.
 - **Logic:**
   - every template renders a subject, accessible HTML and plain text, with no tracking images
   - only reminders and summaries carry an unsubscribe line
