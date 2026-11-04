@@ -1,4 +1,5 @@
 import { system } from "./db";
+import { sendMonthlySummaries } from "./email/monthly";
 
 /**
  * Tidy-up (Phase 6). Safe to run as often as you like.
@@ -28,5 +29,5 @@ export async function housekeeping(now = new Date()) {
     const old = new Date(now.getTime() - 30 * 86_400_000);
     const sessions = (await c.query("DELETE FROM sessions WHERE expires_at < $1 OR revoked_at < $1", [old])).affectedRows;
     return { expiredHolds: stale.length, failedOrders: orders, deletedOtps: otps, deletedSessions: sessions };
-  });
+  }).then(async (r) => ({ ...r, monthly: await sendMonthlySummaries(now) }));
 }

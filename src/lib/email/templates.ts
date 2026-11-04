@@ -93,6 +93,10 @@ export const TEMPLATES = {
     subject: `Payment received: ${p.amount}`, heading: "Payment received",
     blocks: [rows([["For", `${p.course} (${p.child})`], ["Amount", `${p.amount} incl. GST`], ["Invoice", p.invoice]]), { p: "Your fee is held until each session is delivered. Refund terms are on your Orders page." }, { cta: { label: "View invoice and orders", href: "/app/orders" } }],
   }) },
+  monthly_summary: { category: "updates", render: (p) => ({
+    subject: `${p.names}'s month at Robokalam: ${p.month}`, heading: `${p.month} at a glance`,
+    blocks: [{ list: p.lines }, { p: "Every build and note is in your family home, and certificates are ready to print there." }, { cta: { label: "Open family home", href: "/app" } }, { note: "Coming up: new events and camps are on robokalam.com/events." }],
+  }) },
   class_reminder: { category: "updates", render: (p) => ({
     subject: `Tomorrow: ${p.course}`, heading: `${p.child}'s class is coming up`,
     blocks: [rows([["Class", p.course], ["When", p.when], ["Educator", p.educator]]), { p: "Join from your family home a few minutes early. Classes are recorded on the platform." }, { cta: { label: "Open family home", href: "/app" } }],

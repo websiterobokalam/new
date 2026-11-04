@@ -81,3 +81,15 @@ Bots are filtered by a hidden field and a rate limit.
 **Running and cancelling:**
 - *Who's coming (CSV)* lists first name, age band and the parent's email. Nothing else about the child.
 - Cancelling an event emails everyone registered with the reason, and the public page shows it.
+
+## Monthly family summary
+
+**When it's sent:** on the 1st to 3rd of each month (India time), as part of the daily tidy-up.
+
+**Who gets it:** each family with something to report.
+
+**What's in it:** one short email covering last month's classes attended, builds finished and certificates, plus classes booked ahead, for each child.
+
+**Rules:**
+- It's an *updates* email, so families who turned updates off don't get it, and every one has an unsubscribe line.
+- One per family per month, however often the job runs.

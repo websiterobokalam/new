@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { login, addLearner, staffPage, ownerQuery } from "../helpers";
+import { login, loginByEmail, addLearner, staffPage, ownerQuery } from "../helpers";
 
 const KEY = "test-cron-secret";
 
@@ -44,4 +44,23 @@ test("ops see Launch readiness with each blocker and its fix; parents can't", as
   await page.goto("/app/ops/launch");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("This line goes nowhere.");
   await expect(page.getByText("Test sign-in codes and mock payments are off")).toHaveCount(0);
+});
+
+test("monthly summary: families with activity get one note a month, respecting their email choice", async ({ page, request }) => {
+  await loginByEmail(page, undefined, { landing: /\/app$/ });
+  const learnerId = await addLearner(page, "Noor", "9-11");
+  const [p] = await ownerQuery<{ id: string }>("SELECT id FROM projects ORDER BY world, level LIMIT 1");
+  await ownerQuery("INSERT INTO learner_progress (learner_id, project_id, status, reviewed_by, completed_at) VALUES ($1,$2,'built','test', UTC_TIMESTAMP(3))", [learnerId, p.id]);
+  const [{ guardian_account_id: acct }] = await ownerQuery<{ guardian_account_id: string }>("SELECT guardian_account_id FROM learners WHERE id = $1", [learnerId]);
+  const nextMonth = new Date(); nextMonth.setUTCMonth(nextMonth.getUTCMonth() + 1, 1); nextMonth.setUTCHours(6, 0, 0, 0);
+  const res = await (await request.get(`/api/cron/housekeeping?key=${KEY}&now=${nextMonth.toISOString()}`)).json();
+  expect(res.monthly.queued).toBeGreaterThanOrEqual(1);
+  const [m] = await ownerQuery<{ payload: { lines: string[] }; category: string }>("SELECT payload, category FROM email_outbox WHERE account_id = $1 AND template = 'monthly_summary'", [acct]);
+  expect(m.category).toBe("updates");
+  expect(m.payload.lines[0]).toBe("Noor: 1 build finished");
+  // Again the same month: nothing new. Mid-month: nothing at all.
+  await request.get(`/api/cron/housekeeping?key=${KEY}&now=${nextMonth.toISOString()}`);
+  expect((await ownerQuery("SELECT id FROM email_outbox WHERE account_id = $1 AND template = 'monthly_summary'", [acct])).length).toBe(1);
+  const mid = await (await request.get(`/api/cron/housekeeping?key=${KEY}`)).json();
+  expect(new Date().getUTCDate() > 3 ? mid.monthly.queued : 0).toBe(0);
 });
