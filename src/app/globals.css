@@ -339,3 +339,57 @@
   .js [data-power] .rk-letter { opacity: 1; transform: none; transition: none; }
   .rk-spark { display: none; }
 }
+
+/* ---- Robokalam orbit (hero background), after old.robokalam.com ---- */
+.orbit { overflow: visible; }
+.orbit .orb-ring { transform-box: view-box; transform-origin: 400px 400px; animation: orb-spin 60s linear infinite; }
+.orbit .orb-ring.orb-b { animation-duration: 90s; animation-direction: reverse; }
+.orbit .orb-ring.orb-c { animation-duration: 120s; }
+.orbit .orb-upright { transform-box: fill-box; transform-origin: center; animation: orb-spin 60s linear infinite reverse; }
+.orbit .orb-upright.orb-b { animation-duration: 90s; animation-direction: normal; }
+.orbit .orb-upright.orb-c { animation-duration: 120s; }
+.orbit .orb-core { transform-box: fill-box; transform-origin: center; animation: orb-breathe 7s ease-in-out infinite; }
+.orbit .orb-drift { animation: orb-drift 14s ease-in-out infinite alternate; }
+.orbit .orb-signal { animation: orb-pulse 1.8s ease-in-out infinite; }
+.orbit .orb-blink { animation: orb-pulse 2.6s ease-in-out infinite; }
+@keyframes orb-spin { to { transform: rotate(360deg); } }
+@keyframes orb-breathe { 0%, 100% { transform: scale(0.94); opacity: 0.85; } 50% { transform: scale(1.04); opacity: 1; } }
+@keyframes orb-drift { to { transform: translate(-14px, 10px); } }
+@keyframes orb-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.hero-orbit { position: absolute; z-index: 0; pointer-events: none; width: min(50rem, 110vw); right: -6rem; bottom: -9rem; opacity: 0.85; }
+@media (max-width: 1023px) { .hero-orbit { width: 30rem; right: -9rem; bottom: -9rem; opacity: 0.4; } }
+
+/* ---- Footer ground with the robot friends ---- */
+.footer-ground { position: relative; isolation: isolate; background: linear-gradient(165deg, #0B4F66 0%, #0E6A82 60%, #0E7088 100%); color: #E3F4F8; }
+.footer-ground::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: var(--kalam-gradient); }
+.footer-ground h2 { color: #FFFFFF !important; font-family: var(--font-sans); font-size: 1.05rem; font-weight: 600; letter-spacing: 0; text-transform: none; }
+.footer-ground h2::after { content: ""; display: block; width: 2.6rem; height: 3px; margin-top: 0.5rem; border-radius: 999px; background: #FFD31D; }
+.footer-ground a:hover { color: #FFFFFF; text-decoration: underline; text-underline-offset: 3px; }
+.footer-bots { position: absolute; inset: auto 0 0; z-index: -1; pointer-events: none; display: none; }
+@media (min-width: 768px) { .footer-bots { display: block; } }
+.footer-bots .bot-astronaut { position: absolute; left: max(0.5rem, calc(50% - 46rem)); bottom: 0; height: 15rem; width: auto; }
+.footer-bots .bot-trio { position: absolute; right: max(0.5rem, calc(50% - 46rem)); bottom: 0; height: 11.5rem; width: auto; }
+.footer-legal { background: #083A4C; color: #C9E3EC; }
+.footer-legal a { color: #E3F4F8; }
+
+.bot .bot-blink { transform-box: fill-box; transform-origin: center; animation: bot-blink 5s infinite; }
+.bot .bot-antenna { animation: orb-pulse 1.6s ease-in-out infinite; }
+.bot .bot-bob { animation: bot-bob 3.2s ease-in-out infinite; }
+.bot .bot-step { transform-box: fill-box; transform-origin: 50% 0; animation: bot-step 3.2s ease-in-out infinite; }
+.bot .bot-point { transform-box: fill-box; transform-origin: 0 0; animation: bot-point 4s ease-in-out infinite; }
+.bot .bot-sway { transform-box: fill-box; transform-origin: 50% 100%; animation: bot-sway 5s ease-in-out infinite; }
+.bot .bot-hop { animation: bot-hop 2.4s ease-in-out infinite; }
+.bot .bot-wave-l { transform-box: fill-box; transform-origin: 100% 100%; animation: bot-wave-l 1.4s ease-in-out infinite; }
+.bot .bot-wave-r { transform-box: fill-box; transform-origin: 0 100%; animation: bot-wave-r 1.4s ease-in-out infinite 0.2s; }
+@keyframes bot-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+@keyframes bot-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes bot-step { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(6deg); } }
+@keyframes bot-point { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-8deg); } }
+@keyframes bot-sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+@keyframes bot-hop { 0%, 70%, 100% { transform: translateY(0); } 80% { transform: translateY(-10px); } 90% { transform: translateY(0); } }
+@keyframes bot-wave-l { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-18deg); } }
+@keyframes bot-wave-r { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(18deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit *, .bot * { animation: none !important; }
+}
