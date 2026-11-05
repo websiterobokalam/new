@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { doors } from "@/content/site";
 import { DoorLink } from "../motion/DoorTransition";
+import { OrbitSystem } from "../art/OrbitSystem";
 
 /**
  * Home hero: Robokalam as an EdTech technology company for premium schools.
@@ -11,7 +12,8 @@ export function Hero() {
   return (
     <section className="hero-night relative overflow-hidden text-white" aria-labelledby="hero-title">
       <div aria-hidden className="hero-glow pointer-events-none absolute inset-0" />
-      <div className="wrap relative grid items-center gap-14 pb-28 pt-14 sm:pt-20 lg:grid-cols-[1.02fr_1fr] lg:pb-36">
+      <OrbitSystem className="hero-orbit" />
+      <div className="wrap relative z-10 grid items-center gap-14 pb-28 pt-14 sm:pt-20 lg:grid-cols-[1.02fr_1fr] lg:pb-36">
         <div>
           <p className="kicker">EdTech software · AI · Robotics labs · Curriculum</p>
           <h1 id="hero-title" className="hero-title mt-5 !text-white">
