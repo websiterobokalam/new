@@ -229,10 +229,15 @@ export function mountRobotScene(host: HTMLElement, opts: { onReady?: () => void 
     if (!visible || document.hidden) { clock.getDelta(); return; }
     const t = clock.getElapsedTime();
 
-    // float, sway and follow the pointer
+    // float, sway and follow the pointer; scrolling turns the bot and pulls the camera back
+    const scroll = Math.min(1, window.scrollY / 700);
+    camera.position.z = 9.2 + scroll * 2.6;
+    camera.position.y = 0.35 + scroll * 0.8;
+    inner.g.rotation.x = 0.32 + scroll * 0.5;
+    outer.g.rotation.x = -0.2 - scroll * 0.4;
     bot.position.y = Math.sin(t * 1.4) * 0.14;
     const spinning = t < spinUntil;
-    const targetY = spinning ? bot.rotation.y + 0.35 : pointer.x * 0.5;
+    const targetY = spinning ? bot.rotation.y + 0.35 : pointer.x * 0.5 + scroll * 1.4;
     bot.rotation.y = spinning ? targetY : MathUtils.lerp(bot.rotation.y % (Math.PI * 2), targetY, 0.06);
     bot.rotation.x = MathUtils.lerp(bot.rotation.x, pointer.y * 0.12, 0.06);
     head.rotation.z = Math.sin(t * 0.9) * 0.05;

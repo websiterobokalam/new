@@ -88,6 +88,7 @@ export const kits: ContentPage = {
         { title: "Science intuition", body: "Forces, circuits and energy, felt by hand before they are written down." },
       ],
     },
+    { kind: "gallery", title: "Kits in action.", ids: ["robotics-zone", "iot-sensor-project", "robot-soccer", "kids-building-1", "kids-building-2"] },
     { kind: "note", text: "Kits contain small parts and batteries. Children should build with an adult nearby." },
   ],
 };

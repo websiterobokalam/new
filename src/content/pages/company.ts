@@ -43,6 +43,7 @@ export const about: ContentPage = {
         { title: "Strength and confidence", body: "Analysis, attention to detail and persistence, learnt by making something that works, carry into every part of life." },
       ],
     },
+    { kind: "gallery", title: "Out in the world.", lede: "Events, showcases and recognition along the way.", ids: ["tgic-innovation-panchayat", "t-hub-event", "science-day-warangal", "assembly-talk", "robot-demo-kids"] },
     {
       kind: "people", heading: "The founders",
       items: [

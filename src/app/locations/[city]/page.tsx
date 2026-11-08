@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { cities, cityList, type CityId } from "@/content/cities";
 import { posts, readingMinutes } from "@/content/blog";
 import { CONTACT } from "@/content/company";
+import { Gallery3D } from "@/components/Gallery3D";
 import { JsonLd, breadcrumbLd, cityLd, faqLd } from "@/lib/jsonld";
 
 export const dynamicParams = false;
@@ -67,6 +68,7 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
         </ul>
       </section>
 
+      <Gallery3D eyebrow={`Robokalam in ${c.name}`} title={c.id === "warangal" ? "Building in Warangal." : "Building in Hyderabad."} ids={c.id === "warangal" ? ["science-day-warangal", "space-zone", "robot-soccer", "iot-sensor-project"] : ["t-hub-event", "tgic-innovation-panchayat", "robotics-zone", "coding-zone"]} />
       <section className="bg-panel/50 py-16" aria-labelledby="areas">
         <div className="wrap grid gap-10 lg:grid-cols-2">
           <div>

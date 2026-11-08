@@ -3,6 +3,7 @@ import { upcomingEvents } from "@/lib/events";
 import { events as formats } from "@/content/pages/company";
 import { Blocks } from "@/components/content/ContentBlocks";
 import { EventCard } from "@/components/EventCard";
+import { Gallery3D } from "@/components/Gallery3D";
 import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
 
 export const dynamic = "force-dynamic";
@@ -33,6 +34,7 @@ export default async function Events() {
           <ul className="mt-4 grid gap-4 md:grid-cols-2">{list.map((e) => <li key={e.id} className="flex"><EventCard e={e} /></li>)}</ul>
         )}
       </section>
+      <Gallery3D tag="events" eyebrow="From recent events" title="Science days, showcases and talks." />
       <section className="wrap max-w-5xl pb-20" aria-label="What we run">
         <Blocks blocks={formats.blocks} />
       </section>

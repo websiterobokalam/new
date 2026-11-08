@@ -18,7 +18,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const locale = await getLocale(a?.language);
   const t = dict(locale);
   return (
-    <div className="min-h-[70vh] bg-bg pb-24">
+    <div className="min-h-[70vh] bg-bg pb-24" data-app-shell>
       {a && (
         <nav aria-label={a.role === "school_admin" || a.role === "trainer" ? "School portal" : "Family app"} className="border-b border-line bg-surface">
           <div className="wrap flex flex-wrap items-center gap-x-5 gap-y-2 py-3 text-sm font-semibold">

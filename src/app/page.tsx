@@ -5,6 +5,7 @@ import {
   MadeByStudents, ParentTrust, ProjectStories, StudentVoices, Faq,
 } from "@/components/home/Sections";
 import { BotLoader } from "@/components/home/BotLoader";
+import { Gallery3D } from "@/components/Gallery3D";
 import { KalamLineScope, LineNode } from "@/components/motion/KalamLine";
 import { Section, SectionHead } from "@/components/Section";
 import { JsonLd, faqLd } from "@/lib/jsonld";
@@ -28,6 +29,7 @@ export default function Home() {
         <Solutions />
         <LineNode />
         <LabAtNight />
+        <Gallery3D title="Robokalam in the real world." lede="Real 21C Labs, real student builds and real events, from Hyderabad to Warangal. Swipe through." />
         <LineNode />
         <WhySchools />
         <LineNode />

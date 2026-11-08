@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero, StickyCta } from "@/components/PageHero";
+import { Gallery3D } from "@/components/Gallery3D";
 import { Section, SectionHead } from "@/components/Section";
 import { Claim } from "@/components/Claim";
 import { platform } from "@/content/site";
 import { SchoolDemoForm } from "@/components/forms/LeadForms";
 import { LabAtNight } from "@/components/home/Sections";
-import { AwaitingContent } from "@/components/AwaitingContent";
 import { planLab } from "@/lib/planner";
 import { IsoLab } from "@/components/art/IsoLab";
 
@@ -98,7 +98,7 @@ export default function LabPage() {
         </div>
       </Section>
 
-      <AwaitingContent title="Lab gallery" need="Real photos of real labs with a consistent warm grade, plus named school video stories (with permission)." />
+      <Gallery3D eyebrow="Inside a 21C Lab" title="Step inside a 21C Lab." lede="A Robotics Zone, a Space Zone, a Coding Zone and an arena: every corner is built for making things." ids={["robotics-zone", "space-zone", "coding-zone", "robot-soccer", "iot-sensor-project", "robot-demo-kids", "kid-robodog", "kids-building-1", "classroom-ldr"]} />
 
       <Section id="demo" label="Book Turnkey Demo" className="bg-panel/50">
         <div className="wrap grid gap-10 lg:grid-cols-[1fr_1.3fr]">
