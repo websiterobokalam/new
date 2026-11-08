@@ -12,7 +12,8 @@ import { JsonLd, faqLd } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "Kalamites: teach what you love, earn while you study",
-  description: "Kalamites are everyone who builds Robokalam: our team, trainers and the college students who teach with us. Join as a Junior Kalamite from wherever you are, teach robotics, IoT, AI and coding, and grow into the next level.",
+  description: "Teach robotics, IoT, AI and coding with Robokalam as a Kalamite: part-time roles for college students in Hyderabad, Warangal and online, with training.",
+  alternates: { canonical: "/kalamites" },
 };
 
 const why = [

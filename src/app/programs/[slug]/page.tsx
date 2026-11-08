@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { programmes } from "@/content/site";
 import { EXTERNAL } from "@/content/company";
+import { metaClip } from "@/lib/site";
 import { JsonLd, breadcrumbLd, courseLd } from "@/lib/jsonld";
 
 export const dynamicParams = false;
@@ -12,7 +13,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const p = programmes.find((x) => x.slug === slug);
-  return { title: p ? `${p.name}${p.age ? ` (${p.age}+)` : ""}` : undefined, description: p ? `${p.outcome} ${p.intro}` : undefined };
+  return { title: p ? `${p.name}${p.age ? ` (${p.age}+)` : ""}` : undefined, description: p ? metaClip(`${p.outcome} ${p.intro}`) : undefined, alternates: p ? { canonical: `/programs/${p.slug}` } : undefined };
 }
 
 export default async function ProgrammePage({ params }: { params: Promise<{ slug: string }> }) {

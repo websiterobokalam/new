@@ -7,7 +7,7 @@ import { PILOT } from "@/lib/fellows/core";
 import { system } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Apply to Kalamites", description: "Apply to teach as a Kalamite. For college students aged 18+." };
+export const metadata: Metadata = { title: "Apply to Kalamites", description: "Apply to teach robotics, coding, IoT and AI as a Kalamite: part-time, online or in person, for college students aged 18+ in Hyderabad, Warangal and India.", alternates: { canonical: "/kalamites/apply" } };
 
 export default async function ApplyPage({ searchParams }: { searchParams: Promise<{ ref?: string }> }) {
   const a = await currentAccount().catch(() => null);

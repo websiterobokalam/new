@@ -1,3 +1,4 @@
+import { OG_IMAGES } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -14,13 +15,15 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const p = postBySlug((await params).slug);
   if (!p) return {};
+  // Long titles drop the "| Robokalam" suffix so search results show the words that matter.
+  const t = p.seoTitle ?? p.title;
   return {
-    title: p.title,
+    title: t.length > 55 ? { absolute: t } : t,
     description: p.description,
     keywords: p.keywords,
     authors: [{ name: p.author }],
     alternates: { canonical: `/blog/${p.slug}` },
-    openGraph: { type: "article", url: `/blog/${p.slug}`, title: p.title, description: p.description, publishedTime: p.published, modifiedTime: p.updated ?? p.published, section: p.tag, tags: p.keywords },
+    openGraph: { type: "article", url: `/blog/${p.slug}`, title: p.title, description: p.description, publishedTime: p.published, modifiedTime: p.updated ?? p.published, section: p.tag, tags: p.keywords, images: OG_IMAGES },
     twitter: { card: "summary_large_image", title: p.title, description: p.description },
   };
 }

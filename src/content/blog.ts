@@ -16,6 +16,8 @@ export type PostSection = {
 export type Post = {
   slug: string;
   title: string;
+  /** A shorter title for search results (60 characters or less) when the heading is long. */
+  seoTitle?: string;
   /** Meta description: 140-160 characters, says what the reader gets. */
   description: string;
   excerpt: string;
@@ -169,6 +171,7 @@ void loop() {
   {
     slug: "earn-while-you-study-teaching-tech-hyderabad-warangal",
     title: "Earn while you study: teaching tech as a college student in Hyderabad and Warangal",
+    seoTitle: "Teach tech part-time as a college student in Hyderabad & Warangal",
     description: "How college students in Hyderabad and Warangal can teach robotics, coding and AI part-time as Kalamites: who can apply, training, safety rules and pay.",
     excerpt: "If you're an engineering, degree or master's student who loves building, teaching it is the fastest way to get better, and you get paid for it.",
     tag: "Kalamites",

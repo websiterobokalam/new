@@ -501,6 +501,10 @@
   }
 }
 
+/* 3D transforms (tilted sections, the coverflow, the orbit) must never make the page scroll sideways.
+   clip, not hidden: it does not create a scroll container, so sticky elements keep working. */
+main#main, footer { overflow-x: clip; }
+
 /* ---- The Robokalam mascot ---- */
 .mascot { height: auto; filter: drop-shadow(0 24px 28px rgb(0 0 0 / 0.28)); }
 .mascot-float { animation: mascot-float 4.5s ease-in-out infinite; }

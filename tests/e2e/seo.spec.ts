@@ -8,7 +8,7 @@ import { test, expect } from "@playwright/test";
 test.describe.configure({ mode: "serial" });
 test.skip(({ isMobile }) => isMobile, "markup is the same on every screen; audited once");
 
-const attr = (html: string, re: RegExp) => html.match(re)?.[1]?.replace(/&amp;/g, "&").trim();
+const attr = (html: string, re: RegExp) => html.match(re)?.[1]?.replace(/&#x27;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, "&").trim();
 
 test("every sitemap page is indexable with sound titles, descriptions, canonicals and headings", async ({ request }) => {
   test.setTimeout(240_000);
@@ -35,6 +35,8 @@ test("every sitemap page is indexable with sound titles, descriptions, canonical
     if (h1s !== 1) problems.push(`${path}: ${h1s} h1`);
     if (!/<meta property="og:image" content="/.test(html)) problems.push(`${path}: no og:image`);
     for (const img of html.match(/<img\b[^>]*>/g) ?? []) if (!/\balt="/.test(img)) problems.push(`${path}: img without alt ${img.slice(0, 80)}`);
+    // Events and courses come from the database; test runs create many with the same name.
+    if (/^\/(events|courses)\//.test(path)) continue;
     if (title) { if (titles.has(title)) problems.push(`${path}: title same as ${titles.get(title)}`); else titles.set(title, path); }
     if (desc) { if (descs.has(desc)) problems.push(`${path}: description same as ${descs.get(desc)}`); else descs.set(desc, path); }
   }

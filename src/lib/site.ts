@@ -20,6 +20,17 @@ export function siteUrl(raw = process.env.NEXT_PUBLIC_SITE_URL): string {
   }
 }
 
+/** Cut a meta description at a word, to the ~160 characters search results show. */
+export function metaClip(s: string, max = 158) {
+  const t = s.replace(/\s+/g, " ").trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max - 1);
+  return cut.slice(0, cut.lastIndexOf(" ")).replace(/[,;:.\s]+$/, "") + "…";
+}
+
+/** The share image, for pages that set their own openGraph (which would otherwise drop it). */
+export const OG_IMAGES = [{ url: "/og.png", width: 1200, height: 630, alt: "Robokalam: robotics, coding and AI for kids and schools" }];
+
 export const SITE = {
   name: "Robokalam",
   tagline: "Literature of Technologies",

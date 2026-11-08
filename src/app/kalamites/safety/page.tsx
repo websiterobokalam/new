@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { fellowRules } from "@/content/site";
 import { Claim } from "@/components/Claim";
 
-export const metadata: Metadata = { title: "Rules for teaching children", description: "The child-safety rules every Kalamite follows." };
+export const metadata: Metadata = { title: "Rules for teaching children", description: "The child-safety rules every Robokalam Kalamite follows with children: no private contact, checked messages, a one-tap report button and a POCSO course.", alternates: { canonical: "/kalamites/safety" } };
 
 const more = [
   "Kalamites see only what they need: a learner's first name, age band and progress.",

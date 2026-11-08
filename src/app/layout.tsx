@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: { default: "Robokalam: AI, software and labs for future-ready schools", template: "%s | Robokalam" },
   description:
-    "Robokalam is an EdTech technology company in Hyderabad: the AADHYA AI platform, 21cschool ERP, turnkey STEM & AI labs and curriculum for schools, and live robotics, coding and AI classes for kids from age 6 in Hyderabad, Warangal and across India.",
+    "Live robotics, coding and AI classes for kids from age 6, STEM & AI labs and curriculum for schools, and the AADHYA AI platform. Robokalam, Hyderabad and Warangal.",
   keywords: ["Robokalam", "robotics classes for kids Hyderabad", "coding classes Hyderabad", "AI classes for kids", "STEM lab for schools Hyderabad", "robotics lab Warangal", "STEM education Telangana", "EdTech company Hyderabad", "21C STEM & AI lab", "AADHYA AI platform"],
   category: "education",
   // Search Console and Bing Webmaster verification (paste the codes they give you, then rebuild).
@@ -23,10 +23,12 @@ export const metadata: Metadata = {
     other: process.env.NEXT_PUBLIC_BING_VERIFICATION ? { "msvalidate.01": process.env.NEXT_PUBLIC_BING_VERIFICATION } : undefined,
   },
   other: { "geo.region": "IN-TG", "geo.placename": "Hyderabad", "geo.position": "17.4474;78.3762", ICBM: "17.4474, 78.3762" },
-  twitter: { card: "summary_large_image", images: ["/og.png"] },
+  // The share image comes from app/opengraph-image.png and app/twitter-image.png, so every page has one
+  // even when it sets its own openGraph fields.
+  twitter: { card: "summary_large_image" },
   applicationName: "Robokalam",
   manifest: "/manifest.webmanifest",
-  openGraph: { siteName: "Robokalam", type: "website", locale: "en_IN", images: [{ url: "/og.png", width: 1200, height: 630, alt: "Robokalam: AI, software and labs for future-ready schools" }] },
+  openGraph: { siteName: "Robokalam", type: "website", locale: "en_IN" },
   icons: { icon: [{ url: "/favicon-32.png", sizes: "32x32", type: "image/png" }, { url: "/icon-192.png", sizes: "192x192", type: "image/png" }], apple: "/icon-192.png" },
 };
 
