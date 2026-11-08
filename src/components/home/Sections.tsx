@@ -138,17 +138,20 @@ export function LabAtNight() {
         </h2>
         <p className="lede mt-4 max-w-2xl !text-[#a3bccb]" data-stagger>We handle the room, the kit, the platform and the training. Your school gets a lab that runs itself.</p>
         <div className="mt-14 grid items-center gap-10 lg:grid-cols-2">
-          {/* the lab: benches light up in sequence */}
-          <div className="relative rounded-[var(--radius-card)] border border-white/10 bg-[#0b1322] p-6" aria-hidden>
-            <div className="grid grid-cols-4 gap-3">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} data-stagger className="lab-bench aspect-[4/3] rounded-lg border border-white/10 bg-[#13213a]" style={{ ["--i" as string]: String(i) }}>
-                  <div className="lab-screen m-1.5 h-[55%] rounded bg-[#1b2c47]" />
-                </div>
-              ))}
-            </div>
-            <div className="mt-5 h-1.5 rounded-full bg-white/10"><div className="lab-progress h-full rounded-full" /></div>
-          </div>
+          {/* the real lab, as a card that tilts in 3D */}
+          <figure className="lab-photo" data-tilt>
+            <img
+              src="/images/21c-lab-1200.webp"
+              srcSet="/images/21c-lab-720.webp 720w, /images/21c-lab-1200.webp 1200w"
+              sizes="(min-width: 1024px) 560px, 92vw"
+              width={1200}
+              height={800}
+              loading="lazy"
+              alt="A Robokalam 21C AI & Robotics innovation lab: work benches with stools, robots on the shelf and science posters on the walls."
+              className="block h-auto w-full rounded-[calc(1.75rem-3px)]"
+            />
+            <figcaption className="lab-photo-tag">A real 21C AI &amp; Robotics lab</figcaption>
+          </figure>
           <ol className="relative grid gap-5 border-l border-white/15 pl-6">
             {rollout.map((r, i) => (
               <li key={r.t} data-stagger className="relative">

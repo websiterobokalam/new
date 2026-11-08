@@ -4,6 +4,7 @@ import { poppins, jetbrains, anekTe, anekHi, brand } from "./fonts";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MotionRuntime } from "@/components/motion/MotionRuntime";
+import { TiltRuntime } from "@/components/motion/TiltRuntime";
 import { DoorTransitionProvider } from "@/components/motion/DoorTransition";
 import { SITE } from "@/lib/site";
 import { JsonLd, organizationLd } from "@/lib/jsonld";
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer />
         </DoorTransitionProvider>
         <MotionRuntime />
+        <TiltRuntime />
       </body>
     </html>
   );
