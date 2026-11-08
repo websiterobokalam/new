@@ -4,6 +4,7 @@ import { SITE } from "@/lib/site";
 import { CONTACT, EXTERNAL, SOCIAL, PEOPLE } from "@/content/company";
 import { SmartLink } from "./SmartLink";
 import { ThemeToggle } from "./ThemeToggle";
+import { CookieSettingsLink } from "./Analytics";
 import { Mascot } from "./art/Mascot";
 
 const cols = [
@@ -78,7 +79,7 @@ export function Footer() {
       </div>
       <div className="footer-legal">
         <div className="wrap flex flex-col gap-2 py-5 text-xs sm:flex-row sm:justify-between">
-          <div className="flex flex-wrap items-center gap-4"><p>© {new Date().getFullYear()} {SITE.legalName}</p><ThemeToggle /></div>
+          <div className="flex flex-wrap items-center gap-4"><p>© {new Date().getFullYear()} {SITE.legalName}</p><ThemeToggle /><CookieSettingsLink className="underline hover:no-underline" /></div>
           <p>
             Safeguarding Lead: <a href={`mailto:${PEOPLE.safeguardingLead.email}`} className="hover:underline">{PEOPLE.safeguardingLead.named ? PEOPLE.safeguardingLead.name : PEOPLE.safeguardingLead.email}</a>
             {" · "}Grievance Officer: <a href={`mailto:${PEOPLE.grievanceOfficer.email}`} className="hover:underline">{PEOPLE.grievanceOfficer.named ? PEOPLE.grievanceOfficer.name : PEOPLE.grievanceOfficer.email}</a>

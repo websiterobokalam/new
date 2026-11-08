@@ -77,16 +77,10 @@ export function IsoLab({ className = "", idp = "iso" }: { className?: string; id
       <Box x={17.5} y={9.5} z={6} w={4.5} d={3.4} h={0.35} tone={T.pcb} />
       <polyline points={pts([[18, 10, 6.4], [20, 10, 6.4], [20, 12, 6.4], [21.5, 12, 6.4]])} fill="none" stroke="#FFD31D" strokeWidth="1.2" />
       <Box x={19.6} y={10.6} z={6.35} w={1.2} d={1} h={0.5} tone={T.navy} />
-      {/* bench 2: robot + satellite */}
+      {/* bench 2: the mascot + satellite */}
       <Box x={9} y={21} z={0} w={15} d={6} h={6} tone={T.bench} />
-      <Box x={11} y={22.5} z={6} w={3.4} d={3} h={2.6} tone={T.navy} />
-      <Box x={11.5} y={22.9} z={8.6} w={2.4} d={2.2} h={2} tone={T.sky} />
-      {[12.2, 13.3].map((x) => {
-        const [cx, cy] = iso([x, 25.12, 9.8]);
-        return <circle key={x} cx={cx} cy={cy} r="3" fill="#fff" />;
-      })}
-      <line x1={iso([12.7, 24, 10.6])[0]} y1={iso([12.7, 24, 10.6])[1]} x2={iso([12.7, 24, 12.4])[0]} y2={iso([12.7, 24, 12.4])[1]} stroke="#00445F" strokeWidth="1.6" />
-      <circle cx={iso([12.7, 24, 12.6])[0]} cy={iso([12.7, 24, 12.6])[1]} r="3.4" fill="#FFD31D" />
+      {/* the Robokalam mascot, standing on the bench */}
+      {(() => { const [mx, my] = iso([12.7, 24.5, 6]); return <image href="/brand/mascot-300.webp" x={mx - 22} y={my - 54} width="44" height="55" />; })()}
       <Box x={17} y={23} z={6} w={0.6} d={0.6} h={2.5} tone={T.navy} />
       <Box x={16.4} y={22.4} z={8.5} w={1.8} d={1.8} h={1.8} tone={T.spark} />
       <Box x={14.2} y={22.9} z={9.1} w={2.2} d={0.8} h={0.15} tone={T.sky} />

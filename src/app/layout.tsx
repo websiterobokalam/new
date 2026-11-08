@@ -5,9 +5,10 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MotionRuntime } from "@/components/motion/MotionRuntime";
 import { TiltRuntime } from "@/components/motion/TiltRuntime";
+import { Analytics } from "@/components/Analytics";
 import { DoorTransitionProvider } from "@/components/motion/DoorTransition";
 import { SITE } from "@/lib/site";
-import { JsonLd, organizationLd } from "@/lib/jsonld";
+import { JsonLd, organizationLd, websiteLd } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -16,6 +17,11 @@ export const metadata: Metadata = {
     "Robokalam is an EdTech technology company in Hyderabad: the AADHYA AI platform, 21cschool ERP, turnkey STEM & AI labs and curriculum for schools, and live robotics, coding and AI classes for kids from age 6 in Hyderabad, Warangal and across India.",
   keywords: ["Robokalam", "robotics classes for kids Hyderabad", "coding classes Hyderabad", "AI classes for kids", "STEM lab for schools Hyderabad", "robotics lab Warangal", "STEM education Telangana", "EdTech company Hyderabad", "21C STEM & AI lab", "AADHYA AI platform"],
   category: "education",
+  // Search Console and Bing Webmaster verification (paste the codes they give you, then rebuild).
+  verification: {
+    google: process.env.NEXT_PUBLIC_GSC_VERIFICATION || undefined,
+    other: process.env.NEXT_PUBLIC_BING_VERIFICATION ? { "msvalidate.01": process.env.NEXT_PUBLIC_BING_VERIFICATION } : undefined,
+  },
   other: { "geo.region": "IN-TG", "geo.placename": "Hyderabad", "geo.position": "17.4474;78.3762", ICBM: "17.4474, 78.3762" },
   twitter: { card: "summary_large_image", images: ["/og.png"] },
   applicationName: "Robokalam",
@@ -43,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
         <JsonLd data={organizationLd()} />
+        <JsonLd data={websiteLd()} />
       </head>
       <body className="min-h-dvh overflow-x-clip">
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] btn btn-primary">
@@ -55,6 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </DoorTransitionProvider>
         <MotionRuntime />
         <TiltRuntime />
+        <Analytics />
       </body>
     </html>
   );

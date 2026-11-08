@@ -1,3 +1,4 @@
+import { MascotHead } from "../art/Mascot";
 import Link from "next/link";
 import { worlds, ladder, gigs, parentTrust, faqs, initiatives, doors, type WorldId } from "@/content/site";
 import { Section, SectionHead } from "../Section";
@@ -68,7 +69,7 @@ export function WorldsBento() {
             <li key={w.id} data-stagger className={span[w.id]}>
               <Link href={w.href} className={`group world-tile world-${w.id} flex h-full flex-col p-6`}>
                 <div className="flex items-start justify-between gap-3">
-                  <span aria-hidden className="world-icon">{WORLD_ICON[w.id]}</span>
+                  <span aria-hidden className="world-icon">{w.id === "robotics" ? <MascotHead className="h-8 w-auto" /> : WORLD_ICON[w.id]}</span>
                   <WorldMotif shape={w.shape} color={w.accent} />
                 </div>
                 <h3 className={`mt-4 font-[family-name:var(--font-display)] font-bold ${w.id === "robotics" ? "text-4xl" : "text-2xl"}`}>{w.name}</h3>

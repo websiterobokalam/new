@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { programmes } from "@/content/site";
 import { EXTERNAL } from "@/content/company";
+import { JsonLd, breadcrumbLd, courseLd } from "@/lib/jsonld";
 
 export const dynamicParams = false;
 export function generateStaticParams() {
@@ -21,6 +22,8 @@ export default async function ProgrammePage({ params }: { params: Promise<{ slug
   const others = programmes.filter((x) => x.slug !== p.slug);
   return (
     <>
+      <JsonLd data={courseLd({ name: p.name, description: `${p.outcome} ${p.intro}`, path: `/programs/${p.slug}`, image: p.image, ageMin: p.age })} />
+      <JsonLd data={breadcrumbLd([{ name: "Home", path: "/" }, { name: "Learn", path: "/learn" }, { name: p.name, path: `/programs/${p.slug}` }])} />
       <section className="relative overflow-hidden pb-12 pt-12 sm:pb-16 sm:pt-20">
         <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(50% 70% at 85% 0%, rgba(0,152,214,.16), transparent 70%)" }} />
         <div className={`wrap relative ${p.image ? "grid items-center gap-10 lg:grid-cols-[1.3fr_1fr]" : "max-w-4xl"}`}>

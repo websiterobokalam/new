@@ -111,7 +111,7 @@ export function GigPhone() {
   );
 }
 
-/** Learner hero: Kalam Bot on a build mat. */
+/** Learner hero: the Robokalam mascot on a build mat. */
 export function LearnerArt() {
   return (
     <svg viewBox="0 0 360 300" className="h-auto w-full">
@@ -122,16 +122,7 @@ export function LearnerArt() {
       <path d="M60 240 H150 V130 H290 V70" fill="none" stroke="url(#la-g)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx="290" cy="70" r="14" fill="#00B16A" />
       <circle cx="60" cy="240" r="9" fill="#00CBD6" />
-      <g transform="translate(118 150) scale(1.15)">
-        <line x1="32" y1="4" x2="32" y2="14" stroke="#00445F" strokeWidth="3" strokeLinecap="round" />
-        <circle cx="32" cy="5" r="4.5" fill="#FFD31D" />
-        <rect x="10" y="13" width="44" height="32" rx="12" fill="#00445F" />
-        <rect x="15" y="19" width="34" height="19" rx="8" fill="#E6F4FA" />
-        <rect x="22" y="24" width="6" height="9" rx="3" fill="#0098D6" />
-        <rect x="36" y="24" width="6" height="9" rx="3" fill="#0098D6" />
-        <rect x="18" y="46" width="28" height="18" rx="7" fill="#0098D6" />
-        <circle cx="32" cy="55" r="4" fill="#00B16A" />
-      </g>
+      <image href="/brand/mascot-300.webp" x="112" y="104" width="96" height="119" />
       <rect x="250" y="190" width="70" height="44" rx="10" fill="#0B2B3D" />
       <text x="262" y="217" fontFamily="var(--font-mono)" fontSize="13" fill="#7FD0F2">.py</text>
     </svg>

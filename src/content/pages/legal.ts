@@ -11,7 +11,7 @@ import { refundPolicy } from "@/lib/learn/refunds";
  */
 
 const status = LEGAL_APPROVED ? "Approved by Robokalam Technologies Private Limited." : "Draft carried over from our previous policy and updated for India's DPDP Act. Pending legal review.";
-const UPDATED = "4 November 2026";
+const UPDATED = "8 November 2026";
 
 export const privacy: ContentPage = {
   eyebrow: "Trust",
@@ -62,15 +62,17 @@ export const privacy: ContentPage = {
     {
       kind: "prose", id: "cookies", heading: "Cookies and similar technologies",
       paras: [
-        "We use only the cookies the site needs to work:",
+        "We use the cookies the site needs to work, and one optional set for analytics that you choose:",
       ],
       bullets: [
         "rk_sess keeps you signed in. It is secure and cannot be read by scripts.",
         "rk_in tells the site you are signed in, so it can show the right menu.",
         "rk_lang remembers the language you picked.",
         "Your light or dark theme choice is kept in your browser's local storage and never sent to us.",
+        "Optional, only if you tap \"Allow analytics\": Google Analytics sets _ga cookies to count visits and see which public pages help people. Your choice is kept in local storage (rk-analytics). Tap \"Cookie settings\" at the foot of any page to change it; saying no removes those cookies.",
       ],
       after: [
+        "Analytics never runs on signed-in pages, sign-in pages, children's booking and application pages or certificates, and the notice asks only adults to choose. We switch off Google signals, ad personalisation and advertising storage, so analytics data is not used for advertising.",
         "We do not use advertising, remarketing or cross-site tracking cookies, and we do not let third parties place them through our site. Our previous policy described Google advertising and remarketing cookies; this site does not use them.",
       ],
     },
@@ -79,6 +81,7 @@ export const privacy: ContentPage = {
       paras: ["We do not sell, rent or trade personal data. We share it only as follows:"],
       bullets: [
         "Service providers who work for us: hosting, email and SMS delivery, payments, background checks, video and recording, and support tools. They are bound by contract to keep data confidential and secure and to use it only for the work we give them.",
+        "Google, as our analytics provider, only for visitors who allow analytics (see Cookies). Google receives page addresses, device and browser type and approximate location, not names, emails or phone numbers.",
         "Your school, if you learn or teach through a school programme, limited to what that programme needs.",
         "Parents see their own child's classes, recordings, reports and educator profiles. Schools see their own lab programme.",
         "Other people you direct us to share with.",

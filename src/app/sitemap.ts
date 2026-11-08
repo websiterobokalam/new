@@ -4,8 +4,13 @@ import { pages } from "@/content/pages";
 import { programmes } from "@/content/site";
 import { sortedPosts } from "@/content/blog";
 import { cityList } from "@/content/cities";
+import { upcomingEvents } from "@/lib/events";
+import { listCourses } from "@/lib/learn/catalogue";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+// Built per request (cached by the CDN), so new events and courses appear without a rebuild.
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Only finished, indexable pages. Drafts awaiting review are noindex and left out.
   const content = Object.entries(pages).filter(([, p]) => p.index).map(([slug]) => `/${slug}`);
   const paths = [...content, ...programmes.map((p) => `/programs/${p.slug}`), "/", "/learn", "/learn/build-session", "/courses", "/21c-lab", "/21c-lab/planner", "/kalamites", "/kalamites/apply", "/kalamites/safety", "/kalamites/earnings", "/campus-ambassadors", "/one-to-one", "/validate", "/newsletter", "/events"];
@@ -16,5 +21,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE.url}/blog`, lastModified: posts[0]?.published, changeFrequency: "weekly", priority: 0.8 },
     ...posts.map((p) => ({ url: `${SITE.url}/blog/${p.slug}`, lastModified: p.updated ?? p.published, changeFrequency: "monthly" as const, priority: 0.7 })),
   ];
-  return [...base, ...local, ...blog];
+  // Live listings. If the database is down the sitemap still serves the rest.
+  const events = await upcomingEvents().catch(() => []);
+  const courses = await listCourses({}).catch(() => []);
+  const live: MetadataRoute.Sitemap = [
+    ...events.map((e) => ({ url: `${SITE.url}/events/${e.slug}`, changeFrequency: "weekly" as const, priority: 0.6 })),
+    ...courses.filter((c) => !c.sample).map((c) => ({ url: `${SITE.url}/courses/${c.slug}`, changeFrequency: "weekly" as const, priority: 0.7 })),
+  ];
+  return [...base, ...local, ...blog, ...live];
 }
