@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Hosts the 3D Kalam-bot. The illustrated robot (children) shows first; on
+ * Hosts the 3D mascot scene. The mascot image (children) shows first; on
  * devices that can run WebGL, wide enough screens and no reduced-motion
  * preference, the 3D scene loads after the page is idle and fades in on top.
  */
@@ -28,7 +28,7 @@ export function Stage3D({ children }: { children: React.ReactNode }) {
     return () => { cancelled = true; if (!w.requestIdleCallback) clearTimeout(id); stop?.(); };
   }, []);
   return (
-    <div ref={host} className="stage3d" data-ready={ready || undefined} title={ready ? "Tap the robot!" : undefined}>
+    <div ref={host} className="stage3d" data-ready={ready || undefined} title={ready ? "Tap the mascot!" : undefined}>
       <div className="stage3d-fallback">{children}</div>
     </div>
   );

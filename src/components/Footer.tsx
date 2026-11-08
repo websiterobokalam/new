@@ -4,7 +4,7 @@ import { SITE } from "@/lib/site";
 import { CONTACT, EXTERNAL, SOCIAL, PEOPLE } from "@/content/company";
 import { SmartLink } from "./SmartLink";
 import { ThemeToggle } from "./ThemeToggle";
-import { Astronaut, RobotTrio } from "./art/FooterRobots";
+import { Mascot } from "./art/Mascot";
 
 const cols = [
   { title: "Learn", links: [["/learn", "Find a course"], ["/programs", "Ashaer tracks"], ["/bootcamps", "Bootcamps"], ["/internships", "Internships"], ["/kits", "ASHAER Box"], [EXTERNAL.learn.href, "Learning portal"], [EXTERNAL.shop.href, "Shop"]] },
@@ -29,7 +29,7 @@ export function Footer() {
         </div>
       </div>
       <div className="footer-ground">
-        <div aria-hidden className="footer-bots"><Astronaut /><RobotTrio /></div>
+        <div aria-hidden className="footer-bots"><Mascot className="footer-mascot" sizes="200px" /></div>
         <div className="wrap relative pb-24 pt-14 md:pb-48">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
           <div className="col-span-2 flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-white/15 pb-8 sm:col-span-3 lg:col-span-5">

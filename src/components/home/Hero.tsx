@@ -2,13 +2,13 @@ import Link from "next/link";
 import { doors } from "@/content/site";
 import { DoorLink } from "../motion/DoorTransition";
 import { OrbitSystem } from "../art/OrbitSystem";
-import { CuteBot } from "../art/CuteBot";
+import { Mascot } from "../art/Mascot";
 import { Stage3D } from "../three/Stage3D";
 
 /**
  * Home hero: Robokalam as an EdTech technology company for premium schools.
  * Software, AI, hardware labs and curriculum from one partner. The visual is
- * Kalam-bot, our 3D mascot (the real lab photo is in the Lab at Night section).
+ * the Robokalam mascot in 3D (the real lab photo is in the Lab at Night section).
  */
 export function Hero() {
   return (
@@ -53,12 +53,12 @@ export function Hero() {
   );
 }
 
-/** Kalam-bot, our 3D mascot, with illustrative previews of the platforms floating around it. */
+/** The Robokalam mascot in 3D, with illustrative previews of the platforms floating around it. */
 function BotStage() {
   return (
     <figure className="relative mx-auto w-full max-w-[560px] pb-10 lg:pb-0">
-      <Stage3D><CuteBot /></Stage3D>
-      <figcaption className="sr-only">Kalam-bot, the Robokalam robot, waving, with previews of the AADHYA platform and the school portal.</figcaption>
+      <Stage3D><Mascot priority sizes="(min-width: 1024px) 380px, 70vw" className="h-full w-full object-contain" /></Stage3D>
+      <figcaption className="sr-only">The Robokalam mascot giving a thumbs up, with previews of the AADHYA platform and the school portal.</figcaption>
 
       {/* AADHYA preview: illustrative, no data. */}
       <div aria-hidden className="ui-card absolute -left-4 -top-8 w-56 sm:-left-10">

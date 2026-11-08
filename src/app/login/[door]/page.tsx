@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { LearnerLogin } from "@/components/app/LearnerLogin";
 import { FellowLogin, SchoolLogin } from "@/components/app/DoorLogin";
 import { smsLoginAvailable } from "@/lib/auth/otp";
+import { Mascot } from "@/components/art/Mascot";
 
 // Rendered per request: which sign-in methods are on depends on this server's settings.
 export const dynamic = "force-dynamic";
@@ -39,6 +40,7 @@ export default async function DoorLogin({ params }: { params: Promise<{ door: st
           {c.notes.map((n) => <p key={n} className="mt-4 text-muted">{n}</p>)}
           {d.id === "educator" && <Link className="mt-2 inline-block font-semibold text-link underline" href="/kalamites/apply">Apply to Kalamites</Link>}
           <p className="mt-6 text-sm text-muted"><Link className="underline" href="/login">Choose a different door</Link></p>
+          <Mascot className="mt-8 hidden w-36 md:block" sizes="144px" />
         </div>
         <div className="card p-6 sm:p-8">
           {d.id === "learner" ? <Suspense><LearnerLogin smsEnabled={sms} /></Suspense> : d.id === "educator" ? <Suspense><FellowLogin smsEnabled={sms} /></Suspense> : <Suspense><SchoolLogin smsEnabled={sms} /></Suspense>}

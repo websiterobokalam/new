@@ -10,18 +10,9 @@ const C = 400; // centre of the 800 × 800 viewBox
 
 /* ---------- Icons, each drawn around (0,0) ---------- */
 
+/** The Robokalam mascot's head, riding the orbit. */
 function RobotHead() {
-  return (
-    <g fill="none" stroke="#04202F" strokeWidth="2.6" strokeLinejoin="round" strokeLinecap="round">
-      <rect x="-17" y="-13" width="34" height="26" rx="6" fill="#FFFFFF" />
-      <circle cx="-7" cy="-1" r="4" fill="#00CBD6" />
-      <circle cx="7" cy="-1" r="4" fill="#00CBD6" />
-      <path d="M-6 8h12" />
-      <path d="M0 -13v-7" />
-      <circle className="orb-blink" cx="0" cy="-23" r="3.2" fill="#FFD31D" />
-      <path d="M-17 -2h-5M17 -2h5" />
-    </g>
-  );
+  return <image href="/brand/mascot-head-96.webp" x="-22" y="-19" width="44" height="37" />;
 }
 
 function CodeWindow() {

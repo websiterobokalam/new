@@ -367,8 +367,6 @@
 .footer-ground a:hover { color: #FFFFFF; text-decoration: underline; text-underline-offset: 3px; }
 .footer-bots { position: absolute; inset: auto 0 0; z-index: -1; pointer-events: none; display: none; }
 @media (min-width: 768px) { .footer-bots { display: block; } }
-.footer-bots .bot-astronaut { position: absolute; left: max(0.5rem, calc(50% - 46rem)); bottom: 0; height: 15rem; width: auto; }
-.footer-bots .bot-trio { position: absolute; right: max(0.5rem, calc(50% - 46rem)); bottom: 0; height: 11.5rem; width: auto; }
 .footer-legal { background: #083A4C; color: #C9E3EC; }
 .footer-legal a { color: #E3F4F8; }
 
@@ -403,30 +401,20 @@
 }
 .tilt-on [data-tilting]::after { opacity: 1; }
 
-/* ---- Kalam-bot stage (3D mascot, illustrated fallback) ---- */
+/* ---- Mascot stage (3D scene, mascot image first) ---- */
 .stage3d { position: relative; width: 100%; aspect-ratio: 1 / 1; }
 .stage3d .robot-canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; opacity: 0; transition: opacity 0.8s ease; cursor: pointer; }
 .stage3d[data-ready] .robot-canvas { opacity: 1; }
 .stage3d-fallback { position: absolute; inset: 6% 10%; transition: opacity 0.6s ease; }
 .stage3d[data-ready] .stage3d-fallback { opacity: 0; }
 .stage3d::before { content: ""; position: absolute; inset: 8%; border-radius: 999px; background: radial-gradient(circle, rgb(0 203 214 / 0.35), rgb(0 152 214 / 0.12) 45%, transparent 70%); filter: blur(10px); }
-.cutebot { width: 100%; height: 100%; overflow: visible; }
-.cutebot-float { animation: cb-float 4.5s ease-in-out infinite; }
-.cutebot-shadow { transform-box: fill-box; transform-origin: center; animation: cb-shadow 4.5s ease-in-out infinite; }
-.cutebot-eyes { transform-box: fill-box; transform-origin: center; animation: bot-blink 4.5s infinite; }
-.cutebot-pulse { animation: orb-pulse 1.6s ease-in-out infinite; }
-.cutebot-antenna { transform-box: fill-box; transform-origin: 50% 100%; animation: bot-sway 3s ease-in-out infinite; }
-.cutebot-wave { transform-box: fill-box; transform-origin: 0% 100%; animation: bot-wave-r 1.2s ease-in-out infinite; }
-@keyframes cb-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-@keyframes cb-shadow { 0%, 100% { transform: scaleX(1); opacity: 0.25; } 50% { transform: scaleX(0.85); opacity: 0.15; } }
 
 /* ---- The real lab photo, as a 3D card ---- */
 .lab-photo { position: relative; margin: 0; padding: 3px; border-radius: 1.75rem; background: linear-gradient(135deg, #0098D6, #00CBD6 60%, #FFD31D); box-shadow: 0 40px 80px -30px rgb(0 152 214 / 0.55); transform: perspective(1200px) rotateY(-6deg) rotateX(3deg); }
 .lab-photo-tag { position: absolute; left: 1rem; bottom: 1rem; border-radius: 999px; background: rgb(4 32 47 / 0.8); padding: 0.4rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #fff; backdrop-filter: blur(6px); }
 
 @media (prefers-reduced-motion: reduce) {
-  .cutebot *, .cutebot-float, .cutebot-shadow { animation: none !important; }
-  .lab-photo { transform: none; }
+    .lab-photo { transform: none; }
 }
 .bot .bot-heart { transform-box: fill-box; transform-origin: center; animation: bot-heart 1.2s ease-in-out infinite; }
 @keyframes bot-heart { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1); } 45% { transform: scale(1.18); } }
@@ -512,3 +500,14 @@
     }
   }
 }
+
+/* ---- The Robokalam mascot ---- */
+.mascot { height: auto; filter: drop-shadow(0 24px 28px rgb(0 0 0 / 0.28)); }
+.mascot-float { animation: mascot-float 4.5s ease-in-out infinite; }
+@keyframes mascot-float { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-12px) rotate(1deg); } }
+.stage3d-fallback { inset: 4% 20% !important; display: grid; place-items: center; }
+.footer-bots .footer-mascot { position: absolute; right: max(1rem, calc(50% - 44rem)); bottom: 0.5rem; width: auto; height: 15rem; animation: mascot-float 4.5s ease-in-out infinite; filter: drop-shadow(0 18px 18px rgb(0 0 0 / 0.35)); }
+.kalam-bot img { filter: drop-shadow(0 6px 8px rgb(0 0 0 / 0.25)); }
+.kalam-bot[data-mood="wave"] { animation: mascot-hop 0.6s ease-in-out 3; }
+@keyframes mascot-hop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-18%) rotate(-6deg); } }
+@media (prefers-reduced-motion: reduce) { .mascot-float, .footer-bots .footer-mascot, .kalam-bot[data-mood="wave"] { animation: none !important; } }

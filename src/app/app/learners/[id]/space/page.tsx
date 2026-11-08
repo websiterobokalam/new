@@ -32,7 +32,7 @@ export default async function LearnerSpace({ params }: { params: Promise<{ id: s
     <section className="py-10">
       <div className="wrap grid max-w-3xl gap-6">
         <div className="flex items-center gap-4">
-          <KalamBot className="h-20 w-20" mood="wave" />
+          <KalamBot full className="h-28 w-24" mood="wave" />
           <h1 className="display-lg">Hi {d.l.first_name}!</h1>
         </div>
         <div className="card grad-border p-6" data-lit="true">
