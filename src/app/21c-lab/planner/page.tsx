@@ -4,6 +4,7 @@ import { approvedClaim, claimText } from "@/lib/claims";
 
 export const metadata: Metadata = {
   title: "Lab Planner",
+  alternates: { canonical: "/21c-lab/planner" },
   description: "Tell us your board, classes, students and room. Get a suggested 21C lab setup, curriculum map and rollout plan as a PDF.",
 };
 

@@ -1,4 +1,5 @@
 import { LogoMark } from "../Logo";
+import { Mascot, MascotHead } from "./Mascot";
 
 /** Slowly rotating badge that sits beside the hero. */
 export function RotatingBadge({ className = "" }: { className?: string }) {
@@ -20,23 +21,12 @@ export function RotatingBadge({ className = "" }: { className?: string }) {
   );
 }
 
-/** Kalam Bot: small original SVG robot that rides the line. */
-export function KalamBot({ className = "", mood = "idle" }: { className?: string; mood?: "idle" | "wave" }) {
+/** The Robokalam mascot, sized for small places: the head for icons, the whole figure when there's room. */
+export function KalamBot({ className = "", mood = "idle", full = false }: { className?: string; mood?: "idle" | "wave"; full?: boolean }) {
   return (
-    <svg viewBox="0 0 64 72" className={`bot ${className}`} data-mood={mood} aria-hidden>
-      <line x1="32" y1="4" x2="32" y2="14" stroke="#00445F" strokeWidth="3" strokeLinecap="round" />
-      <circle cx="32" cy="5" r="4.5" fill="#FFD31D" />
-      <rect x="10" y="13" width="44" height="32" rx="12" fill="#00445F" />
-      <rect x="15" y="19" width="34" height="19" rx="8" fill="#E6F4FA" />
-      <rect className="bot-eye" x="22" y="24" width="6" height="9" rx="3" fill="#0098D6" />
-      <rect className="bot-eye" x="36" y="24" width="6" height="9" rx="3" fill="#0098D6" />
-      <rect x="18" y="46" width="28" height="18" rx="7" fill="#0098D6" />
-      <circle cx="32" cy="55" r="4" fill="#00B16A" />
-      <rect className="bot-arm" x="48" y="44" width="7" height="16" rx="3.5" fill="#00CBD6" />
-      <rect x="9" y="46" width="7" height="14" rx="3.5" fill="#00CBD6" />
-      <rect x="20" y="64" width="9" height="6" rx="3" fill="#0B2B3D" />
-      <rect x="35" y="64" width="9" height="6" rx="3" fill="#0B2B3D" />
-    </svg>
+    <span className={`kalam-bot inline-block ${className}`} data-mood={mood} aria-hidden>
+      {full ? <Mascot float={false} className="h-full w-full object-contain" sizes="160px" /> : <MascotHead className="h-full w-full object-contain" />}
+    </span>
   );
 }
 
@@ -67,22 +57,10 @@ export function RobotPreview() {
       ))}
       <path d="M8 64 H56 V24 H120" fill="none" stroke="#00CBD6" strokeWidth="3" strokeDasharray="5 6" strokeLinecap="round" />
       <g className="transition-transform duration-700 ease-out group-hover:translate-x-[64px] group-focus-within:translate-x-[64px]">
-        <g transform="translate(40 8) scale(.42)"><KalamBotInner /></g>
+        <image href="/brand/mascot-head-96.webp" x="34" y="14" width="44" height="37" />
       </g>
       <rect x="122" y="14" width="22" height="22" rx="5" fill="#00B16A" />
     </svg>
-  );
-}
-
-function KalamBotInner() {
-  return (
-    <>
-      <rect x="10" y="13" width="44" height="32" rx="12" fill="#00445F" />
-      <rect x="15" y="19" width="34" height="19" rx="8" fill="#E6F4FA" />
-      <rect x="22" y="24" width="6" height="9" rx="3" fill="#0098D6" />
-      <rect x="36" y="24" width="6" height="9" rx="3" fill="#0098D6" />
-      <rect x="18" y="46" width="28" height="18" rx="7" fill="#0098D6" />
-    </>
   );
 }
 
@@ -133,7 +111,7 @@ export function GigPhone() {
   );
 }
 
-/** Learner hero: Kalam Bot on a build mat. */
+/** Learner hero: the Robokalam mascot on a build mat. */
 export function LearnerArt() {
   return (
     <svg viewBox="0 0 360 300" className="h-auto w-full">
@@ -144,16 +122,7 @@ export function LearnerArt() {
       <path d="M60 240 H150 V130 H290 V70" fill="none" stroke="url(#la-g)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx="290" cy="70" r="14" fill="#00B16A" />
       <circle cx="60" cy="240" r="9" fill="#00CBD6" />
-      <g transform="translate(118 150) scale(1.15)">
-        <line x1="32" y1="4" x2="32" y2="14" stroke="#00445F" strokeWidth="3" strokeLinecap="round" />
-        <circle cx="32" cy="5" r="4.5" fill="#FFD31D" />
-        <rect x="10" y="13" width="44" height="32" rx="12" fill="#00445F" />
-        <rect x="15" y="19" width="34" height="19" rx="8" fill="#E6F4FA" />
-        <rect x="22" y="24" width="6" height="9" rx="3" fill="#0098D6" />
-        <rect x="36" y="24" width="6" height="9" rx="3" fill="#0098D6" />
-        <rect x="18" y="46" width="28" height="18" rx="7" fill="#0098D6" />
-        <circle cx="32" cy="55" r="4" fill="#00B16A" />
-      </g>
+      <image href="/brand/mascot-300.webp" x="112" y="104" width="96" height="119" />
       <rect x="250" y="190" width="70" height="44" rx="10" fill="#0B2B3D" />
       <text x="262" y="217" fontFamily="var(--font-mono)" fontSize="13" fill="#7FD0F2">.py</text>
     </svg>

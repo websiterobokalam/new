@@ -8,7 +8,7 @@ import { getLocale } from "@/i18n";
 import { DbDown } from "@/components/app/DbDown";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Book a Free Build Session", description: "One free live session. Your child finishes one real build." };
+export const metadata: Metadata = { title: "Book a Free Build Session", description: "Book one free live robotics or coding session for your child, online or in Hyderabad and Warangal. Your child finishes one real build.", alternates: { canonical: "/learn/build-session" } };
 
 export default async function BuildSessionPage({ searchParams }: { searchParams: Promise<{ age?: string; interest?: string }> }) {
   const sp = await searchParams;

@@ -14,8 +14,13 @@ export function JsonLd({ data }: { data: object }) {
 export function organizationLd() {
   return {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": ["Organization", "EducationalOrganization"],
+    "@id": `${SITE.url}/#org`,
     name: SITE.name,
+    alternateName: "Robokalam Technologies",
+    description: "Robotics, coding, IoT, AI and space-tech learning for children and schools in Hyderabad, Warangal and across India, with 21st Century Labs for schools.",
+    image: `${SITE.url}/og.png`,
+    knowsAbout: ["Robotics", "Coding for kids", "STEM education", "Internet of Things", "Artificial intelligence", "Space technology", "Atal Tinkering Labs"],
     legalName: SITE.legalName,
     slogan: SITE.tagline,
     url: SITE.url,
@@ -25,6 +30,38 @@ export function organizationLd() {
     address: { "@type": "PostalAddress", streetAddress: "T-Hub Phase 2, Hitec City", addressLocality: "Hyderabad", addressRegion: "Telangana", addressCountry: "IN" },
     areaServed: [{ "@type": "City", name: "Hyderabad" }, { "@type": "City", name: "Warangal" }, { "@type": "State", name: "Telangana" }, { "@type": "Country", name: "India" }],
     contactPoint: CONTACT.phones.map((p) => ({ "@type": "ContactPoint", telephone: p.tel, contactType: "customer support", email: CONTACT.email, areaServed: "IN", availableLanguage: ["English", "Hindi", "Telugu"] })),
+  };
+}
+
+/** The site itself, so search engines show the right name. */
+export function websiteLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE.url}/#website`,
+    name: SITE.name,
+    alternateName: [SITE.legalName, "Robokalam Technologies", "robokalam.com"],
+    url: SITE.url,
+    inLanguage: "en-IN",
+    publisher: { "@id": `${SITE.url}/#org` },
+  };
+}
+
+/** A course or programme. Offers appear only with an approved fee. */
+export function courseLd(c: { name: string; description: string; path: string; image?: string; ageMin?: number | null; ageMax?: number | null; feeRupees?: number | null; online?: boolean }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: c.name,
+    description: c.description,
+    url: `${SITE.url}${c.path}`,
+    image: c.image ? `${SITE.url}${c.image}` : `${SITE.url}/og.png`,
+    inLanguage: "en-IN",
+    provider: { "@type": "Organization", "@id": `${SITE.url}/#org`, name: SITE.name, url: SITE.url },
+    ...(c.ageMin ? { typicalAgeRange: c.ageMax ? `${c.ageMin}-${c.ageMax}` : `${c.ageMin}-` } : {}),
+    educationalLevel: "Beginner",
+    hasCourseInstance: [{ "@type": "CourseInstance", courseMode: c.online === false ? "Onsite" : "Blended", location: { "@type": "Place", name: "Hyderabad and Warangal, Telangana, India" } }],
+    ...(c.feeRupees ? { offers: [{ "@type": "Offer", category: "Paid", price: c.feeRupees, priceCurrency: "INR", url: `${SITE.url}${c.path}` }] } : {}),
   };
 }
 

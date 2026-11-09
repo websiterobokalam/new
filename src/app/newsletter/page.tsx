@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { NewsletterForm } from "@/components/forms/Engage";
+import { Mascot } from "@/components/art/Mascot";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Newsletter", description: "The Robokalam newsletter: new projects, guides for parents and schools, and events. Adults only, confirmed by email.", alternates: { canonical: "/newsletter" } };
@@ -16,6 +17,7 @@ export default async function Newsletter({ searchParams }: { searchParams: Promi
   return (
     <section className="py-12 sm:py-20">
       <div className="wrap grid max-w-2xl gap-6">
+        <Mascot className="w-28" sizes="112px" />
         <header>
           <p className="eyebrow">Newsletter</p>
           <h1 className="display-lg mt-3">{s?.title ?? "Build notes, twice a month."}</h1>

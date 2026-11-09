@@ -2,11 +2,13 @@ import Link from "next/link";
 import { doors } from "@/content/site";
 import { DoorLink } from "../motion/DoorTransition";
 import { OrbitSystem } from "../art/OrbitSystem";
+import { Mascot } from "../art/Mascot";
+import { Stage3D } from "../three/Stage3D";
 
 /**
  * Home hero: Robokalam as an EdTech technology company for premium schools.
  * Software, AI, hardware labs and curriculum from one partner. The visual is
- * the real 21C lab photo with an illustrative preview of the platforms.
+ * the Robokalam mascot in 3D (the real lab photo is in the Lab at Night section).
  */
 export function Hero() {
   return (
@@ -42,7 +44,7 @@ export function Hero() {
             ))}
           </ul>
         </div>
-        <ProductStage />
+        <BotStage />
       </div>
       <svg aria-hidden viewBox="0 0 1440 80" preserveAspectRatio="none" className="absolute inset-x-0 bottom-0 h-12 w-full sm:h-20">
         <path d="M0 80 V40 C 240 0, 480 0, 720 30 S 1200 70, 1440 20 V80 Z" fill="var(--bg)" />
@@ -51,23 +53,12 @@ export function Hero() {
   );
 }
 
-/** The real lab photo, with illustrative previews of the platforms layered on top. */
-function ProductStage() {
+/** The Robokalam mascot in 3D, with illustrative previews of the platforms floating around it. */
+function BotStage() {
   return (
-    <figure className="relative mx-auto w-full max-w-[600px] pb-10 lg:pb-0">
-      <div className="hero-photo relative overflow-hidden rounded-[1.75rem]">
-        <img
-          src="/images/21c-lab-1200.webp"
-          srcSet="/images/21c-lab-720.webp 720w, /images/21c-lab-1200.webp 1200w"
-          sizes="(min-width: 1024px) 600px, 92vw"
-          width={1200}
-          height={800}
-          fetchPriority="high"
-          alt="A Robokalam 21C AI & Robotics innovation lab: work benches with stools, robots on the shelf and science posters on the walls."
-          className="block h-auto w-full"
-        />
-      </div>
-      <figcaption className="sr-only">A Robokalam 21C AI &amp; Robotics lab, with previews of the AADHYA platform and the school portal.</figcaption>
+    <figure className="relative mx-auto w-full max-w-[560px] pb-10 lg:pb-0">
+      <Stage3D><Mascot priority sizes="(min-width: 1024px) 380px, 70vw" className="h-full w-full object-contain" /></Stage3D>
+      <figcaption className="sr-only">The Robokalam mascot giving a thumbs up, with previews of the AADHYA platform and the school portal.</figcaption>
 
       {/* AADHYA preview: illustrative, no data. */}
       <div aria-hidden className="ui-card absolute -left-4 -top-8 w-56 sm:-left-10">

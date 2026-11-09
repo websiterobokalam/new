@@ -5,6 +5,7 @@ import { StickyCta } from "@/components/PageHero";
 
 export const metadata: Metadata = {
   title: "One-to-one classes, with you in the loop",
+  alternates: { canonical: "/one-to-one" },
   description: "How Robokalam runs one-to-one online classes for under-18s: your consent, a notice before and a summary after every session, recordings, and you can join any time.",
 };
 

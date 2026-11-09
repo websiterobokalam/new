@@ -3,14 +3,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { eventBySlug, EVENT_KINDS, ageLabel, seatsLeft, isOpen, ist } from "@/lib/events";
 import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
-import { SITE } from "@/lib/site";
+import { SITE, metaClip, OG_IMAGES } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const e = await eventBySlug((await params).slug).catch(() => null);
   if (!e) return { robots: { index: false } };
-  return { title: e.title, description: e.summary, alternates: { canonical: `/events/${e.slug}` }, robots: e.status === "cancelled" ? { index: false } : undefined, openGraph: { type: "website", title: e.title, description: e.summary, url: `/events/${e.slug}` } };
+  const where = e.mode === "online" ? "online" : e.city ? `in ${e.city}` : "in person";
+  const description = metaClip(`${e.summary.replace(/\.?$/, ".")} A Robokalam ${e.audience === "adults" ? "event for parents, teachers and educators" : "event for young learners"}, ${where}, on ${e.starts_at.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Kolkata" })}.`);
+  return { title: e.title, description, alternates: { canonical: `/events/${e.slug}` }, robots: e.status === "cancelled" ? { index: false } : undefined, openGraph: { type: "website", title: e.title, description, url: `/events/${e.slug}`, images: OG_IMAGES } };
 }
 
 export default async function EventPage({ params }: { params: Promise<{ slug: string }> }) {

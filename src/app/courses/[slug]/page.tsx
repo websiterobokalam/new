@@ -2,16 +2,20 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCourse } from "@/lib/learn/catalogue";
 import { FeeLine } from "@/components/FeeLine";
-import { JsonLd } from "@/lib/jsonld";
-import { SITE } from "@/lib/site";
+import { JsonLd, breadcrumbLd, courseLd } from "@/lib/jsonld";
 import { DbDown } from "@/components/app/DbDown";
+import { metaClip, OG_IMAGES } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 const LANG: Record<string, string> = { en: "English", te: "Telugu", hi: "Hindi" };
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const d = await getCourse((await params).slug).catch(() => null);
-  return d ? { title: d.course.title, description: d.course.outcome } : {};
+  if (!d) return {};
+  const c = d.course;
+  const ages = `ages ${c.age_min}${c.age_max ? `–${c.age_max}` : "+"}`;
+  const description = metaClip(`${c.outcome.replace(/\.?$/, ".")} ${c.title}: a live Robokalam course for ${ages}, ${c.sessions} classes, from Hyderabad and Warangal.`);
+  return { title: c.title, description, alternates: { canonical: `/courses/${c.slug}` }, robots: c.sample ? { index: false } : undefined, openGraph: { type: "website", title: c.title, description, url: `/courses/${c.slug}`, images: OG_IMAGES } };
 }
 
 export default async function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -22,7 +26,8 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
   const { course: c, batches } = d;
   return (
     <section className="py-10 sm:py-16">
-      {!c.sample && <JsonLd data={{ "@context": "https://schema.org", "@type": "Course", name: c.title, description: c.outcome, provider: { "@type": "Organization", name: SITE.name, url: SITE.url } }} />}
+      {!c.sample && <JsonLd data={courseLd({ name: c.title, description: c.outcome, path: `/courses/${c.slug}`, ageMin: c.age_min, ageMax: c.age_max, feeRupees: c.fee_approved && c.fee_paise ? c.fee_paise / 100 : null })} />}
+      {!c.sample && <JsonLd data={breadcrumbLd([{ name: "Home", path: "/" }, { name: "Courses", path: "/courses" }, { name: c.title, path: `/courses/${c.slug}` }])} />}
       <div className="wrap grid gap-8 lg:grid-cols-[1.3fr_1fr]">
         <div>
           <p className="eyebrow">Age {c.age_min}{c.age_max ? `–${c.age_max}` : "+"}{c.programme ? ` · ${c.programme}` : ""}</p>

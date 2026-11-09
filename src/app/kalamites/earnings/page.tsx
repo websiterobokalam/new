@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { EarningsCalculator } from "@/components/forms/EarningsCalculator";
 
-export const metadata: Metadata = { title: "How Kalamite pay works" };
+export const metadata: Metadata = { title: "How Kalamite pay works", description: "How pay works for Kalamites, the college students who teach robotics, coding and AI with Robokalam: what is paid, when it is paid, and how to check it.", alternates: { canonical: "/kalamites/earnings" } };
 
 const rules = [
   "Robokalam-curriculum gigs pay a fixed amount per session, shown before you accept.",

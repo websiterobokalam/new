@@ -4,6 +4,7 @@ import { StickyCta } from "@/components/PageHero";
 
 export const metadata: Metadata = {
   title: "Campus Ambassadors",
+  alternates: { canonical: "/campus-ambassadors" },
   description: "Kalamites who help classmates at their college become Kalamites. For live Kalamites only. College students aged 18+.",
 };
 

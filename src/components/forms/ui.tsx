@@ -10,7 +10,10 @@ export function useLeadSubmit() {
     try {
       const r = await fetch("/api/leads", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(data) });
       const j = await r.json();
-      if (j.ok) setState({ status: "done", ref: j.ref, fields: {} });
+      if (j.ok) {
+        setState({ status: "done", ref: j.ref, fields: {} });
+        window.rkTrack?.("generate_lead", { form: String(data.door ?? "lead") });
+      }
       else setState({ status: "error", error: j.error, fields: j.fields ?? {} });
       return j.ok as boolean;
     } catch {

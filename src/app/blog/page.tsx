@@ -3,14 +3,14 @@ import Link from "next/link";
 import { sortedPosts, readingMinutes, fmtDate } from "@/content/blog";
 import { cities } from "@/content/cities";
 import { JsonLd, breadcrumbLd } from "@/lib/jsonld";
-import { SITE } from "@/lib/site";
+import { SITE, OG_IMAGES } from "@/lib/site";
 import { NewsletterForm } from "@/components/forms/Engage";
 
 export const metadata: Metadata = {
   title: "Blog: robotics, AI and STEM education",
   description: "The Robokalam blog: robotics projects, AI for kids, STEM labs for schools, and guides for parents and college students in Hyderabad, Warangal and across India.",
   alternates: { canonical: "/blog", types: { "application/rss+xml": [{ url: "/blog/rss.xml", title: "Robokalam blog" }] } },
-  openGraph: { type: "website", url: "/blog", title: "The Robokalam blog", description: "Robotics projects, AI for kids, STEM labs and guides for parents, schools and college students." },
+  openGraph: { type: "website", url: "/blog", title: "The Robokalam blog", description: "Robotics projects, AI for kids, STEM labs and guides for parents, schools and college students.", images: OG_IMAGES },
 };
 
 export default function BlogIndex() {

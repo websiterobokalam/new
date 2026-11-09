@@ -35,6 +35,7 @@ export function ContactForm() {
     const r = await send("/api/enquiries", { ...Object.fromEntries(fd), adult });
     setBusy(false);
     if (!r.ok) return setErr(r);
+    window.rkTrack?.("generate_lead", { form: "contact" });
     setRef(r.ref);
   }
   return (
@@ -79,6 +80,7 @@ export function NewsletterForm({ source = "site", compact = false }: { source?: 
     const r = await send("/api/newsletter", { email: fd.get("email"), website: fd.get("website"), adult, source });
     setBusy(false);
     if (!r.ok) return setErr(r);
+    window.rkTrack?.("sign_up", { method: "newsletter" });
     setDone(true);
   }
   return (

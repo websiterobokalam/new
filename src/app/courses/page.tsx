@@ -6,7 +6,7 @@ import { worlds } from "@/content/site";
 import { DbDown } from "@/components/app/DbDown";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Courses", description: "Find a Robokalam course by age, world, language, online or offline, and time." };
+export const metadata: Metadata = { title: "Courses", description: "Find a Robokalam robotics, coding, IoT or AI course for your child by age, language, online or offline, and time. Hyderabad, Warangal and online.", alternates: { canonical: "/courses" } };
 
 const LANG: Record<string, string> = { en: "English", te: "Telugu", hi: "Hindi" };
 const WORLD_KEYS: Record<string, string> = { "financial-literacy": "finlit" };

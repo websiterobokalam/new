@@ -17,6 +17,7 @@ export function EventRegister({ slug, audience, kids, selfRegistered }: { slug: 
     const r = await post(url, data);
     setBusy(false);
     if (!r.ok) return setErr(r.error);
+    if (url.endsWith("/register")) window.rkTrack?.("event_register", { event: slug });
     setDone(okText); setPicked([]); router.refresh();
   }
   if (audience === "adults") {
