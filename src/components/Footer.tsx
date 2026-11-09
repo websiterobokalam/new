@@ -5,7 +5,7 @@ import { CONTACT, EXTERNAL, SOCIAL, PEOPLE } from "@/content/company";
 import { SmartLink } from "./SmartLink";
 import { ThemeToggle } from "./ThemeToggle";
 import { CookieSettingsLink } from "./Analytics";
-import { Mascot } from "./art/Mascot";
+import { FooterFriends } from "./FooterFriends";
 
 const cols = [
   { title: "Learn", links: [["/learn", "Find a course"], ["/programs", "Ashaer tracks"], ["/bootcamps", "Bootcamps"], ["/internships", "Internships"], ["/kits", "ASHAER Box"], [EXTERNAL.learn.href, "Learning portal"], [EXTERNAL.shop.href, "Shop"]] },
@@ -30,8 +30,9 @@ export function Footer() {
         </div>
       </div>
       <div className="footer-ground">
-        <div aria-hidden className="footer-bots"><Mascot className="footer-mascot" sizes="200px" /></div>
-        <div className="wrap relative pb-24 pt-14 md:pb-48">
+        {/* Kiko on the left, the Robokalam mascot on the right: eyes follow the pointer, tap to say hi. */}
+        <FooterFriends />
+        <div className="wrap relative pb-40 pt-14 md:pb-56">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
           <div className="col-span-2 flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-white/15 pb-8 sm:col-span-3 lg:col-span-5">
             <span className="rounded-xl bg-white px-3 py-2"><Wordmark /></span>
