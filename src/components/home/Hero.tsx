@@ -1,89 +1,76 @@
 import Link from "next/link";
 import { doors } from "@/content/site";
 import { DoorLink } from "../motion/DoorTransition";
-import { OrbitSystem } from "../art/OrbitSystem";
 import { Mascot } from "../art/Mascot";
-import { Stage3D } from "../three/Stage3D";
 
 /**
  * Home hero: Robokalam as an EdTech technology company for premium schools.
- * Software, AI, hardware labs and curriculum from one partner. The visual is
- * the Robokalam mascot in 3D (the real lab photo is in the Lab at Night section).
+ * Calm and hand-made on purpose: the mascot in front of one big sunny circle,
+ * a speech bubble, and a few hand-drawn doodles kept clear of it. No orbits,
+ * no glow, nothing crossing the mascot.
  */
 export function Hero() {
   return (
-    <section className="hero-night relative overflow-hidden text-white" aria-labelledby="hero-title">
-      <div aria-hidden className="hero-glow pointer-events-none absolute inset-0" />
-      <OrbitSystem className="hero-orbit" />
-      <div className="wrap relative z-10 grid items-center gap-14 pb-28 pt-14 sm:pt-20 lg:grid-cols-[1.02fr_1fr] lg:pb-36">
+    <section className="hero-sky relative overflow-hidden" aria-labelledby="hero-title">
+      <div className="wrap relative z-10 grid items-center gap-10 pb-16 pt-12 sm:pt-16 lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:pb-24">
         <div>
-          <p className="kicker">EdTech software · AI · Robotics labs · Curriculum</p>
-          <h1 id="hero-title" className="hero-title mt-5 !text-white">
+          <p className="hero-kicker">EdTech software · AI · Robotics labs · Curriculum</p>
+          <h1 id="hero-title" className="hero-title mt-4 text-heading">
             The technology behind{" "}
             <span className="relative inline-block whitespace-nowrap">
               future-ready
               <svg aria-hidden viewBox="0 0 200 20" preserveAspectRatio="none" className="absolute -bottom-2 left-0 h-3 w-full overflow-visible">
-                <path className="pen-write" style={{ ["--len" as string]: 260 }} d="M3 13 C 40 6, 90 5, 130 9 S 185 14, 197 6" fill="none" stroke="#FFD31D" strokeWidth="6" strokeLinecap="round" />
+                <path className="pen-write" style={{ ["--len" as string]: 260 }} d="M3 13 C 40 6, 90 5, 130 9 S 185 14, 197 6" fill="none" stroke="#FFD31D" strokeWidth="7" strokeLinecap="round" />
               </svg>
             </span>{" "}
             schools.
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-[#C9D6E3] sm:text-xl">
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted sm:text-xl">
             Robokalam is an EdTech technology company. We build the AI learning platform, school software, robotics and AI labs, and curriculum that premium schools run on, and we stay to run them with you.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <DoorLink href="/21c-lab#demo" className="btn btn-primary">Book a consultation</DoorLink>
-            <a href="#solutions" className="btn border border-white/30 text-white hover:border-[#00CBD6] hover:text-[#00CBD6]">Explore solutions</a>
+            <a href="#solutions" className="btn btn-ghost">Explore solutions</a>
           </div>
-          <ul className="mt-8 grid gap-2 text-sm text-[#C9D6E3] sm:grid-cols-2" aria-label="What schools get">
+          <ul className="mt-8 grid gap-2 text-sm text-muted sm:grid-cols-2" aria-label="What schools get">
             {["One partner: software, hardware, curriculum, training", "Built around your campus and brand", "Privacy and child safety by design", "Support with a contracted response time"].map((t) => (
               <li key={t} className="flex items-start gap-2">
-                <svg viewBox="0 0 16 16" aria-hidden className="mt-0.5 h-4 w-4 shrink-0"><circle cx="8" cy="8" r="8" fill="#00CBD6" /><path d="m4.6 8.3 2.2 2.2 4.6-4.8" stroke="#04202F" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                <svg viewBox="0 0 16 16" aria-hidden className="mt-0.5 h-4 w-4 shrink-0"><circle cx="8" cy="8" r="8" fill="#00A9B5" /><path d="m4.6 8.3 2.2 2.2 4.6-4.8" stroke="#fff" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 {t}
               </li>
             ))}
           </ul>
         </div>
-        <BotStage />
+        <MascotStage />
       </div>
-      <svg aria-hidden viewBox="0 0 1440 80" preserveAspectRatio="none" className="absolute inset-x-0 bottom-0 h-12 w-full sm:h-20">
-        <path d="M0 80 V40 C 240 0, 480 0, 720 30 S 1200 70, 1440 20 V80 Z" fill="var(--bg)" />
-      </svg>
     </section>
   );
 }
 
-/** The Robokalam mascot in 3D, with illustrative previews of the platforms floating around it. */
-function BotStage() {
+/** The mascot on a sunny circle, with a speech bubble and hand-drawn doodles around the edge. */
+function MascotStage() {
   return (
-    <figure className="relative mx-auto w-full max-w-[560px] pb-10 lg:pb-0">
-      <Stage3D><Mascot priority sizes="(min-width: 1024px) 380px, 70vw" className="h-full w-full object-contain" /></Stage3D>
-      <figcaption className="sr-only">The Robokalam mascot giving a thumbs up, with previews of the AADHYA platform and the school portal.</figcaption>
-
-      {/* AADHYA preview: illustrative, no data. */}
-      <div aria-hidden className="ui-card absolute -left-4 -top-8 w-56 sm:-left-10">
-        <p className="ui-label"><span className="ui-dot bg-[#0098D6]" />AADHYA · AI platform</p>
-        <p className="mt-2 text-sm font-bold text-[#04202F]">Today&apos;s mission</p>
-        <div className="mt-2 grid gap-1.5">
-          {["Build the line follower", "Test the sensors", "Ask the AI for a hint"].map((t, i) => (
-            <div key={t} className="flex items-center gap-2 text-xs text-[#33475C]"><span className={`h-2.5 w-2.5 rounded-full ${i === 0 ? "bg-[#00CBD6]" : "border border-[#9FB3C4]"}`} />{t}</div>
-          ))}
-        </div>
-      </div>
-
-      {/* School portal preview: illustrative, no data. */}
-      <div aria-hidden className="ui-card absolute -bottom-2 right-0 w-60 sm:-right-6 [animation-delay:-3s]">
-        <p className="ui-label"><span className="ui-dot bg-[#FFD31D]" />School portal</p>
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          {["Labs", "Classes", "Tickets"].map((t, i) => (
-            <div key={t} className="rounded-lg bg-[#F2F6FF] p-2">
-              <div className="h-1.5 rounded-full bg-[#D6E2EE]"><div className="h-1.5 rounded-full" style={{ width: `${[85, 65, 40][i]}%`, background: "linear-gradient(90deg,#0098D6,#00CBD6)" }} /></div>
-              <p className="mt-1.5 text-[11px] font-semibold text-[#33475C]">{t}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+    <figure className="hero-stage">
+      <div aria-hidden className="hero-sun" />
+      <div aria-hidden className="hero-ground" />
+      <Mascot priority float={false} sizes="(min-width: 1024px) 340px, 60vw" className="hero-mascot" alt="The Robokalam mascot giving a thumbs up" />
+      <p aria-hidden className="hero-bubble">Hi! Let&apos;s build something.</p>
+      <Doodle kind="gear" className="hero-doodle d-gear" />
+      <Doodle kind="bulb" className="hero-doodle d-bulb" />
+      <Doodle kind="code" className="hero-doodle d-code" />
     </figure>
+  );
+}
+
+/** Small hand-drawn marks, one stroke weight, brand navy. Decorative. */
+function Doodle({ kind, className }: { kind: "gear" | "bulb" | "code"; className: string }) {
+  const common = { fill: "none", stroke: "currentColor", strokeWidth: 3, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  return (
+    <svg aria-hidden viewBox="0 0 48 48" className={className}>
+      {kind === "gear" && (<g {...common}><circle cx="24" cy="24" r="7" /><path d="M24 6v6M24 36v6M6 24h6M36 24h6M11.3 11.3l4.2 4.2M32.5 32.5l4.2 4.2M11.3 36.7l4.2-4.2M32.5 15.5l4.2-4.2" /><circle cx="24" cy="24" r="13" /></g>)}
+      {kind === "bulb" && (<g {...common}><path d="M17 30c-3-3-5-6-5-10a12 12 0 0 1 24 0c0 4-2 7-5 10v4H17z" /><path d="M19 39h10M21 43h6" /><path d="M24 16v8l3 3" /></g>)}
+      {kind === "code" && (<g {...common}><path d="M16 14 6 24l10 10M32 14l10 10-10 10M27 10l-6 28" /></g>)}
+    </svg>
   );
 }
 

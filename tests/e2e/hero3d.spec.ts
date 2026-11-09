@@ -1,23 +1,32 @@
 import { test, expect } from "@playwright/test";
 
-test("hero: the mascot shows at once; the 3D scene loads lazily without errors", async ({ page }) => {
+test("hero: the mascot shows at once on a calm stage, with nothing crossing it", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
-  await expect(page.locator(".stage3d img.mascot")).toBeAttached();
-  // The 3D engine is never part of the first HTML.
-  const html = await (await page.request.get("/")).text();
-  expect(html).not.toContain("robotScene");
-  await page.waitForTimeout(3000);
+  const mascot = page.locator(".hero-stage img.hero-mascot");
+  await expect(mascot).toBeVisible();
+  await expect(mascot).toHaveAttribute("alt", /Robokalam mascot/);
+  // No 3D engine, orbits or canvases behind the mascot any more.
+  await expect(page.locator(".hero-sky canvas, .hero-sky .orbit")).toHaveCount(0);
+  // The speech bubble and doodles stay clear of the mascot's middle (its body).
+  const m = (await mascot.boundingBox())!;
+  const body = { x: m.x + m.width * 0.2, y: m.y + m.height * 0.12, w: m.width * 0.6, h: m.height * 0.8 };
+  for (const el of await page.locator(".hero-bubble, .hero-doodle").all()) {
+    const b = (await el.boundingBox())!;
+    const overlaps = b.x < body.x + body.w && b.x + b.width > body.x && b.y < body.y + body.h && b.y + b.height > body.y;
+    expect(overlaps, (await el.getAttribute("class")) ?? "").toBe(false);
+  }
+  await page.waitForTimeout(500);
   expect(errors).toEqual([]);
 });
 
-test("reduced motion: no 3D scene, the mascot image stays", async ({ page }) => {
+test("reduced motion: the hero holds still", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await page.waitForTimeout(2500);
-  await expect(page.locator(".stage3d canvas")).toHaveCount(0);
-  await expect(page.locator(".stage3d img.mascot")).toBeVisible();
+  const name = await page.locator(".hero-mascot").evaluate((e) => getComputedStyle(e).animationName);
+  expect(name).toBe("none");
+  await expect(page.locator(".hero-bubble")).toBeVisible();
 });
 
 test("real photos: galleries show lab and event photos, never children's photos without consent", async ({ request }) => {
