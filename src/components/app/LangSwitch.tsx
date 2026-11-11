@@ -21,6 +21,5 @@ export function LangSwitch({ current, label }: { current: string; label: string 
 }
 
 export function LogoutButton({ label }: { label: string }) {
-  const router = useRouter();
-  return <button type="button" className="text-sm font-semibold text-link underline-offset-4 hover:underline" onClick={async () => { await post("/api/auth/logout", {}); router.push("/"); router.refresh(); }}>{label}</button>;
+  return <button type="button" className="text-sm font-semibold text-link underline-offset-4 hover:underline" onClick={async () => { await post("/api/auth/logout", {}); window.location.assign("/"); }}>{label}</button>;
 }

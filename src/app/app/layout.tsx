@@ -4,6 +4,7 @@ import { currentAccount } from "@/lib/auth/session";
 import { dict, getLocale } from "@/i18n";
 import { ReportButton } from "@/components/app/ReportButton";
 import { LangSwitch, LogoutButton } from "@/components/app/LangSwitch";
+import { FlashHost } from "@/components/app/Flash";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +35,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       )}
       <div lang={locale === "en" ? undefined : locale}>{children}</div>
       <ReportButton t={t} />
+      <FlashHost />
     </div>
   );
 }

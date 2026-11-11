@@ -1,12 +1,10 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { OtpFlow } from "../app/OtpFlow";
 import { Check, Chips, Field, FormError, WORLD_OPTIONS } from "../forms/ui";
 import { post } from "../app/client";
 
 export function FellowApply({ signedIn, pilotCity, openCities = [pilotCity], colleges = [], referral, smsEnabled = true }: { signedIn: boolean; pilotCity: string; openCities?: string[]; colleges?: string[]; referral?: string; smsEnabled?: boolean }) {
-  const router = useRouter();
   const [authed, setAuthed] = useState(signedIn);
   const [worlds, setWorlds] = useState<string[]>([]);
   const [langs, setLangs] = useState<string[]>(["en"]);
@@ -34,7 +32,7 @@ export function FellowApply({ signedIn, pilotCity, openCities = [pilotCity], col
       });
       setBusy(false);
       if (!r.ok) return setErr({ msg: r.error, fields: r.fields });
-      router.push("/app/fellow"); router.refresh();
+      window.location.assign("/app/fellow");
     }}>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Full name (as on your ID)" name="fullName" autoComplete="name" error={err.fields?.fullName} />

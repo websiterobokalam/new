@@ -16,7 +16,7 @@ export function Quiz({ url, questions, fixed, submit, onPassHref }: { url: strin
       setBusy(false);
       if (!r.ok) return setRes({ passed: false, text: r.error ?? "Could not submit" });
       setRes({ passed: r.passed, text: r.passed ? "Passed. Nice work." : `Not this time${r.correct != null ? ` (${r.correct}/${r.total})` : ""}.${r.attemptsLeft ? ` You have ${r.attemptsLeft} more attempt.` : " Read the points again and retry."}` });
-      if (r.passed) setTimeout(() => { router.push(onPassHref); router.refresh(); }, 900);
+      if (r.passed) setTimeout(() => { router.push(onPassHref); }, 900);
     }}>
       {questions.map((q, qi) => (
         <fieldset key={qi} className="card grid gap-2 p-4">
