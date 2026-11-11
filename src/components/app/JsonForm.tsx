@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { post } from "./client";
+import { flash } from "./Flash";
 
 export type FieldDef = {
   name: string; label: string; type?: "text" | "textarea" | "number" | "select" | "checkbox" | "datetime" | "date" | "url" | "email";
@@ -20,6 +21,9 @@ export function JsonForm({ url, fields, submit, fixed = {}, redirect, done, tone
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string }>();
   const [errs, setErrs] = useState<Record<string, string>>({});
+  // If this form vanishes right after a save (its item left the list on refresh), hand the message to the page.
+  const lastOk = useRef<{ text: string; at: number }>(undefined);
+  useEffect(() => () => { const m = lastOk.current; if (m && Date.now() - m.at < 5000) flash(m.text); }, []);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -37,6 +41,7 @@ export function JsonForm({ url, fields, submit, fixed = {}, redirect, done, tone
     if (!r.ok) { setErrs(r.fields ?? {}); return setMsg({ ok: false, text: r.error ?? "Something went wrong" }); }
     if (redirect) return router.push(redirect);
     setMsg({ ok: true, text: done ?? "Saved" });
+    lastOk.current = { text: done ?? "Saved", at: Date.now() };
     router.refresh();
   }
 
