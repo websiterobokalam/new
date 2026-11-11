@@ -38,3 +38,21 @@ test("real photos: galleries show lab and event photos, never children's photos 
   const lab = await (await request.get("/21c-lab")).text();
   for (const id of ["robotics-zone", "space-zone", "coding-zone"]) expect(lab).toContain(`/images/real/${id}`);
 });
+
+test("footer friends: Kiko and the mascot say hi when tapped, without covering footer links", async ({ page }) => {
+  await page.goto("/about");
+  const kiko = page.getByRole("button", { name: "Say hi to Kiko" });
+  await kiko.scrollIntoViewIfNeeded();
+  await kiko.click();
+  const bubble = page.locator(".friend-say");
+  await expect(bubble).toHaveText(/Kiko/);
+  const b = (await bubble.boundingBox())!;
+  for (const link of await page.locator("footer .footer-ground a").all()) {
+    const l = await link.boundingBox();
+    if (!l) continue;
+    const overlaps = b.x < l.x + l.width && b.x + b.width > l.x && b.y < l.y + l.height && b.y + b.height > l.y;
+    expect(overlaps, (await link.textContent()) ?? "").toBe(false);
+  }
+  await page.getByRole("button", { name: "Say hi to the Robokalam mascot" }).click();
+  await expect(bubble).toHaveCount(1);
+});

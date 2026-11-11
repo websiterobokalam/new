@@ -335,8 +335,27 @@
 .footer-ground h2 { color: #FFFFFF !important; font-family: var(--font-sans); font-size: 1.05rem; font-weight: 600; letter-spacing: 0; text-transform: none; }
 .footer-ground h2::after { content: ""; display: block; width: 2.6rem; height: 3px; margin-top: 0.5rem; border-radius: 999px; background: #FFD31D; }
 .footer-ground a:hover { color: #FFFFFF; text-decoration: underline; text-underline-offset: 3px; }
-.footer-bots { position: absolute; inset: auto 0 0; z-index: -1; pointer-events: none; display: none; }
-@media (min-width: 768px) { .footer-bots { display: block; } }
+.footer-bots { position: absolute; inset: auto 0 0; z-index: 1; pointer-events: none; }
+.footer-pair { position: relative; margin: 0 auto; display: flex; align-items: flex-end; justify-content: space-between; max-width: 88rem; padding: 0 1rem; }
+.footer-ground-line { height: 1.1rem; background: #0A5A70; border-top: 3px solid #12839C; pointer-events: none; }
+.footer-friend { position: relative; pointer-events: auto; display: block; cursor: pointer; border-radius: 1rem; background: none; padding: 0; line-height: 0; }
+.footer-friend:focus-visible { outline: 3px solid #FFD31D; outline-offset: 4px; }
+.footer-friend > span:first-child { display: block; transform-origin: 50% 100%; }
+.footer-friend:hover .footer-kiko, .footer-friend:hover .footer-mascot { translate: 0 -6px; }
+.footer-kiko, .footer-bots .footer-mascot { transition: translate 0.25s ease; }
+.footer-kiko { height: 7rem; width: auto; margin-bottom: -2px; animation: kiko-step 3.2s ease-in-out infinite; transform-origin: 50% 100%; filter: drop-shadow(0 8px 10px rgb(0 0 0 / 0.3)); }
+.footer-bots[data-following] .footer-kiko .kiko-eyes { animation: none; transform: translateX(calc(var(--look, 0) * 24px)); transition: transform 0.12s linear; }
+.friend-hop { animation: friend-hop 0.6s cubic-bezier(.3,1.5,.6,1); }
+@keyframes friend-hop { 0%, 100% { transform: translateY(0) scale(1, 1); } 20% { transform: translateY(0) scale(1.08, 0.9); } 55% { transform: translateY(-26px) scale(0.95, 1.06); } }
+.friend-say { position: absolute; bottom: 62%; white-space: nowrap; border: 2.5px solid #04202F; border-radius: 1rem; background: #fff; padding: 0.45rem 0.8rem; font-size: 0.9rem; font-weight: 700; line-height: 1.2; color: #04202F; box-shadow: 3px 3px 0 #04202F; animation: bubble-pop 0.35s cubic-bezier(.3,1.6,.6,1) both; }
+.friend-say-left { left: 100%; margin-left: 0.4rem; border-bottom-left-radius: 0.25rem; transform-origin: 0 100%; }
+.friend-say-right { right: 100%; margin-right: 0.4rem; border-bottom-right-radius: 0.25rem; transform-origin: 100% 100%; }
+.footer-kiko .kiko-eyes { animation: kiko-look 6s ease-in-out infinite; }
+.footer-kiko .kiko-antenna { transform-box: fill-box; transform-origin: 50% 100%; animation: kiko-antenna 2.4s ease-in-out infinite; }
+@media (min-width: 768px) { .footer-pair { padding: 0 3rem; } .footer-kiko { height: 11.5rem; } }
+@keyframes kiko-look { 0%, 18%, 100% { transform: translateX(0); } 26%, 42% { transform: translateX(-22px); } 52%, 70% { transform: translateX(22px); } 80% { transform: translateX(0); } }
+@keyframes kiko-antenna { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+@keyframes kiko-step { 0%, 100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-6px) rotate(-3deg); } 75% { transform: translateX(6px) rotate(3deg); } }
 .footer-legal { background: #083A4C; color: #C9E3EC; }
 .footer-legal a { color: #E3F4F8; }
 
@@ -492,8 +511,9 @@ main#main, footer { overflow-x: clip; }
 .mascot { height: auto; filter: drop-shadow(0 24px 28px rgb(0 0 0 / 0.28)); }
 .mascot-float { animation: mascot-float 4.5s ease-in-out infinite; }
 @keyframes mascot-float { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-12px) rotate(1deg); } }
-.footer-bots .footer-mascot { position: absolute; right: max(1rem, calc(50% - 44rem)); bottom: 0.5rem; width: auto; height: 15rem; animation: mascot-float 4.5s ease-in-out infinite; filter: drop-shadow(0 18px 18px rgb(0 0 0 / 0.35)); }
+.footer-bots .footer-mascot { height: 8.5rem; width: auto; transform: scaleX(-1); filter: drop-shadow(0 10px 10px rgb(0 0 0 / 0.3)); }
+@media (min-width: 768px) { .footer-bots .footer-mascot { height: 14rem; } }
 .kalam-bot img { filter: drop-shadow(0 6px 8px rgb(0 0 0 / 0.25)); }
 .kalam-bot[data-mood="wave"] { animation: mascot-hop 0.6s ease-in-out 3; }
 @keyframes mascot-hop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-18%) rotate(-6deg); } }
-@media (prefers-reduced-motion: reduce) { .mascot-float, .footer-bots .footer-mascot, .kalam-bot[data-mood="wave"] { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .mascot-float, .footer-bots .footer-mascot, .footer-kiko, .footer-kiko *, .friend-hop, .friend-say, .kalam-bot[data-mood="wave"] { animation: none !important; } }
