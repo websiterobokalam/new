@@ -45,6 +45,7 @@ export function GET() {
     `- [About](${u("/about")})`,
     `- [Contact](${u("/contact")})`,
     `- [Privacy](${u("/privacy")})`,
+    `- [Gallery](${u("/gallery")}): photos of labs, student builds and events`,
     `- [Verify a certificate](${u("/validate")})`,
     "",
   ];
