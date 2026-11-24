@@ -4,7 +4,7 @@ import { CONTACT, isExternal } from "@/content/company";
 import { Claim } from "@/components/Claim";
 import { SmartLink } from "@/components/SmartLink";
 import { ContactForm, NewsletterForm } from "@/components/forms/Engage";
-import { Gallery3D } from "@/components/Gallery3D";
+import { PhotoGallery } from "@/components/PhotoGallery";
 
 function Actions({ actions }: { actions: Action[] }) {
   return (
@@ -141,7 +141,7 @@ function BlockView({ b }: { b: Block }) {
         </section>
       );
     case "gallery":
-      return <div className="-mx-4 sm:mx-0"><Gallery3D eyebrow="Photos" title={b.title} lede={b.lede} ids={b.ids} /></div>;
+      return <div className="[&_.photo-gallery]:py-0 [&_.wrap]:!px-0"><PhotoGallery eyebrow="Photos" title={b.title} lede={b.lede} ids={b.ids} /></div>;
     case "form":
       return b.form === "contact" ? <ContactForm /> : <NewsletterForm source="page" />;
     case "note":
