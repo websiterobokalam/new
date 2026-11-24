@@ -23,10 +23,13 @@ export async function housekeeping(now = new Date()) {
       await c.query(`UPDATE bookings SET status = 'cancelled' WHERE status = 'pending_payment' AND id IN (${marks})`, stale);
       await c.query("INSERT INTO audit_log (action, entity, entity_id, meta) VALUES ('holds_expired','booking','batch',$1)", [{ bookings: stale.length, orders }]);
     }
-    const dayAgo = new Date(now.getTime() - 86_400_000);
+    // Deleting codes and sessions can't be undone, so it never runs ahead of the real clock,
+    // even when a test or a back-fill passes a later `now` (that once wiped live sign-in codes).
+    const purgeClock = Math.min(now.getTime(), Date.now());
+    const dayAgo = new Date(purgeClock - 86_400_000);
     const otps = (await c.query("DELETE FROM otp_challenges WHERE created_at < $1", [dayAgo])).affectedRows
       + (await c.query("DELETE FROM email_otp_challenges WHERE created_at < $1", [dayAgo])).affectedRows;
-    const old = new Date(now.getTime() - 30 * 86_400_000);
+    const old = new Date(purgeClock - 30 * 86_400_000);
     const sessions = (await c.query("DELETE FROM sessions WHERE expires_at < $1 OR revoked_at < $1", [old])).affectedRows;
     return { expiredHolds: stale.length, failedOrders: orders, deletedOtps: otps, deletedSessions: sessions };
   }).then(async (r) => ({ ...r, monthly: await sendMonthlySummaries(now) }));
