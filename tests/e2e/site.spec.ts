@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test("home: three doors, each with its action", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("The technology behind future-ready schools");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Building the future with");
   for (const cta of ["Book a Free Build Session", "Book Turnkey Demo", "Become a Kalamite"]) {
     await expect(page.getByRole("link", { name: cta }).first()).toBeVisible();
   }

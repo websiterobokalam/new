@@ -440,7 +440,7 @@
     }
 
     /* The hero tips back and fades as you scroll past it. */
-    .hero-sky > .wrap {
+    .hero-orbit-light > .wrap {
       transform-origin: 50% 100%;
       animation: s3d-hero-out linear both;
       animation-timeline: view();
@@ -468,38 +468,8 @@
 main#main, footer { overflow-x: clip; }
 
 /* ---- Home hero: light sky, one sunny circle, the mascot, a speech bubble, hand-drawn doodles ---- */
-.hero-sky { background: linear-gradient(180deg, #DDF2FA 0%, #EEF7FC 55%, var(--bg) 100%); }
-:root[data-theme="dark"] .hero-sky { background: linear-gradient(180deg, #0C2738 0%, var(--bg) 100%); }
-.hero-kicker { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #00708F; }
+ .hero-kicker { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #00708F; }
 :root[data-theme="dark"] .hero-kicker { color: #7FD0F2; }
-/* The engineer's drawing sheet behind the hero mascot */
-.bp-sheet { --bp-paper: #FCFEFF; --bp-ink: #0E5A75; --bp-faint: rgb(0 152 214 / 0.09); --bp-mid: rgb(0 152 214 / 0.16); --bp-accent: #F08A00;
-  position: relative; margin: 0 auto; width: 100%; max-width: 31rem; border-radius: 1.5rem; overflow: hidden; border: 1px solid #CFE3EE;
-  background-color: var(--bp-paper);
-  background-image: linear-gradient(var(--bp-mid) 1px, transparent 1px), linear-gradient(90deg, var(--bp-mid) 1px, transparent 1px), linear-gradient(var(--bp-faint) 1px, transparent 1px), linear-gradient(90deg, var(--bp-faint) 1px, transparent 1px);
-  background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px; background-position: -1px -1px;
-  box-shadow: 0 1px 0 #fff inset, 0 30px 60px -30px rgb(4 32 47 / 0.35), 0 8px 20px -12px rgb(4 32 47 / 0.18); }
-:root[data-theme="dark"] .bp-sheet { --bp-paper: #0D2636; --bp-ink: #8FD6F2; --bp-faint: rgb(127 208 242 / 0.07); --bp-mid: rgb(127 208 242 / 0.13); border-color: #1C4258; }
-.bp-draw { position: absolute; inset: 0; width: 100%; height: 100%; font-family: var(--font-mono, ui-monospace, monospace); }
-.bp-construct { fill: none; stroke: var(--bp-ink); stroke-width: 1; opacity: 0.28; }
-.bp-construct .bp-ground { stroke-width: 2; opacity: 1; stroke-dasharray: none; }
-.bp-dim { fill: none; stroke: var(--bp-ink); stroke-width: 1.4; opacity: 0.55; }
-.bp-notes text { fill: var(--bp-ink); font-size: 14px; opacity: 0.45; letter-spacing: 0.04em; }
-.bp-leader { fill: none; stroke: var(--bp-ink); stroke-width: 1.6; stroke-dasharray: 1; stroke-dashoffset: 1; animation: bp-draw 0.9s calc(0.35s + var(--i) * 0.25s) cubic-bezier(.6,0,.2,1) forwards; }
-.bp-pin { fill: var(--bp-accent); stroke: var(--bp-paper); stroke-width: 2.5; opacity: 0; animation: bp-in 0.3s calc(0.3s + var(--i) * 0.25s) ease-out forwards; }
-.bp-label { opacity: 0; animation: bp-in 0.4s calc(1s + var(--i) * 0.25s) ease-out forwards; }
-.bp-label circle { fill: var(--bp-ink); }
-.bp-letter { fill: var(--bp-paper); font-size: 14px; font-weight: 700; }
-.bp-word { fill: var(--bp-ink); font-family: var(--font-sans); font-size: 19px; font-weight: 700; }
-.bp-note { fill: var(--bp-ink); font-size: 12px; opacity: 0.7; letter-spacing: 0.06em; text-transform: uppercase; }
-.bp-title rect { fill: var(--bp-paper); stroke: var(--bp-ink); stroke-width: 1.2; }
-.bp-title path { stroke: var(--bp-ink); stroke-width: 1; opacity: 0.6; }
-.bp-title text { fill: var(--bp-ink); font-size: 10px; letter-spacing: 0.08em; }
-.bp-mascot { position: absolute; max-width: none; object-fit: contain; filter: drop-shadow(0 14px 14px rgb(4 32 47 / 0.22)); }
-@keyframes bp-draw { to { stroke-dashoffset: 0; } }
-@keyframes bp-in { to { opacity: 1; } }
-@media (max-width: 639px) { .bp-sheet { border-radius: 1.1rem; } }
-@media (prefers-reduced-motion: reduce) { .bp-leader { animation: none; stroke-dashoffset: 0; } .bp-pin, .bp-label { animation: none; opacity: 1; } }
 
 /* ---- The Robokalam mascot ---- */
 .mascot { height: auto; filter: drop-shadow(0 24px 28px rgb(0 0 0 / 0.28)); }
@@ -566,3 +536,48 @@ main#main, footer { overflow-x: clip; }
 .cursor-globe canvas { position: relative; width: 100%; height: 100%; }
 :root[data-theme="dark"] .cursor-globe::before { background: radial-gradient(circle, rgb(127 208 242 / 0.18), transparent 70%); }
 @media (prefers-reduced-motion: reduce), (hover: none) { .cursor-globe { display: none; } }
+
+/* ---- Home hero, after old.robokalam.com, on a light background ---- */
+.hero-orbit-light { background:
+  radial-gradient(55% 60% at 22% 48%, rgb(0 203 214 / 0.14), transparent 70%),
+  radial-gradient(40% 45% at 92% 10%, rgb(110 168 255 / 0.12), transparent 70%),
+  linear-gradient(180deg, #F3FAFD 0%, #EAF6FB 60%, var(--bg) 100%); }
+:root[data-theme="dark"] .hero-orbit-light { background: radial-gradient(55% 60% at 22% 48%, rgb(0 203 214 / 0.16), transparent 70%), linear-gradient(180deg, #0C2738 0%, var(--bg) 100%); }
+.hero-halo { position: absolute; right: -14rem; bottom: -16rem; width: 38rem; height: 38rem; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgb(0 203 214 / 0.18), transparent 65%); box-shadow: 0 0 0 1px rgb(0 152 214 / 0.12), 0 0 0 5rem rgb(0 152 214 / 0.03), 0 0 0 10rem rgb(0 152 214 / 0.02); }
+.hero-orbit-stage { position: relative; margin: 0 auto; width: 100%; max-width: 34rem; aspect-ratio: 1; }
+.hero-orbit-main { position: absolute; inset: -6%; width: 112%; height: 112%; }
+.orbit { overflow: visible; }
+.orbit .orb-ring { transform-box: view-box; transform-origin: 400px 400px; animation: orb-spin 60s linear infinite; }
+.orbit .orb-ring.orb-b { animation-duration: 90s; animation-direction: reverse; }
+.orbit .orb-ring.orb-c { animation-duration: 120s; }
+.orbit .orb-upright { transform-box: fill-box; transform-origin: center; animation: orb-spin 60s linear infinite reverse; }
+.orbit .orb-upright.orb-b { animation-duration: 90s; animation-direction: normal; }
+.orbit .orb-upright.orb-c { animation-duration: 120s; }
+.orbit .orb-core { transform-box: fill-box; transform-origin: center; animation: orb-breathe 7s ease-in-out infinite; }
+.orbit .orb-drift { animation: orb-drift 14s ease-in-out infinite alternate; }
+.orbit .orb-bot { animation: orb-float 5.5s ease-in-out infinite; }
+@keyframes orb-spin { to { transform: rotate(360deg); } }
+@keyframes orb-breathe { 0%, 100% { transform: scale(0.94); opacity: 0.85; } 50% { transform: scale(1.04); opacity: 1; } }
+@keyframes orb-drift { to { transform: translate(-14px, 10px); } }
+@keyframes orb-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.hero-headline { font-size: clamp(2.3rem, 5vw, 4.1rem); line-height: 1.08; font-weight: 800; letter-spacing: -0.02em; }
+.hero-typed { display: inline-flex; align-items: baseline; white-space: nowrap; }
+/* Phones: the longest word may need two lines; keep room for them so the text below never jumps. */
+@media (max-width: 639px) { .hero-typed { display: flex; flex-wrap: wrap; white-space: normal; min-height: 1.25em; align-items: flex-start; } }
+.typewriter-text { background: linear-gradient(90deg, #0098D6, #00B8C8 55%, #5FAF2E); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.typewriter-caret { display: inline-block; width: 0.08em; height: 0.9em; margin-left: 0.08em; transform: translateY(0.08em); border-radius: 2px; background: #0098D6; animation: caret 1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+.pill { display: inline-flex; min-height: 3rem; align-items: center; border-radius: 999px; padding: 0 1.25rem; font-size: 0.98rem; font-weight: 700; white-space: nowrap; transition: transform 0.2s, box-shadow 0.2s, background 0.2s; }
+.pill:hover { transform: translateY(-2px); }
+.pill:focus-visible { outline: 3px solid #04202F; outline-offset: 3px; }
+.pill-solid { background: linear-gradient(90deg, #0098D6, #00CBD6); color: #04202F; box-shadow: 0 12px 26px -12px rgb(0 152 214 / 0.7); }
+.pill-soft { background: rgb(0 152 214 / 0.1); color: #00445F; box-shadow: inset 0 0 0 1.5px rgb(0 152 214 / 0.35); }
+.pill-soft:hover { background: rgb(0 152 214 / 0.16); }
+:root[data-theme="dark"] .pill-soft { color: #BFE9F7; }
+.hero-strip { border-block: 1px solid var(--line); background: var(--surface); }
+.hero-strip ul { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 2rem; padding-block: 1.1rem; list-style: none; }
+.hero-strip li { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #33506A; }
+:root[data-theme="dark"] .hero-strip li { color: #A9C3D3; }
+@media (max-width: 767px) { .hero-strip ul { justify-content: flex-start; gap: 0.5rem 1.25rem; } .hero-strip li { font-size: 0.7rem; } }
+@media (prefers-reduced-motion: reduce) { .orbit *, .typewriter-caret { animation: none !important; } }

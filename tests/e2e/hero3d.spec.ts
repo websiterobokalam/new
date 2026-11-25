@@ -1,33 +1,30 @@
 import { test, expect } from "@playwright/test";
 
-test("hero: the mascot sits on a drawing sheet; call-out labels stay off the mascot's body", async ({ page }) => {
+test("hero: the old-site orbit with a robot at its centre, a typing headline and three pill buttons", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
-  const mascot = page.locator(".bp-sheet img.bp-mascot");
-  await expect(mascot).toBeVisible();
-  await expect(mascot).toHaveAttribute("alt", /Robokalam mascot/);
-  await expect(page.locator(".hero-sky canvas, .hero-sky .orbit")).toHaveCount(0);
-  // Sense, think, act: three labels, drawn in after load.
-  await expect(page.locator(".bp-word")).toHaveText(["Sense", "Think", "Act"]);
-  // Sharp on high-density screens: the full-size artwork is offered.
-  expect(await mascot.getAttribute("srcset")).toContain("mascot.webp 967w");
-  const m = (await mascot.boundingBox())!;
-  const body = { x: m.x + m.width * 0.2, y: m.y + m.height * 0.12, w: m.width * 0.6, h: m.height * 0.8 };
-  await page.waitForTimeout(1800);
-  for (const el of await page.locator(".bp-label, .bp-title").all()) {
-    const b = (await el.boundingBox())!;
-    const overlaps = b.x < body.x + body.w && b.x + b.width > body.x && b.y < body.y + body.h && b.y + b.height > body.y;
-    expect(overlaps, (await el.textContent()) ?? "").toBe(false);
-  }
+  const h1 = page.getByRole("heading", { level: 1 });
+  // Search engines and screen readers get the whole sentence, not the half-typed word.
+  await expect(h1).toContainText("Building the future with");
+  await expect(h1).toContainText("AI, robotics labs, smart software and young innovators.");
+  await expect(page.locator(".hero-orbit-main .orb-ring")).toHaveCount(3);
+  await expect(page.locator(".hero-orbit-main .orb-bot image")).toHaveCount(1);
+  for (const name of ["Explore Solutions", "Innovation Ecosystem", "View Vision"]) await expect(page.getByRole("link", { name })).toBeVisible();
+  // The typed word changes over time.
+  const typed = page.locator(".typewriter-text");
+  const first = await typed.textContent();
+  await expect.poll(async () => typed.textContent(), { timeout: 8000 }).not.toBe(first);
+  await expect(page.locator(".hero-strip li")).toHaveCount(5);
   expect(errors).toEqual([]);
 });
 
-test("reduced motion: the drawing is complete at once and nothing moves", async ({ page }) => {
+test("reduced motion: the orbit and the cursor hold still and the first word stays", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  expect(await page.locator(".bp-mascot").evaluate((e) => getComputedStyle(e).animationName)).toBe("none");
-  expect(await page.locator(".bp-label").first().evaluate((e) => getComputedStyle(e).opacity)).toBe("1");
+  expect(await page.locator(".hero-orbit-main .orb-ring").first().evaluate((e) => getComputedStyle(e).animationName)).toBe("none");
+  await page.waitForTimeout(3500);
+  await expect(page.locator(".typewriter-text")).toHaveText("AI.");
 });
 
 test("real photos: galleries show lab and event photos, never children's photos without consent", async ({ request }) => {
