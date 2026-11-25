@@ -74,22 +74,7 @@ export function MotionRuntime() {
         cleanups.push(() => { el.removeEventListener("pointermove", move); el.removeEventListener("pointerleave", leave); });
       });
 
-      // 5. Soft cursor glow (desktop only).
-      const glow = document.createElement("div");
-      glow.setAttribute("aria-hidden", "true");
-      glow.style.cssText =
-        "position:fixed;left:0;top:0;width:420px;height:420px;margin:-210px 0 0 -210px;border-radius:50%;pointer-events:none;z-index:1;background:radial-gradient(circle,rgba(0,203,214,.10),transparent 65%);transition:opacity .3s;opacity:0;will-change:transform";
-      document.body.appendChild(glow);
-      let raf = 0;
-      const onMove = (e: PointerEvent) => {
-        cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(() => {
-          glow.style.opacity = "1";
-          glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-        });
-      };
-      window.addEventListener("pointermove", onMove, { passive: true });
-      cleanups.push(() => { window.removeEventListener("pointermove", onMove); glow.remove(); });
+      // 5. The pointer companion is CursorGlobe (a globe of 0s and 1s), mounted in the root layout.
     }
 
     return () => cleanups.forEach((f) => f());
