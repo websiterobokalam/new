@@ -1,30 +1,26 @@
 import { test, expect } from "@playwright/test";
 
-test("hero: the old-site orbit with a robot at its centre, a typing headline and three pill buttons", async ({ page }) => {
+test("hero: a two-tone headline over a real lab photo, side tags, buttons and a scroll cue", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
   const h1 = page.getByRole("heading", { level: 1 });
-  // Search engines and screen readers get the whole sentence, not the half-typed word.
-  await expect(h1).toContainText("Building the future with");
-  await expect(h1).toContainText("AI, robotics labs, smart software and young innovators.");
-  await expect(page.locator(".hero-orbit-main .orb-ring")).toHaveCount(3);
-  await expect(page.locator(".hero-orbit-main .orb-bot image")).toHaveCount(1);
-  for (const name of ["Explore Solutions", "Innovation Ecosystem", "View Vision"]) await expect(page.getByRole("link", { name })).toBeVisible();
-  // The typed word changes over time.
-  const typed = page.locator(".typewriter-text");
-  const first = await typed.textContent();
-  await expect.poll(async () => typed.textContent(), { timeout: 8000 }).not.toBe(first);
-  await expect(page.locator(".hero-strip li")).toHaveCount(5);
+  await expect(h1).toHaveText(/Building the future\s*with robotics, AI & smart labs/);
+  await expect(page.locator(".az-hero-photo img")).toBeVisible();
+  for (const name of ["Book a consultation", "Free build session"]) await expect(page.getByRole("link", { name: new RegExp(name) }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /Scroll to explore/ })).toHaveAttribute("href", "#intro");
+  // Facts are plain and true: ages, tracks, offices, one partner.
+  await expect(page.locator("#intro dd")).toHaveCount(4);
+  await expect(page.locator("#solutions .sol-row")).toHaveCount(6);
   expect(errors).toEqual([]);
 });
 
-test("reduced motion: the orbit and the cursor hold still and the first word stays", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
+test("menu: the two-line button opens a full-screen numbered menu", async ({ page }) => {
   await page.goto("/");
-  expect(await page.locator(".hero-orbit-main .orb-ring").first().evaluate((e) => getComputedStyle(e).animationName)).toBe("none");
-  await page.waitForTimeout(3500);
-  await expect(page.locator(".typewriter-text")).toHaveText("AI.");
+  await page.locator('summary[aria-label="Menu"]').click();
+  const menu = page.getByRole("navigation", { name: "Mobile menu" });
+  await expect(menu.getByRole("link", { name: /Schools/ })).toBeVisible();
+  await expect(menu.getByRole("link", { name: "Gallery" })).toBeVisible();
 });
 
 test("real photos: galleries show lab and event photos, never children's photos without consent", async ({ request }) => {
@@ -93,20 +89,8 @@ test("footer friends: rapid taps never duplicate the robots", async ({ page }) =
   await expect(page.locator(".friend-say")).toHaveCount(1);
 });
 
-test("pointer companion: a globe of 0s and 1s on desktop, hidden over form fields, absent on touch", async ({ page, isMobile }) => {
-  await page.goto("/contact");
-  if (isMobile) {
-    await expect(page.locator(".cursor-globe")).toHaveCount(0);
-    return;
-  }
-  const globe = page.locator(".cursor-globe");
-  await expect(globe).toHaveCount(1);
-  await expect(globe).toHaveAttribute("aria-hidden", "true");
-  await page.mouse.move(200, 200);
-  await page.mouse.move(260, 240, { steps: 5 });
-  await expect(globe).toHaveCSS("opacity", "1");
-  const field = page.locator("input, textarea").first();
-  const box = (await field.boundingBox())!;
-  await page.mouse.move(box.x + 10, box.y + box.height / 2, { steps: 5 });
-  await expect(globe).toHaveCSS("opacity", "0");
+test("no pointer companion: the mouse cursor is the browser's own", async ({ page }) => {
+  await page.goto("/");
+  await page.mouse.move(300, 300);
+  await expect(page.locator(".cursor-globe, canvas")).toHaveCount(0);
 });

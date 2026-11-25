@@ -92,10 +92,10 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
       <section className="py-16" aria-labelledby="city-faq">
         <div className="wrap max-w-3xl">
           <h2 id="city-faq" className="display-lg">{c.name}: common questions</h2>
-          <div className="mt-6 grid gap-3">
+          <div className="mt-6 faq-list">
             {c.faqs.map((f) => (
-              <details key={f.q} className="group card px-5 py-4">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold text-heading">{f.q}<span aria-hidden className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-panel transition-transform group-open:rotate-45">+</span></summary>
+              <details key={f.q} className="group faq-row">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold text-heading">{f.q}<span aria-hidden className="faq-plus">+</span></summary>
                 <p className="mt-3 text-muted">{f.a}</p>
               </details>
             ))}

@@ -1,8 +1,9 @@
-import { Poppins, JetBrains_Mono, Anek_Telugu, Anek_Devanagari, Cinzel } from "next/font/google";
+import { Manrope, JetBrains_Mono, Anek_Telugu, Anek_Devanagari, Cinzel } from "next/font/google";
 
-// Poppins: the typeface of the original robokalam.com and of Vedantu. Headings and body.
-export const poppins = Poppins({ subsets: ["latin"], variable: "--font-poppins", display: "swap", weight: ["400", "500", "600", "700", "800"] });
-export const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap", preload: false });
+// Manrope: headings and body (a calm, modern grotesk). JetBrains Mono: the uppercase labels,
+// numbers and buttons that give the site its "engineering notebook" voice.
+export const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap", weight: ["400", "500", "600", "700"] });
+export const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap", weight: ["400", "500", "600"] });
 // Telugu and Hindi load only when glyphs are used (unicode-range), no preload.
 export const anekTe = Anek_Telugu({ subsets: ["telugu"], variable: "--font-anek-te", display: "swap", preload: false });
 export const anekHi = Anek_Devanagari({ subsets: ["devanagari"], variable: "--font-anek-hi", display: "swap", preload: false });

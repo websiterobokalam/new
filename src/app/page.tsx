@@ -1,4 +1,4 @@
-import { Hero, Doors } from "@/components/home/Hero";
+import { Hero, Intro, Doors } from "@/components/home/Hero";
 import { Solutions, WhySchools, Consult } from "@/components/home/Company";
 import {
   WorldsBento, LabAtNight, FellowsBand, ImpactBand,
@@ -24,6 +24,7 @@ export default function Home() {
     <>
       <JsonLd data={faqLd(faqs)} />
       <Hero />
+      <Intro />
       <KalamLineScope>
         <LineNode />
         <Solutions />

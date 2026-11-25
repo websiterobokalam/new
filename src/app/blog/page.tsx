@@ -36,7 +36,7 @@ export default function BlogIndex() {
       <section className="wrap pb-12" aria-label="Featured post">
         <Link href={`/blog/${featured.slug}`} className="consult-card grid gap-4 p-8 text-[#c9dbe5] sm:p-10 lg:grid-cols-[1.5fr_1fr] lg:items-end">
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.14em] text-[#7FD0F2]">Latest · {featured.tag}</p>
+            <p className="font-mono text-xs uppercase tracking-[0.14em] text-white/90">Latest · {featured.tag}</p>
             <h2 className="mt-3 text-3xl font-bold !text-white sm:text-4xl">{featured.title}</h2>
             <p className="mt-3 max-w-2xl">{featured.excerpt}</p>
           </div>

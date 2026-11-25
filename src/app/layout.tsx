@@ -1,10 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { poppins, jetbrains, anekTe, anekHi, brand } from "./fonts";
+import { manrope, jetbrains, anekTe, anekHi, brand } from "./fonts";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MotionRuntime } from "@/components/motion/MotionRuntime";
-import { CursorGlobe } from "@/components/motion/CursorGlobe";
 import { TiltRuntime } from "@/components/motion/TiltRuntime";
 import { Analytics } from "@/components/Analytics";
 import { DoorTransitionProvider } from "@/components/motion/DoorTransition";
@@ -46,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en-IN"
-      className={`no-js ${brand.variable} ${poppins.variable} ${jetbrains.variable} ${anekTe.variable} ${anekHi.variable}`}
+      className={`no-js ${brand.variable} ${manrope.variable} ${jetbrains.variable} ${anekTe.variable} ${anekHi.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -64,7 +63,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer />
         </DoorTransitionProvider>
         <MotionRuntime />
-        <CursorGlobe />
         <TiltRuntime />
         <Analytics />
       </body>
