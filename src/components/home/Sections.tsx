@@ -288,12 +288,12 @@ export function Faq({ items = faqs }: { items?: { q: string; a: string }[] }) {
     <Section id="faq" label="Frequently asked questions">
       <div className="wrap grid gap-10 lg:grid-cols-[1fr_1.4fr]">
         <SectionHead eyebrow="FAQ" title="Straight answers." lede={<>Something else? <Link className="text-link underline" href="/contact">Ask us</Link>.</>} />
-        <div className="grid gap-3">
+        <div className="faq-list">
           {items.map((f) => (
-            <details key={f.q} data-stagger className="group card px-5 py-4 open:shadow-[var(--shadow-lift)]">
+            <details key={f.q} data-stagger className="group faq-row">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold text-heading">
                 {f.q}
-                <span aria-hidden className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-panel transition-transform group-open:rotate-45">+</span>
+                <span aria-hidden className="faq-plus">+</span>
               </summary>
               <p className="mt-3 text-muted">{f.a}</p>
             </details>

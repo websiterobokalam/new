@@ -70,12 +70,12 @@ function BlockView({ b }: { b: Block }) {
       return (
         <section>
           {b.heading && <h2 className="text-2xl font-bold text-heading">{b.heading}</h2>}
-          <div className="mt-4 grid gap-3">
+          <div className="mt-4 faq-list">
             {b.items.map((f) => (
-              <details key={f.q} className="group card px-5 py-4 open:shadow-[var(--shadow-lift)]">
+              <details key={f.q} className="group faq-row">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold text-heading">
                   {f.q}
-                  <span aria-hidden className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-panel transition-transform group-open:rotate-45">+</span>
+                  <span aria-hidden className="faq-plus">+</span>
                 </summary>
                 <p className="mt-3 text-muted">{f.a}</p>
               </details>
@@ -158,24 +158,30 @@ export function ContentPageView({ page }: { page: ContentPage }) {
   const toc = page.legal ? page.blocks.filter((b): b is Extract<Block, { kind: "prose" }> => b.kind === "prose" && !!b.id && !!b.heading) : [];
   return (
     <>
-      <section className="relative overflow-hidden pb-10 pt-12 sm:pb-14 sm:pt-20">
-        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(50% 70% at 85% 0%, rgba(0,152,214,.16), transparent 70%)" }} />
-        <div className="wrap relative max-w-5xl">
-          <p className="eyebrow">{page.eyebrow}</p>
-          <h1 className={`${page.legal ? "display-lg" : "display-xl"} mt-3 max-w-4xl`}>{page.title}</h1>
-          <p className="lede mt-4 max-w-3xl">{page.lede}</p>
-          {page.legal && (
-            <p className="mt-4 text-sm text-muted">
-              Last updated {page.legal.updated}. <span className="font-semibold text-heading">{page.legal.status}</span>
-            </p>
-          )}
-          {page.actions && <div className="mt-8"><Actions actions={page.actions} /></div>}
+      <section className="relative pb-12 pt-6 sm:pb-20">
+        <div className="wrap relative">
+          <nav aria-label="Breadcrumb" className="mono-tag"><Link href="/" className="hover:text-heading">Home</Link> <span aria-hidden>/</span> <span aria-current="page" className="text-heading underline underline-offset-4">{page.eyebrow}</span></nav>
+          <div className="mt-14 grid gap-8 sm:mt-20 lg:grid-cols-[1.25fr_1fr] lg:items-end lg:gap-16">
+            <div>
+              <p className="eyebrow">{page.eyebrow}</p>
+              <h1 className={`${page.legal ? "display-lg" : "display-xl"} mt-4`}>{page.title}</h1>
+            </div>
+            <div>
+              <p className="lede !text-heading">{page.lede}</p>
+              {page.legal && (
+                <p className="mt-4 text-sm text-muted">
+                  Last updated {page.legal.updated}. <span className="font-semibold text-heading">{page.legal.status}</span>
+                </p>
+              )}
+              {page.actions && <div className="mt-8"><Actions actions={page.actions} /></div>}
+            </div>
+          </div>
         </div>
       </section>
-      <div className={`wrap max-w-5xl pb-20 ${toc.length ? "grid gap-10 lg:grid-cols-[14rem_1fr]" : ""}`}>
+      <div className={`wrap pb-20 ${toc.length ? "grid gap-10 lg:grid-cols-[14rem_1fr]" : ""}`}>
         {toc.length > 0 && (
           <nav aria-label="On this page" className="lg:sticky lg:top-24 lg:self-start">
-            <p className="font-mono text-xs uppercase tracking-[0.14em] text-muted">On this page</p>
+            <p className="mono-tag">On this page</p>
             <ol className="mt-3 grid gap-1.5 text-sm">
               {toc.map((b) => <li key={b.id}><a className="text-muted hover:text-link" href={`#${b.id}`}>{b.heading}</a></li>)}
             </ol>

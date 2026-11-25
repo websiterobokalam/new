@@ -13,51 +13,60 @@ const nav = [
   { href: "/kalamites", label: "Kalamites" },
 ];
 const small = [
+  { href: "/gallery", label: "Gallery" },
+  { href: "/blog", label: "Blog" },
   { href: "/partners", label: "Partners" },
   { href: "/studio", label: "Studio" },
   { href: EXTERNAL.shop.href, label: "Shop" },
   { href: "/contact", label: "Contact" },
 ];
 
+/**
+ * Minimal header: the wordmark, a few mono links, "Say hello", the region and
+ * account, and a two-line menu button that opens a full-screen, numbered menu.
+ * No JavaScript needed (details/summary).
+ */
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-line/70 glass" data-noprint>
-      <div className="wrap flex h-16 items-center justify-between gap-3">
+    <header className="site-header sticky top-0 z-50" data-noprint>
+      <div className="wrap flex h-16 items-center justify-between gap-3 sm:h-[4.5rem]">
         <Link href="/" aria-label="Robokalam home" className="shrink-0 rounded-lg">
           <Wordmark />
         </Link>
-        <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
+        <nav aria-label="Main" className="hidden items-center gap-6 lg:flex">
           {nav.map((n) => (
-            <Link key={n.href} href={n.href} className="rounded-full px-4 py-2 font-semibold text-heading hover:bg-panel">
-              {n.label}
-            </Link>
-          ))}
-          <span className="mx-2 hidden h-5 w-px bg-line lg:block" aria-hidden />
-          {small.map((n) => (
-            <SmartLink key={n.href} href={n.href} className="hidden rounded-full px-3 py-2 text-sm text-muted hover:text-heading lg:inline-flex">
-              {n.label}
-            </SmartLink>
+            <Link key={n.href} href={n.href} className="nav-mono">{n.label}</Link>
           ))}
         </nav>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Link href="/contact" className="nav-mono hidden items-center gap-1.5 md:inline-flex">
+            Say hello <span aria-hidden>↗</span>
+          </Link>
           <RegionPicker />
           <AccountLink />
-          <details className="relative lg:hidden">
-            <summary className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-line bg-surface" aria-label="Menu">
-              <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+          <details className="menu-sheet">
+            <summary className="menu-button" aria-label="Menu">
+              <span aria-hidden className="menu-lines" />
             </summary>
-            <nav aria-label="Mobile menu" className="card absolute right-0 top-12 grid w-56 gap-1 p-2">
-              {nav.map((n) => (
-                <Link key={n.href} href={n.href} className="rounded-xl px-4 py-3 font-semibold text-heading hover:bg-panel md:hidden">
-                  {n.label}
-                </Link>
-              ))}
-              {small.map((n) => (
-                <SmartLink key={n.href} href={n.href} className="rounded-xl px-4 py-3 font-semibold text-heading hover:bg-panel">
-                  {n.label}
-                </SmartLink>
-              ))}
-            </nav>
+            <div className="menu-panel">
+              <nav aria-label="Mobile menu" className="wrap grid gap-10 pb-16 pt-24 lg:grid-cols-[1.4fr_1fr]">
+                <ol className="grid gap-2">
+                  {nav.map((n, i) => (
+                    <li key={n.href}>
+                      <Link href={n.href} className="menu-big">
+                        <span className="mono-tag">[{String(i + 1).padStart(2, "0")}]</span>
+                        {n.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ol>
+                <ul className="grid content-start gap-3">
+                  {small.map((n) => (
+                    <li key={n.href}><SmartLink href={n.href} className="nav-mono !text-base">{n.label}</SmartLink></li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
           </details>
         </div>
       </div>

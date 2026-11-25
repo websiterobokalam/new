@@ -37,26 +37,32 @@ const solutions = [
 
 export function Solutions() {
   return (
-    <Section id="solutions" label="Solutions for schools" className="scroll-mt-20">
+    <section id="solutions" aria-labelledby="solutions-h" className="scroll-mt-20 py-20 sm:py-28">
       <div className="wrap">
-        <SectionHead eyebrow="Solutions for schools" title="Software, AI, labs and curriculum. From one partner." lede="Most schools stitch together an app here, a lab vendor there and a curriculum from somewhere else. We build all of it to work together, and we run it with you." />
-        <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {solutions.map((s) => (
-            <li key={s.name} data-stagger>
-              <Link href={s.href} className="solution-card group flex h-full flex-col p-6">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="solution-icon"><Icon d={s.icon} /></span>
-                  <span className="rounded-full border border-line px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted">{s.tag}</span>
+        <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
+          <p className="eyebrow">Solutions for schools</p>
+          <div>
+            <h2 id="solutions-h" className="display-lg">Software, AI, labs and curriculum. <span className="tone">From one partner.</span></h2>
+            <p className="lede mt-5 max-w-2xl">Most schools stitch together an app here, a lab vendor there and a curriculum from somewhere else. We build all of it to work together, and we run it with you.</p>
+          </div>
+        </div>
+        <ol className="mt-14 border-t border-heading/30">
+          {solutions.map((s, i) => (
+            <li key={s.name} className="sol-row" data-stagger>
+              <span className="mono-tag pt-1">[{String(i + 1).padStart(2, "0")}]</span>
+              <h3 className="sol-name">{s.name}</h3>
+              <div className="grid gap-4">
+                <p className="text-lg leading-snug text-heading">{s.line.split(": ")[0]}{s.line.includes(": ") && <span className="tone">: {s.line.split(": ").slice(1).join(": ")}</span>}</p>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <span className="mono-tag">{s.tag}</span>
+                  <Link href={s.href} className="nav-mono !text-xs">Learn more <span aria-hidden>↗</span><span className="sr-only"> about {s.name}</span></Link>
                 </div>
-                <h3 className="mt-5 text-xl font-bold">{s.name}</h3>
-                <p className="mt-2 text-fg">{s.line}</p>
-                <span className="mt-auto pt-5 text-sm font-semibold text-link">Learn more <span aria-hidden className="inline-block transition-transform group-hover:translate-x-1">→</span></span>
-              </Link>
+              </div>
             </li>
           ))}
-        </ul>
+        </ol>
       </div>
-    </Section>
+    </section>
   );
 }
 
@@ -90,18 +96,14 @@ export function WhySchools() {
 /** A clear next step for school leaders. */
 export function Consult() {
   return (
-    <section aria-labelledby="consult-h" className="py-16">
+    <section aria-labelledby="consult-h" className="consult-card py-24 text-center sm:py-32">
       <div className="wrap">
-        <div className="consult-card grid items-center gap-8 p-8 sm:p-12 lg:grid-cols-[1.4fr_1fr]">
-          <div>
-            <p className="kicker">For principals, directors and trustees</p>
-            <h2 id="consult-h" className="display-md mt-3 !text-white">Plan your school&apos;s technology with us.</h2>
-            <p className="mt-3 max-w-xl text-[#C9D6E3]">A walk-through of the platform, a visit to see the lab, and a plan sized to your classes, rooms and budget.</p>
-          </div>
-          <div className="flex flex-wrap gap-3 lg:justify-end">
-            <DoorLink href="/21c-lab#demo" className="btn btn-primary">Book a consultation</DoorLink>
-            <Link href="/21c-lab/planner" className="btn border border-white/30 text-white hover:border-[#00CBD6] hover:text-[#00CBD6]">Try the Lab Planner</Link>
-          </div>
+        <p className="eyebrow !text-white before:!text-white/70 after:!text-white/70">For principals, directors and trustees</p>
+        <h2 id="consult-h" className="display-xl mx-auto mt-5 max-w-4xl !text-white">Let&apos;s plan your school&apos;s technology.</h2>
+        <p className="mx-auto mt-6 max-w-xl text-lg text-white/85">A walk-through of the platform, a visit to see the lab, and a plan sized to your classes, rooms and budget.</p>
+        <div className="mt-10 flex flex-wrap justify-center gap-3">
+          <DoorLink href="/21c-lab#demo" className="btn bg-white !text-[#0A2A6B] hover:!bg-[#E8EEFF]">Book a consultation <span aria-hidden>↗</span></DoorLink>
+          <Link href="/21c-lab/planner" className="btn border border-white/60 text-white hover:bg-white hover:!text-[#0A2A6B]">Try the Lab Planner</Link>
         </div>
       </div>
     </section>

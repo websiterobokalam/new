@@ -17,7 +17,7 @@ const cols = [
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-night text-[#c9dbe5]" data-noprint>
+    <footer className="relative overflow-hidden bg-[#111315] text-[#D9D6D2]" data-noprint>
       <div className="wrap pb-12 pt-16">
         {/* The Kalam Line ends with the name: bold letters that spring in, a rolling colour wave, and a spark. */}
         <div data-power>
@@ -34,9 +34,9 @@ export function Footer() {
         <FooterFriends />
         <div className="wrap relative pb-40 pt-14 md:pb-56">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
-          <div className="col-span-2 flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-white/15 pb-8 sm:col-span-3 lg:col-span-5">
-            <span className="rounded-xl bg-white px-3 py-2"><Wordmark /></span>
-            <p className="max-w-md text-sm leading-relaxed text-[#E3F4F8]">{SITE.positioning}</p>
+          <div className="col-span-2 flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-heading/25 pb-8 sm:col-span-3 lg:col-span-5">
+            <span className="rounded-lg bg-white px-3 py-2"><Wordmark /></span>
+            <p className="max-w-md text-lg leading-snug tracking-tight text-heading">{SITE.positioning}</p>
           </div>
           {cols.map((c) => (
             <nav key={c.title} aria-label={c.title}>
@@ -49,7 +49,7 @@ export function Footer() {
             </nav>
           ))}
         </div>
-        <div className="mt-12 grid gap-8 border-t border-white/15 pt-8 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
+        <div className="mt-12 grid gap-8 border-t border-heading/25 pt-8 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <h2>Visit</h2>
             <ul className="mt-3 grid gap-1.5 text-sm">
@@ -64,14 +64,14 @@ export function Footer() {
             <ul className="mt-3 grid gap-1.5 text-sm">
               {CONTACT.phones.map((p) => <li key={p.tel}><a href={`tel:${p.tel}`} className="">{p.label}</a></li>)}
               <li><a href={`mailto:${CONTACT.email}`} className="">{CONTACT.email}</a></li>
-              <li className="text-[#C9E3EC]">{CONTACT.hours}</li>
+              <li className="text-muted">{CONTACT.hours}</li>
             </ul>
           </div>
           <nav aria-label="Follow Robokalam">
             <h2>Follow us</h2>
             <ul className="mt-3 flex flex-wrap gap-2">
               {SOCIAL.map((x) => (
-                <li key={x.name}><SmartLink href={x.href} arrow={false} className="inline-flex min-h-10 items-center rounded-full border border-white/30 bg-white/5 px-3.5 text-sm hover:border-[#FFD31D]">{x.name}</SmartLink></li>
+                <li key={x.name}><SmartLink href={x.href} arrow={false} className="nav-mono inline-flex min-h-10 items-center rounded-full border border-heading/30 px-3.5 !text-xs hover:border-heading">{x.name}</SmartLink></li>
               ))}
             </ul>
           </nav>
