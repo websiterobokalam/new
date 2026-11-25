@@ -559,3 +559,10 @@ main#main, footer { overflow-x: clip; }
 @keyframes pg-fade { from { opacity: 0; } }
 @keyframes pg-in { from { opacity: 0; transform: scale(0.97); } }
 @media (prefers-reduced-motion: reduce) { .pg-img, .pg-full, .pg-viewer[open] { transition: none; animation: none; } .pg-open:hover .pg-img { transform: none; } }
+
+/* ---- Pointer companion: a globe of 0s and 1s with a soft light behind it ---- */
+.cursor-globe { position: fixed; left: 0; top: 0; width: 132px; height: 132px; z-index: 45; pointer-events: none; opacity: 0; transition: opacity 0.35s ease; will-change: transform; }
+.cursor-globe::before { content: ""; position: absolute; inset: -40px; border-radius: 50%; background: radial-gradient(circle, rgb(0 152 214 / 0.16), rgb(0 203 214 / 0.06) 45%, transparent 70%); }
+.cursor-globe canvas { position: relative; width: 100%; height: 100%; }
+:root[data-theme="dark"] .cursor-globe::before { background: radial-gradient(circle, rgb(127 208 242 / 0.18), transparent 70%); }
+@media (prefers-reduced-motion: reduce), (hover: none) { .cursor-globe { display: none; } }

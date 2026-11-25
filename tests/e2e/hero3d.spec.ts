@@ -95,3 +95,21 @@ test("footer friends: rapid taps never duplicate the robots", async ({ page }) =
   await expect(page.locator(".footer-friend svg.kiko")).toHaveCount(1);
   await expect(page.locator(".friend-say")).toHaveCount(1);
 });
+
+test("pointer companion: a globe of 0s and 1s on desktop, hidden over form fields, absent on touch", async ({ page, isMobile }) => {
+  await page.goto("/contact");
+  if (isMobile) {
+    await expect(page.locator(".cursor-globe")).toHaveCount(0);
+    return;
+  }
+  const globe = page.locator(".cursor-globe");
+  await expect(globe).toHaveCount(1);
+  await expect(globe).toHaveAttribute("aria-hidden", "true");
+  await page.mouse.move(200, 200);
+  await page.mouse.move(260, 240, { steps: 5 });
+  await expect(globe).toHaveCSS("opacity", "1");
+  const field = page.locator("input, textarea").first();
+  const box = (await field.boundingBox())!;
+  await page.mouse.move(box.x + 10, box.y + box.height / 2, { steps: 5 });
+  await expect(globe).toHaveCSS("opacity", "0");
+});

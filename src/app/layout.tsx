@@ -4,6 +4,7 @@ import { poppins, jetbrains, anekTe, anekHi, brand } from "./fonts";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MotionRuntime } from "@/components/motion/MotionRuntime";
+import { CursorGlobe } from "@/components/motion/CursorGlobe";
 import { TiltRuntime } from "@/components/motion/TiltRuntime";
 import { Analytics } from "@/components/Analytics";
 import { DoorTransitionProvider } from "@/components/motion/DoorTransition";
@@ -63,6 +64,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer />
         </DoorTransitionProvider>
         <MotionRuntime />
+        <CursorGlobe />
         <TiltRuntime />
         <Analytics />
       </body>
