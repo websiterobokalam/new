@@ -47,30 +47,78 @@ export function Hero() {
   );
 }
 
-/** The mascot on a sunny circle, with a speech bubble and hand-drawn doodles around the edge. */
-function MascotStage() {
-  return (
-    <figure className="hero-stage">
-      <div aria-hidden className="hero-sun" />
-      <div aria-hidden className="hero-ground" />
-      <Mascot priority float={false} sizes="(min-width: 1024px) 340px, 60vw" className="hero-mascot" alt="The Robokalam mascot giving a thumbs up" />
-      <p aria-hidden className="hero-bubble">Hi! Let&apos;s build something.</p>
-      <Doodle kind="gear" className="hero-doodle d-gear" />
-      <Doodle kind="bulb" className="hero-doodle d-bulb" />
-      <Doodle kind="code" className="hero-doodle d-code" />
-    </figure>
-  );
-}
+/*
+ * The mascot on an engineer's drawing sheet. Three drafting call-outs name the
+ * parts every robot has (sensors, a controller, motors), so the picture quietly
+ * teaches "sense, think, act" without saying "STEM". Geometry below is in the
+ * sheet's own units (480 x 520); the mascot artwork is 967 x 1200.
+ */
+const SHEET = { w: 480, h: 520 };
+const BOT = { x: 92, y: 132, w: 230, h: 285 }; // where the mascot sits on the sheet
+const at = (fx: number, fy: number) => ({ x: BOT.x + fx * BOT.w, y: BOT.y + fy * BOT.h });
+// Each call-out: a pin on the part, a leader with one bend, and a lettered label with its text to the right.
+const CALLOUTS = [
+  { id: "A", word: "Sense", note: "sensors", from: at(0.555, 0.196), bend: { x: 318, y: 118 }, to: { x: 350, y: 118 } },
+  { id: "B", word: "Think", note: "controller", from: at(0.46, 0.5), bend: { x: 318, y: 252 }, to: { x: 350, y: 252 } },
+  { id: "C", word: "Act", note: "motors", from: at(0.075, 0.3), bend: { x: 92 + 0.075 * 230, y: 96 }, to: { x: 92 + 0.075 * 230, y: 84 } },
+];
+const pct = (v: number, of: number) => `${((v / of) * 100).toFixed(3)}%`;
 
-/** Small hand-drawn marks, one stroke weight, brand navy. Decorative. */
-function Doodle({ kind, className }: { kind: "gear" | "bulb" | "code"; className: string }) {
-  const common = { fill: "none", stroke: "currentColor", strokeWidth: 3, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+function MascotStage() {
+  const ground = BOT.y + BOT.h;
+  const cx = BOT.x + BOT.w * 0.48, cy = BOT.y + BOT.h * 0.5;
   return (
-    <svg aria-hidden viewBox="0 0 48 48" className={className}>
-      {kind === "gear" && (<g {...common}><circle cx="24" cy="24" r="7" /><path d="M24 6v6M24 36v6M6 24h6M36 24h6M11.3 11.3l4.2 4.2M32.5 32.5l4.2 4.2M11.3 36.7l4.2-4.2M32.5 15.5l4.2-4.2" /><circle cx="24" cy="24" r="13" /></g>)}
-      {kind === "bulb" && (<g {...common}><path d="M17 30c-3-3-5-6-5-10a12 12 0 0 1 24 0c0 4-2 7-5 10v4H17z" /><path d="M19 39h10M21 43h6" /><path d="M24 16v8l3 3" /></g>)}
-      {kind === "code" && (<g {...common}><path d="M16 14 6 24l10 10M32 14l10 10-10 10M27 10l-6 28" /></g>)}
-    </svg>
+    <figure className="bp-sheet" style={{ aspectRatio: `${SHEET.w} / ${SHEET.h}` }}>
+      <svg aria-hidden viewBox={`0 0 ${SHEET.w} ${SHEET.h}`} className="bp-draw">
+        {/* construction geometry */}
+        <g className="bp-construct">
+          <circle cx={cx} cy={cy} r={176} />
+          <circle cx={cx} cy={cy} r={118} strokeDasharray="2 6" />
+          <path d={`M${cx - 196} ${cy}H${cx + 196}M${cx} ${cy - 196}V${cy + 196}`} strokeDasharray="10 5 2 5" />
+          <path d={`M${BOT.x - 30} ${ground}H${BOT.x + BOT.w + 30}`} className="bp-ground" />
+        </g>
+        {/* height dimension */}
+        <g className="bp-dim">
+          <path d={`M24 ${BOT.y}H40M24 ${ground}H40M32 ${BOT.y + 6}V${ground - 6}`} />
+          <path d={`M28 ${BOT.y + 14}L32 ${BOT.y + 4}L36 ${BOT.y + 14}M28 ${ground - 14}L32 ${ground - 4}L36 ${ground - 14}`} />
+        </g>
+        {/* formulas in the margin */}
+        <g className="bp-notes">
+          <text x={SHEET.w - 22} y={36} textAnchor="end">V = I · R</text>
+          <text x={SHEET.w - 22} y={58} textAnchor="end">F = m · a</text>
+        </g>
+        {/* call-outs */}
+        {CALLOUTS.map((c, i) => (
+          <g key={c.id} className="bp-callout" style={{ ["--i" as string]: i }}>
+            <path className="bp-leader" pathLength={1} d={`M${c.from.x} ${c.from.y}L${c.bend.x} ${c.bend.y}L${c.to.x} ${c.to.y}`} />
+            <circle className="bp-pin" cx={c.from.x} cy={c.from.y} r={5} />
+            <g transform={`translate(${c.to.x} ${c.to.y})`} className="bp-label">
+              <circle r={13} />
+              <text className="bp-letter" textAnchor="middle" dy="0.36em">{c.id}</text>
+              <text className="bp-word" x={20} dy="-0.05em">{c.word}</text>
+              <text className="bp-note" x={20} dy="1.25em">{c.note}</text>
+            </g>
+          </g>
+        ))}
+        {/* title block */}
+        <g className="bp-title" transform={`translate(${SHEET.w - 222} ${SHEET.h - 60})`}>
+          <rect width={204} height={44} rx={6} />
+          <path d="M0 22H204M148 0V44" />
+          <text x={10} y={15}>KALAM-01</text>
+          <text x={10} y={37}>SENSE → THINK → ACT</text>
+          <text x={156} y={15}>1 : 1</text>
+          <text x={156} y={37}>REV A</text>
+        </g>
+      </svg>
+      <Mascot
+        priority
+        float={false}
+        sizes="(min-width: 1024px) 300px, 56vw"
+        className="bp-mascot"
+        alt="The Robokalam mascot on an engineer's drawing, labelled sense, think and act"
+      />
+      <style>{`.bp-mascot{left:${pct(BOT.x, SHEET.w)};top:${pct(BOT.y, SHEET.h)};width:${pct(BOT.w, SHEET.w)};height:${pct(BOT.h, SHEET.h)}}`}</style>
+    </figure>
   );
 }
 

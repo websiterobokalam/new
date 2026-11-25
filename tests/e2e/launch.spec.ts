@@ -64,3 +64,14 @@ test("monthly summary: families with activity get one note a month, respecting t
   const mid = await (await request.get(`/api/cron/housekeeping?key=${KEY}`)).json();
   expect(new Date().getUTCDate() > 3 ? mid.monthly.queued : 0).toBe(0);
 });
+
+test("housekeeping run with a later clock never deletes live sign-in codes", async ({ request }) => {
+  const id = crypto.randomUUID();
+  const email = `fresh.${id.slice(0, 8)}@example.test`;
+  await ownerQuery("INSERT INTO email_otp_challenges (id, email, code_hash, expires_at) VALUES ($1, $2, $3, UTC_TIMESTAMP(3) + INTERVAL 10 MINUTE)", [id, email, "0".repeat(64)]);
+  const later = new Date(Date.now() + 40 * 86_400_000).toISOString();
+  const res = await (await request.get(`/api/cron/housekeeping?key=${KEY}&now=${later}`)).json();
+  expect(res.ok).toBe(true);
+  expect(await ownerQuery("SELECT id FROM email_otp_challenges WHERE id = $1", [id])).toHaveLength(1);
+  await ownerQuery("DELETE FROM email_otp_challenges WHERE id = $1", [id]);
+});
