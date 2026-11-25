@@ -536,12 +536,6 @@ main#main, footer { overflow-x: clip; }
 @keyframes pg-in { from { opacity: 0; transform: scale(0.97); } }
 @media (prefers-reduced-motion: reduce) { .pg-img, .pg-full, .pg-viewer[open] { transition: none; animation: none; } .pg-open:hover .pg-img { transform: none; } }
 
-/* ---- Pointer companion: a globe of 0s and 1s with a soft light behind it ---- */
-.cursor-globe { position: fixed; left: 0; top: 0; width: 132px; height: 132px; z-index: 45; pointer-events: none; opacity: 0; transition: opacity 0.35s ease; will-change: transform; }
-.cursor-globe::before { content: ""; position: absolute; inset: -40px; border-radius: 50%; background: radial-gradient(circle, rgb(0 152 214 / 0.16), rgb(0 203 214 / 0.06) 45%, transparent 70%); }
-.cursor-globe canvas { position: relative; width: 100%; height: 100%; }
-:root[data-theme="dark"] .cursor-globe::before { background: radial-gradient(circle, rgb(127 208 242 / 0.18), transparent 70%); }
-@media (prefers-reduced-motion: reduce), (hover: none) { .cursor-globe { display: none; } }
 
 /* ---- Home hero (Azurio-inspired): huge two-tone headline over a frosted lab photo ---- */
 .az-hero { position: relative; padding: 3rem 0 2rem; }
@@ -618,9 +612,4 @@ main#main, footer { overflow-x: clip; }
 }
 @keyframes arr-out-in { 0% { transform: none; opacity: 1; } 45% { transform: translate(0.7em, -0.7em); opacity: 0; } 46% { transform: translate(-0.7em, 0.7em); opacity: 0; } 100% { transform: none; opacity: 1; } }
 @keyframes arr-down { 0% { transform: none; opacity: 1; } 45% { transform: translateY(0.8em); opacity: 0; } 46% { transform: translateY(-0.8em); opacity: 0; } 100% { transform: none; opacity: 1; } }
-/* The pointer globe grows over anything clickable. */
-.cursor-globe canvas { transition: scale 0.35s cubic-bezier(.2,.7,.2,1); }
-.cursor-globe[data-active] canvas { scale: 1.45; }
-.cursor-globe[data-active]::before { opacity: 1.4; scale: 1.15; }
-.cursor-globe::before { transition: scale 0.35s ease; }
 @media (prefers-reduced-motion: reduce) { a:hover .arr, button:hover .arr { animation: none; } .dim-list > li, .az-hero-photo img { transition: none; } }

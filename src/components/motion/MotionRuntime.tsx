@@ -74,7 +74,6 @@ export function MotionRuntime() {
         cleanups.push(() => { el.removeEventListener("pointermove", move); el.removeEventListener("pointerleave", leave); });
       });
 
-      // 5. The pointer companion is CursorGlobe (a globe of 0s and 1s), mounted in the root layout.
     }
 
     return () => cleanups.forEach((f) => f());
