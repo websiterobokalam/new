@@ -422,7 +422,7 @@
       transform-origin: 50% 0;
       animation: s3d-rise linear both;
       animation-timeline: view();
-      animation-range: entry 0% cover 28%;
+      animation-range: entry 0% entry 40vh; /* fixed distance: tall sections on phones are sharp as soon as they arrive */
     }
     @keyframes s3d-rise {
       from { transform: translateY(36px); filter: blur(6px); }
