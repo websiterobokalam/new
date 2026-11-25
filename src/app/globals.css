@@ -170,7 +170,8 @@
     opacity: 0; transition: opacity 0.3s;
   }
   .grad-border:hover::before, .grad-border:focus-within::before, .grad-border[data-lit="true"]::before { opacity: 1; }
-  .grad-text { background: var(--kalam-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  /* Two-tone headings: the second half in the quieter ink (was the cyan gradient). */
+  .grad-text { color: var(--muted); }
 
   .field { display: grid; gap: 0.4rem; }
   .field > span { font-weight: 600; font-size: 0.95rem; color: var(--heading); }
