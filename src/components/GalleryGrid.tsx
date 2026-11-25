@@ -62,7 +62,7 @@ export function GalleryGrid({ items, filters, title }: { items: GalleryItem[]; f
       <ul className="pg-grid" aria-label={`${title}: ${shown.length} photos`}>
         {shown.map((it, i) => (
           <li key={it.id} className={`pg-tile ${shape(i)}`}>
-            <button type="button" className="pg-open" style={{ aspectRatio: ratio(it) }} aria-label={`Open photo: ${it.caption}`} onClick={(e) => { opener.current = e.currentTarget; setOpen(i); }}>
+            <button type="button" className="pg-open" style={{ aspectRatio: ratio(it) }} aria-label={`${it.label ? `${it.label} ` : ""}${it.caption} (open full size)`} onClick={(e) => { opener.current = e.currentTarget; setOpen(i); }}>
               <img
                 src={`${it.src}-800.webp`}
                 srcSet={`${it.src}-800.webp 800w, ${it.src}.webp ${Math.min(1600, it.width)}w`}
@@ -71,6 +71,7 @@ export function GalleryGrid({ items, filters, title }: { items: GalleryItem[]; f
                 height={it.height}
                 alt={it.alt}
                 loading={i < 2 ? "eager" : "lazy"}
+                fetchPriority={i === 0 ? "high" : undefined}
                 decoding="async"
                 className="pg-img"
               />
