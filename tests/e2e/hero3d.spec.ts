@@ -63,14 +63,14 @@ test("photo gallery: filters, full-screen viewer with next/previous, keyboard an
   const all = await tiles.count();
   expect(all).toBeGreaterThanOrEqual(6);
   // A filter narrows the grid, "All" restores it.
-  await gallery.getByRole("button", { name: /^Events/ }).click();
+  await gallery.getByRole("button", { name: /^Events \d+$/ }).click();
   const events = await tiles.count();
   expect(events).toBeLessThan(all);
-  await expect(gallery.getByRole("button", { name: /^Events/ })).toHaveAttribute("aria-pressed", "true");
-  await gallery.getByRole("button", { name: /^All/ }).click();
+  await expect(gallery.getByRole("button", { name: /^Events \d+$/ })).toHaveAttribute("aria-pressed", "true");
+  await gallery.getByRole("button", { name: /^All \d+$/ }).click();
   await expect(tiles).toHaveCount(all);
   // Open the second photo, step forward with the arrow key and the button, then close with Escape.
-  const second = gallery.getByRole("button", { name: /^Open photo:/ }).nth(1);
+  const second = gallery.getByRole("button", { name: /\(open full size\)$/ }).nth(1);
   await second.click();
   const viewer = page.locator("dialog.pg-viewer");
   await expect(viewer).toHaveAttribute("aria-label", new RegExp(`^Photo 2 of ${all}:`));
