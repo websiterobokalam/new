@@ -46,7 +46,7 @@ export function Solutions() {
             <p className="lede mt-5 max-w-2xl">Most schools stitch together an app here, a lab vendor there and a curriculum from somewhere else. We build all of it to work together, and we run it with you.</p>
           </div>
         </div>
-        <ol className="mt-14 border-t border-heading/30">
+        <ol className="dim-list mt-14 border-t border-heading/30">
           {solutions.map((s, i) => (
             <li key={s.name} className="sol-row" data-stagger>
               <span className="mono-tag pt-1">[{String(i + 1).padStart(2, "0")}]</span>
@@ -55,7 +55,7 @@ export function Solutions() {
                 <p className="text-lg leading-snug text-heading">{s.line.split(": ")[0]}{s.line.includes(": ") && <span className="tone">: {s.line.split(": ").slice(1).join(": ")}</span>}</p>
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <span className="mono-tag">{s.tag}</span>
-                  <Link href={s.href} className="nav-mono !text-xs">Learn more <span aria-hidden>↗</span><span className="sr-only"> about {s.name}</span></Link>
+                  <Link href={s.href} className="nav-mono !text-xs">Learn more <span aria-hidden className="arr">↗</span><span className="sr-only"> about {s.name}</span></Link>
                 </div>
               </div>
             </li>
@@ -102,7 +102,7 @@ export function Consult() {
         <h2 id="consult-h" className="display-xl mx-auto mt-5 max-w-4xl !text-white">Let&apos;s plan your school&apos;s technology.</h2>
         <p className="mx-auto mt-6 max-w-xl text-lg text-white/85">A walk-through of the platform, a visit to see the lab, and a plan sized to your classes, rooms and budget.</p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <DoorLink href="/21c-lab#demo" className="btn bg-white !text-[#0A2A6B] hover:!bg-[#E8EEFF]">Book a consultation <span aria-hidden>↗</span></DoorLink>
+          <DoorLink href="/21c-lab#demo" className="btn bg-white !text-[#0A2A6B] hover:!bg-[#E8EEFF]">Book a consultation <span aria-hidden className="arr">↗</span></DoorLink>
           <Link href="/21c-lab/planner" className="btn border border-white/60 text-white hover:bg-white hover:!text-[#0A2A6B]">Try the Lab Planner</Link>
         </div>
       </div>

@@ -99,6 +99,9 @@ export function CursorGlobe() {
       if (pos.x < -100) { pos.x = target.x; pos.y = target.y; }
       idleSince = performance.now();
       show(!blocked(e.target as Element));
+      // Grow a little over anything clickable.
+      const active = !!(e.target as Element).closest?.("a, button, summary, [role='button'], label");
+      if (active) wrap.dataset.active = ""; else delete wrap.dataset.active;
       if (!raf) { last = performance.now(); raf = requestAnimationFrame(draw); }
     };
     const onLeave = () => show(false);

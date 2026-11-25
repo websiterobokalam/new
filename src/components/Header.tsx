@@ -40,7 +40,7 @@ export function Header() {
         </nav>
         <div className="flex items-center gap-2 sm:gap-3">
           <Link href="/contact" className="nav-mono hidden items-center gap-1.5 md:inline-flex">
-            Say hello <span aria-hidden>↗</span>
+            Say hello <span aria-hidden className="arr">↗</span>
           </Link>
           <RegionPicker />
           <AccountLink />
@@ -50,7 +50,7 @@ export function Header() {
             </summary>
             <div className="menu-panel">
               <nav aria-label="Mobile menu" className="wrap grid gap-10 pb-16 pt-24 lg:grid-cols-[1.4fr_1fr]">
-                <ol className="grid gap-2">
+                <ol className="dim-list grid gap-2">
                   {nav.map((n, i) => (
                     <li key={n.href}>
                       <Link href={n.href} className="menu-big">
@@ -60,7 +60,7 @@ export function Header() {
                     </li>
                   ))}
                 </ol>
-                <ul className="grid content-start gap-3">
+                <ul className="dim-list grid content-start gap-3">
                   {small.map((n) => (
                     <li key={n.href}><SmartLink href={n.href} className="nav-mono !text-base">{n.label}</SmartLink></li>
                   ))}

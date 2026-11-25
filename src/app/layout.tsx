@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MotionRuntime } from "@/components/motion/MotionRuntime";
 import { CursorGlobe } from "@/components/motion/CursorGlobe";
+import { HoverRuntime } from "@/components/motion/HoverRuntime";
 import { TiltRuntime } from "@/components/motion/TiltRuntime";
 import { Analytics } from "@/components/Analytics";
 import { DoorTransitionProvider } from "@/components/motion/DoorTransition";
@@ -65,6 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </DoorTransitionProvider>
         <MotionRuntime />
         <CursorGlobe />
+        <HoverRuntime />
         <TiltRuntime />
         <Analytics />
       </body>

@@ -36,14 +36,14 @@ export function Hero() {
           The AI learning platform, school software, robotics labs and curriculum that future-ready schools run on, and live classes that get children building from age 6.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <DoorLink href="/21c-lab#demo" className="btn btn-primary">Book a consultation <span aria-hidden>↗</span></DoorLink>
+          <DoorLink href="/21c-lab#demo" className="btn btn-primary">Book a consultation <span aria-hidden className="arr">↗</span></DoorLink>
           <Link href="/learn#book" className="btn btn-ghost">Free build session</Link>
         </div>
         <div className="az-hero-foot">
-          <ul aria-label="Robokalam on social media">
+          <ul aria-label="Robokalam on social media" className="dim-list">
             {SOCIAL.slice(0, 4).map((x) => <li key={x.name}><a href={x.href} target="_blank" rel="noopener noreferrer" className="nav-mono !text-xs !text-muted hover:!text-heading">{x.name}</a></li>)}
           </ul>
-          <a href="#intro" className="nav-mono !text-xs">Scroll to explore <span aria-hidden>↓</span></a>
+          <a href="#intro" className="nav-mono !text-xs">Scroll to explore <span aria-hidden className="arr arr-down">↓</span></a>
         </div>
       </div>
     </section>

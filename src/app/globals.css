@@ -602,3 +602,25 @@ main#main, footer { overflow-x: clip; }
 .consult-card .btn-primary:hover { background: #E8EEFF; color: #0A2A6B; }
 .consult-card .btn-ghost { border-color: rgb(255 255 255 / 0.7); color: #fff; }
 .consult-card .btn-ghost:hover { background: #fff; color: #0A2A6B; }
+
+/* ---- Hover interactions (desktop pointers) ---- */
+/* The little arrow slides out up-right and comes back in from the bottom-left. */
+.arr { display: inline-block; overflow: hidden; }
+@media (hover: hover) and (pointer: fine) {
+  a:hover .arr, button:hover .arr { animation: arr-out-in 0.6s cubic-bezier(.6,0,.2,1) both; }
+  a:hover .arr-down { animation-name: arr-down; }
+  /* Hover one item in a list and the others step back. */
+  .dim-list > li { transition: opacity 0.3s ease, scale 0.3s ease; }
+  .dim-list:hover > li:not(:hover) { opacity: 0.35; }
+  /* Photos lean in a touch. */
+  .az-hero-photo img { transition: scale 0.9s cubic-bezier(.2,.7,.2,1); }
+  .az-hero-stage:hover .az-hero-photo img { scale: 1.04; }
+}
+@keyframes arr-out-in { 0% { transform: none; opacity: 1; } 45% { transform: translate(0.7em, -0.7em); opacity: 0; } 46% { transform: translate(-0.7em, 0.7em); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes arr-down { 0% { transform: none; opacity: 1; } 45% { transform: translateY(0.8em); opacity: 0; } 46% { transform: translateY(-0.8em); opacity: 0; } 100% { transform: none; opacity: 1; } }
+/* The pointer globe grows over anything clickable. */
+.cursor-globe canvas { transition: scale 0.35s cubic-bezier(.2,.7,.2,1); }
+.cursor-globe[data-active] canvas { scale: 1.45; }
+.cursor-globe[data-active]::before { opacity: 1.4; scale: 1.15; }
+.cursor-globe::before { transition: scale 0.35s ease; }
+@media (prefers-reduced-motion: reduce) { a:hover .arr, button:hover .arr { animation: none; } .dim-list > li, .az-hero-photo img { transition: none; } }

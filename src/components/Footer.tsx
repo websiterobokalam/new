@@ -41,7 +41,7 @@ export function Footer() {
           {cols.map((c) => (
             <nav key={c.title} aria-label={c.title}>
               <h2>{c.title}</h2>
-              <ul className="mt-3 grid gap-2">
+              <ul className="dim-list mt-3 grid gap-2">
                 {c.links.map(([href, label]) => (
                   <li key={href}><SmartLink href={href} className="text-sm">{label}</SmartLink></li>
                 ))}
@@ -69,7 +69,7 @@ export function Footer() {
           </div>
           <nav aria-label="Follow Robokalam">
             <h2>Follow us</h2>
-            <ul className="mt-3 flex flex-wrap gap-2">
+            <ul className="dim-list mt-3 flex flex-wrap gap-2">
               {SOCIAL.map((x) => (
                 <li key={x.name}><SmartLink href={x.href} arrow={false} className="nav-mono inline-flex min-h-10 items-center rounded-full border border-heading/30 px-3.5 !text-xs hover:border-heading">{x.name}</SmartLink></li>
               ))}
